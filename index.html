@@ -3752,7 +3752,7 @@ const fromTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
   solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID
 )[0];
 console.log('From account:', fromTokenAccount.toString());
-    console.log('From account:', fromTokenAccount.toString());
+    
     
     // Get the burn address token account
 // Get the burn address token account
@@ -3767,7 +3767,18 @@ console.log('SYNTA_MINT:', SYNTA_MINT);
 const mintPubkey = new solanaWeb3.PublicKey(SYNTA_MINT);
 console.log('Mint pubkey created:', mintPubkey.toString());
 
-const toTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
+// Make sure all objects exist before calling toBuffer()
+if (!burnWallet || typeof burnWallet.toBuffer !== 'function') {
+  throw new Error('Burn wallet not properly initialized');
+}
+if (!solanaWeb3.TOKEN_PROGRAM_ID || !solanaWeb3.TOKEN_PROGRAM_ID.toBuffer) {
+  throw new Error('TOKEN_PROGRAM_ID not available');
+}
+if (!mintPubkey || typeof mintPubkey.toBuffer !== 'function') {
+  throw new Error('Mint pubkey not properly initialized');
+}
+
+const toTokenAccount = solanaWeb3.PublicKey.findProgramAddressSync(
   [
     burnWallet.toBuffer(),
     solanaWeb3.TOKEN_PROGRAM_ID.toBuffer(),
@@ -3776,7 +3787,7 @@ const toTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
   solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID
 )[0];
 console.log('To account:', toTokenAccount.toString());
-    console.log('To account:', toTokenAccount.toString());
+
     
     statusMessage.textContent = 'Checking accounts...';
     
@@ -4403,6 +4414,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
