@@ -3812,7 +3812,9 @@ function showSuccessNotification(amount, signature) {
     txHash.textContent = '';
     burnAmount.value = '100';
   }  
-  init();
+ init();
+// Ensure disconnect listener is attached after wallet initialization
+setTimeout(ensureDisconnectListener, 1500);
 });
 document.getElementById('walletTopBtn').addEventListener('click', (e) => {
   e.stopPropagation();
@@ -4331,6 +4333,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
