@@ -3875,8 +3875,7 @@ function showSuccessNotification(amount, signature) {
     txHash.textContent = '';
     burnAmount.value = '100';
   }  
- init();
-
+init();
 
 // ADD THIS FUNCTION RIGHT HERE
 function ensureDisconnectListener() {
@@ -3911,7 +3910,8 @@ function ensureDisconnectListener() {
         updateBurnModalStatus();
         
         // Hide dropdown
-        document.getElementById('walletDropdown')?.classList.remove('active');
+        const walletDropdown = document.getElementById('walletDropdown');
+        if (walletDropdown) walletDropdown.classList.remove('active');
         
         // Clear storage
         localStorage.removeItem('walletConnected');
@@ -3936,52 +3936,60 @@ function ensureDisconnectListener() {
 
 // Now call it after init
 setTimeout(ensureDisconnectListener, 1500);
+
+// ===== MERGED JUPITER WIDGET CODE =====
+const buyPlanet = document.getElementById('buyPlanet');
+const jupiterWidget = document.getElementById('jupiterWidget');
+const widgetBackdrop = document.getElementById('widgetBackdrop');
+const jupiterCloseBtn = document.getElementById('jupiterCloseBtn');  
+
+if (buyPlanet) {
+  buyPlanet.addEventListener('click', function(e) {
+    e.preventDefault();  
+    if (jupiterWidget && widgetBackdrop) {
+      jupiterWidget.classList.add('active');
+      widgetBackdrop.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+    }
+  });
+}  
+
+if (jupiterCloseBtn) {
+  jupiterCloseBtn.addEventListener('click', closeJupiterWidget);
+}
+
+if (widgetBackdrop) {
+  widgetBackdrop.addEventListener('click', closeJupiterWidget);
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && jupiterWidget && jupiterWidget.classList.contains('active')) {
+    closeJupiterWidget();
+  }
 });
-document.addEventListener('DOMContentLoaded', function() {
-  const buyPlanet = document.getElementById('buyPlanet');
-  const jupiterWidget = document.getElementById('jupiterWidget');
-  const widgetBackdrop = document.getElementById('widgetBackdrop');
-  const jupiterCloseBtn = document.getElementById('jupiterCloseBtn');  
-    if (buyPlanet) {
-    buyPlanet.addEventListener('click', function(e) {
-      e.preventDefault();  
-      if (jupiterWidget && widgetBackdrop) {
-        jupiterWidget.classList.add('active');
-        widgetBackdrop.classList.add('active');
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed'; // Prevent background scrolling
-      }
-    });
-  }  
-  if (jupiterCloseBtn) {
-    jupiterCloseBtn.addEventListener('click', closeJupiterWidget);
+
+function closeJupiterWidget() {
+  if (jupiterWidget) {
+    jupiterWidget.classList.remove('active');
   }
   if (widgetBackdrop) {
-    widgetBackdrop.addEventListener('click', closeJupiterWidget);
+    widgetBackdrop.classList.remove('active');
   }
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && jupiterWidget && jupiterWidget.classList.contains('active')) {
+  document.body.style.overflow = 'auto';
+  document.body.style.position = 'static';
+}
+
+if (jupiterWidget) {
+  jupiterWidget.addEventListener('click', function(e) {
+    if (e.target === jupiterWidget) {
       closeJupiterWidget();
     }
   });
-  function closeJupiterWidget() {
-    if (jupiterWidget) {
-      jupiterWidget.classList.remove('active');
-    }
-    if (widgetBackdrop) {
-      widgetBackdrop.classList.remove('active');
-    }
-    document.body.style.overflow = 'auto';
-    document.body.style.position = 'static';
-  }
-  if (jupiterWidget) {
-    jupiterWidget.addEventListener('click', function(e) {
-      if (e.target === jupiterWidget) {
-        closeJupiterWidget();
-      }
-    });
-  }
-});
+}
+// ===== END MERGED JUPITER CODE =====
+
+// ===== COOKIE CONSENT CODE =====
 (function() {
   // Check if user has already made a choice
   const cookieConsent = localStorage.getItem('cookieConsent');
@@ -4433,6 +4441,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
