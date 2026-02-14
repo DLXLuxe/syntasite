@@ -2998,7 +2998,34 @@ transform: translateZ(0);
     transform: translateX(-50%) scale(1);
   }
 }
+/* ULTIMATE FIX FOR WALLET BUTTONS */
+.wallet-dropdown.active,
+.wallet-dropdown.active *,
+.wallet-actions,
+.wallet-actions *,
+.wallet-action-btn,
+#copyWalletAddress,
+#walletDisconnect {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: block !important;
+  z-index: 999999 !important;
+}
 
+.wallet-action-btn.copy,
+.wallet-action-btn.disconnect {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  background: rgba(124, 249, 255, 0.2) !important;
+}
+
+.wallet-action-btn.copy:hover,
+.wallet-action-btn.disconnect:hover {
+  background: rgba(124, 249, 255, 0.3) !important;
+  transform: translateY(-2px) !important;
+}
 </style>
 </head>
 <body>
@@ -4119,6 +4146,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
