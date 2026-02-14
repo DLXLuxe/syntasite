@@ -3743,30 +3743,28 @@ if (typeof publicKey === 'string') {
 console.log('Owner public key:', ownerPublicKey.toString());
 
 // Get the user's token account (associated token account)
+const TOKEN_2022_PROGRAM_ID = new solanaWeb3.PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
+
 const fromTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
   [
     ownerPublicKey.toBuffer(),
-    solanaWeb3.Token.TOKEN_PROGRAM_ID.toBuffer(),
+    TOKEN_2022_PROGRAM_ID.toBuffer(),
     new solanaWeb3.PublicKey(SYNTA_MINT).toBuffer()
   ],
   solanaWeb3.Token.ASSOCIATED_PROGRAM_ID
 )[0];
 console.log('From account:', fromTokenAccount.toString());
-    
-    
+
 // Get the burn address token account
 console.log('Creating burn wallet from address:', BURN_ADDRESS);
 let burnWallet;
 try {
   burnWallet = new solanaWeb3.PublicKey(BURN_ADDRESS);
   console.log('Burn wallet created:', burnWallet.toString());
-  console.log('Burn wallet toBuffer exists:', typeof burnWallet.toBuffer === 'function');
 } catch (e) {
   console.error('Failed to create burn wallet:', e);
   throw new Error('Invalid burn address');
 }
-
-console.log('TOKEN_PROGRAM_ID:', solanaWeb3.Token.TOKEN_PROGRAM_ID.toString());
 
 let mintPubkey;
 try {
@@ -3777,26 +3775,14 @@ try {
   throw new Error('Invalid token mint address');
 }
 
-// Safety checks before calling toBuffer()
-if (!burnWallet || typeof burnWallet.toBuffer !== 'function') {
-  throw new Error('Burn wallet not properly initialized');
-}
-if (!solanaWeb3.Token.TOKEN_PROGRAM_ID || !solanaWeb3.Token.TOKEN_PROGRAM_ID.toBuffer) {
-  throw new Error('TOKEN_PROGRAM_ID not available');
-}
-if (!mintPubkey || typeof mintPubkey.toBuffer !== 'function') {
-  throw new Error('Mint pubkey not properly initialized');
-}
-
-
 console.log('All objects validated, calling findProgramAddressSync');
 const toTokenAccount = solanaWeb3.PublicKey.findProgramAddressSync(
   [
     burnWallet.toBuffer(),
-    solanaWeb3.Token.TOKEN_PROGRAM_ID.toBuffer(),
+    TOKEN_2022_PROGRAM_ID.toBuffer(),
     mintPubkey.toBuffer()
   ],
- solanaWeb3.Token.ASSOCIATED_PROGRAM_ID
+  solanaWeb3.Token.ASSOCIATED_PROGRAM_ID
 )[0];
 console.log('To account:', toTokenAccount.toString());
 
@@ -3837,15 +3823,15 @@ console.log('To account:', toTokenAccount.toString());
     
     statusMessage.textContent = 'Creating transfer instruction...';
     
-    // Create transfer instruction
-    const transferInstruction = solanaWeb3.Token.createTransferInstruction(
-      solanaWeb3.Token.TOKEN_PROGRAM_ID,
-      fromTokenAccount,
-      toTokenAccount,
-      ownerPublicKey,
-      [],
-      lamports
-    );
+// Create transfer instruction
+const transferInstruction = solanaWeb3.Token.createTransferInstruction(
+  TOKEN_2022_PROGRAM_ID,
+  fromTokenAccount,
+  toTokenAccount,
+  ownerPublicKey,
+  [],
+  lamports
+);
     transaction.add(transferInstruction);
     
     statusMessage.textContent = 'Getting recent blockhash...';
@@ -4426,6 +4412,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
