@@ -2998,33 +2998,26 @@ transform: translateZ(0);
     transform: translateX(-50%) scale(1);
   }
 }
-/* ULTIMATE FIX FOR WALLET BUTTONS */
-.wallet-dropdown.active,
-.wallet-dropdown.active *,
-.wallet-actions,
-.wallet-actions *,
+/* FORCE FIX FOR WALLET BUTTONS */
+.wallet-actions button,
 .wallet-action-btn,
 #copyWalletAddress,
 #walletDisconnect {
   pointer-events: auto !important;
   cursor: pointer !important;
-  visibility: visible !important;
+  position: relative !important;
+  z-index: 100000 !important;
   opacity: 1 !important;
-  display: block !important;
-  z-index: 999999 !important;
 }
 
-.wallet-action-btn.copy,
-.wallet-action-btn.disconnect {
+.wallet-dropdown {
   pointer-events: auto !important;
-  cursor: pointer !important;
-  background: rgba(124, 249, 255, 0.2) !important;
+  z-index: 99999 !important;
 }
 
-.wallet-action-btn.copy:hover,
-.wallet-action-btn.disconnect:hover {
-  background: rgba(124, 249, 255, 0.3) !important;
-  transform: translateY(-2px) !important;
+.wallet-dropdown.active {
+  display: block !important;
+  pointer-events: auto !important;
 }
 </style>
 </head>
@@ -4146,6 +4139,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
