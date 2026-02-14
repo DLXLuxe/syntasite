@@ -3754,20 +3754,30 @@ const fromTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
 console.log('From account:', fromTokenAccount.toString());
     
     
-    // Get the burn address token account
 // Get the burn address token account
 console.log('Creating burn wallet from address:', BURN_ADDRESS);
-const burnWallet = new solanaWeb3.PublicKey(BURN_ADDRESS);
-console.log('Burn wallet created:', burnWallet.toString());
-console.log('Burn wallet toBuffer exists:', typeof burnWallet.toBuffer === 'function');
+let burnWallet;
+try {
+  burnWallet = new solanaWeb3.PublicKey(BURN_ADDRESS);
+  console.log('Burn wallet created:', burnWallet.toString());
+  console.log('Burn wallet toBuffer exists:', typeof burnWallet.toBuffer === 'function');
+} catch (e) {
+  console.error('Failed to create burn wallet:', e);
+  throw new Error('Invalid burn address');
+}
 
 console.log('TOKEN_PROGRAM_ID:', solanaWeb3.TOKEN_PROGRAM_ID.toString());
-console.log('SYNTA_MINT:', SYNTA_MINT);
 
-const mintPubkey = new solanaWeb3.PublicKey(SYNTA_MINT);
-console.log('Mint pubkey created:', mintPubkey.toString());
+let mintPubkey;
+try {
+  mintPubkey = new solanaWeb3.PublicKey(SYNTA_MINT);
+  console.log('Mint pubkey created:', mintPubkey.toString());
+} catch (e) {
+  console.error('Failed to create mint pubkey:', e);
+  throw new Error('Invalid token mint address');
+}
 
-// Make sure all objects exist before calling toBuffer()
+// Safety checks before calling toBuffer()
 if (!burnWallet || typeof burnWallet.toBuffer !== 'function') {
   throw new Error('Burn wallet not properly initialized');
 }
@@ -3778,6 +3788,7 @@ if (!mintPubkey || typeof mintPubkey.toBuffer !== 'function') {
   throw new Error('Mint pubkey not properly initialized');
 }
 
+console.log('All objects validated, calling findProgramAddressSync');
 const toTokenAccount = solanaWeb3.PublicKey.findProgramAddressSync(
   [
     burnWallet.toBuffer(),
@@ -4414,6 +4425,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
