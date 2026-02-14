@@ -3693,45 +3693,155 @@ async function connectWallet() {
     }
   });
 
-  // Confirm burn (simplified for now)
-  confirmBurn.addEventListener('click', async () => {
-    if (!publicKey) {
-      alert('Please connect your wallet first');
-      return;
+confirmBurn.addEventListener('click', async () => {
+  if (!publicKey) {
+    alert('Please connect your wallet first');
+    return;
+  }
+  
+  const amount = parseFloat(burnAmount.value);
+  if (!amount || amount <= 0) {
+    alert('Please enter a valid amount');
+    return;
+  }
+  
+  if (amount > walletBalance) {
+    alert(`Insufficient balance. You have ${walletBalance.toFixed(2)} SYNTA`);
+    return;
+  }
+  
+  // Show transaction status
+  txStatus.classList.add('active');
+  statusMessage.textContent = 'Preparing transaction...';
+  statusMessage.style.color = '#7cf9ff';
+  
+  try {
+    // Calculate lamports (amount * 10^decimals)
+    const lamports = Math.floor(amount * Math.pow(10, DECIMALS));
+    
+    statusMessage.textContent = 'Finding token accounts...';
+    
+    // Get the user's token account (associated token account)
+    const fromTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
+      [
+        publicKey.toBuffer(),
+        solanaWeb3.TOKEN_PROGRAM_ID.toBuffer(),
+        new solanaWeb3.PublicKey(SYNTA_MINT).toBuffer()
+      ],
+      solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID
+    )[0];
+    
+    // Get the burn address token account
+    const toTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
+      [
+        new solanaWeb3.PublicKey(BURN_ADDRESS).toBuffer(),
+        solanaWeb3.TOKEN_PROGRAM_ID.toBuffer(),
+        new solanaWeb3.PublicKey(SYNTA_MINT).toBuffer()
+      ],
+      solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID
+    )[0];
+    
+    statusMessage.textContent = 'Creating transfer instruction...';
+    
+    // Create connection with current working RPC
+    const connection = getConnection();
+    
+    // Create transfer instruction
+    const transferInstruction = solanaWeb3.Token.createTransferInstruction(
+      solanaWeb3.TOKEN_PROGRAM_ID,
+      fromTokenAccount,
+      toTokenAccount,
+      publicKey,
+      [],
+      lamports
+    );
+    
+    statusMessage.textContent = 'Getting recent blockhash...';
+    const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+    
+    // Create transaction
+    const transaction = new solanaWeb3.Transaction({
+      feePayer: publicKey,
+      recentBlockhash: blockhash
+    }).add(transferInstruction);
+    
+    // Add compute unit limit for stability
+    const computeUnitLimitIx = solanaWeb3.ComputeBudgetProgram.setComputeUnitLimit({
+      units: 200000
+    });
+    transaction.add(computeUnitLimitIx);
+    
+    statusMessage.textContent = 'Please sign the transaction in your wallet...';
+    
+    // Sign transaction
+    const signedTransaction = await wallet.signTransaction(transaction);
+    
+    statusMessage.textContent = 'Sending transaction...';
+    const signature = await connection.sendRawTransaction(signedTransaction.serialize());
+    
+    statusMessage.textContent = 'Confirming transaction...';
+    const confirmation = await connection.confirmTransaction({
+      signature,
+      blockhash,
+      lastValidBlockHeight
+    }, 'confirmed');
+    
+    if (confirmation.value.err) {
+      throw new Error('Transaction failed: ' + JSON.stringify(confirmation.value.err));
     }
     
-    const amount = parseFloat(burnAmount.value);
-    if (!amount || amount <= 0) {
-      alert('Please enter a valid amount');
-      return;
+    // Success!
+    statusMessage.innerHTML = '✅ Burn Successful!';
+    txHash.textContent = signature;
+    txHash.style.cursor = 'pointer';
+    txHash.onclick = () => {
+      window.open(`https://explorer.solana.com/tx/${signature}`, '_blank');
+    };
+    
+    // Update balance
+    await fetchBalance();
+    updateUI();
+    updateBurnStatus();
+    
+    // Show success modal
+    const successModal = document.getElementById('burnSuccessModal');
+    const successTxHash = document.getElementById('successTxHash');
+    const explorerLink = document.getElementById('explorerLink');
+    
+    if (successModal && successTxHash) {
+      successTxHash.textContent = signature;
+      if (explorerLink) {
+        explorerLink.href = `https://explorer.solana.com/tx/${signature}`;
+      }
+      successModal.classList.add('active');
     }
     
-    if (amount > walletBalance) {
-      alert(`Insufficient balance. You have ${walletBalance.toFixed(2)} SYNTA`);
-      return;
-    }
-    
-    txStatus.classList.add('active');
-    statusMessage.textContent = 'Preparing transaction...';
-    
+    // Save to history
     try {
-      // This is where you'd add the actual burn transaction
-      statusMessage.textContent = 'Simulating successful burn...';
-      
-      setTimeout(() => {
-        statusMessage.innerHTML = '✅ Burn Successful!';
-        txHash.textContent = 'Transaction simulation - working!';
-        fetchBalance().then(() => {
-          updateUI();
-          updateBurnStatus();
-        });
-      }, 2000);
-      
-    } catch (error) {
-      console.error('Burn error:', error);
-      statusMessage.textContent = `❌ Error: ${error.message}`;
+      const burns = JSON.parse(localStorage.getItem('synta_burns') || '[]');
+      burns.unshift({
+        amount,
+        signature,
+        timestamp: new Date().toISOString(),
+        address: publicKey.toString()
+      });
+      if (burns.length > 10) burns.length = 10;
+      localStorage.setItem('synta_burns', JSON.stringify(burns));
+    } catch (e) {
+      console.log('Error saving burn history:', e);
     }
-  });
+    
+  } catch (error) {
+    console.error('Burn error:', error);
+    statusMessage.textContent = `❌ Error: ${error.message}`;
+    statusMessage.style.color = '#ff3300';
+    
+    // Log more details if available
+    if (error.logs) {
+      console.log('Transaction logs:', error.logs);
+    }
+  }
+});
 
   // Initialize
   init();
@@ -4224,6 +4334,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
