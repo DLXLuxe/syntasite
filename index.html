@@ -3876,13 +3876,68 @@ function showSuccessNotification(amount, signature) {
     burnAmount.value = '100';
   }  
  init();
-// Ensure disconnect listener is attached after wallet initialization
+async function init() {
+  // ... your existing init code ...
+}
+
+// ADD THIS FUNCTION RIGHT HERE
+function ensureDisconnectListener() {
+  console.log('Ensuring disconnect listener is attached');
+  const disconnectBtn = document.getElementById('walletDisconnect');
+  if (disconnectBtn) {
+    // Remove existing listeners by cloning
+    const newBtn = disconnectBtn.cloneNode(true);
+    disconnectBtn.parentNode.replaceChild(newBtn, disconnectBtn);
+    
+    // Add fresh listener
+    newBtn.addEventListener('click', async function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      console.log('Disconnect clicked from ensure function');
+      
+      try {
+        // Disconnect wallet
+        if (window.solana) {
+          if (window.solana.disconnect) {
+            await window.solana.disconnect();
+          }
+        }
+        
+        // Clear all state
+        publicKey = null;
+        walletBalance = 0;
+        
+        // Update UI
+        updateWalletUI();
+        updateBurnModalStatus();
+        
+        // Hide dropdown
+        document.getElementById('walletDropdown')?.classList.remove('active');
+        
+        // Clear storage
+        localStorage.removeItem('walletConnected');
+        localStorage.removeItem('walletAddress');
+        
+        // Manual UI reset
+        document.getElementById('walletBtnText').textContent = 'Connect Wallet';
+        document.getElementById('walletShortAddress').textContent = '';
+        document.getElementById('walletFullAddress').textContent = 'Not connected';
+        document.getElementById('syntaBalance').textContent = '0.00';
+        document.getElementById('walletTopBtn').classList.remove('connected');
+        document.getElementById('burnWalletStatus').innerHTML = 'Status: <span style="color: #ff9966;">Not Connected</span>';
+        
+      } catch (error) {
+        console.error('Disconnect error:', error);
+      }
+    });
+    
+    console.log('Disconnect button reinitialized successfully');
+  }
+}
+
+// Now call it after init
 setTimeout(ensureDisconnectListener, 1500);
-});
-document.querySelectorAll('.dropdown-container').forEach(container => {
-  container.addEventListener('mouseenter', () => {
-    document.getElementById('walletDropdown').classList.remove('active');
-  });
 });
 document.addEventListener('DOMContentLoaded', function() {
   const buyPlanet = document.getElementById('buyPlanet');
@@ -4380,6 +4435,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
