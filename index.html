@@ -5,6 +5,29 @@
 <title>SYNTA</title>
 <script src="https://unpkg.com/@solana/web3.js@1.87.6/lib/index.iife.min.js"></script>
 <style>
+  /* Fix cookie banner buttons */
+.cookie-consent-banner button,
+.cookie-btn,
+#cookieSettingsBtn,
+#cookieEssentialBtn,
+#cookieAcceptBtn,
+.cookie-settings-close,
+.cookie-btn-save {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  z-index: 1000000 !important;
+  position: relative !important;
+}
+
+.cookie-settings-panel {
+  pointer-events: auto !important;
+  z-index: 1000001 !important;
+}
+
+/* Make sure the banner itself doesn't block clicks */
+.cookie-consent-banner {
+  pointer-events: all !important;
+}
 .cookie-consent-banner {
   position: fixed;
   bottom: 20px;
@@ -4160,6 +4183,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
