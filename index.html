@@ -3551,28 +3551,31 @@ document.addEventListener('DOMContentLoaded', function() {
       walletDropdown.classList.remove('active');
     }
   });
-
-  async function connectWallet() {
-    try {
-      if (!wallet) {
-        const provider = window.solana || window.phantom?.solana;
-        if (!provider) {
-          alert('Please install Phantom wallet from phantom.app');
-          return;
-        }
-        wallet = provider;
-        connection = new solanaWeb3.Connection(NETWORK);
-      }      
-      await wallet.connect();
-      publicKey = wallet.publicKey;
-      await updateBalance();
-      updateWalletUI();
-      updateBurnModalStatus();      
-    } catch (error) {
-      console.error('Wallet connection error:', error);
-      alert(`Connection failed: ${error.message}`);
+async function connectWallet() {
+  try {
+    // Check if any Solana wallet is installed
+    if (!window.solana) {
+      const choice = confirm('No wallet found! Click OK to install Phantom, or Cancel for other wallets');
+      if (choice) {
+        window.open('https://phantom.app/', '_blank');
+      } else {
+        window.open('https://walletguide.com/solana-wallets', '_blank');
+      }
+      return;
     }
+    
+    wallet = window.solana;
+    connection = new solanaWeb3.Connection(NETWORK);
+    await wallet.connect();
+    publicKey = wallet.publicKey;
+    await updateBalance();
+    updateWalletUI();
+    updateBurnModalStatus();      
+  } catch (error) {
+    console.error('Wallet connection error:', error);
+    alert(`Connection failed: ${error.message}`);
   }
+}
 
   copyWalletAddress.addEventListener('click', () => {
     if (publicKey) {
@@ -4139,6 +4142,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
