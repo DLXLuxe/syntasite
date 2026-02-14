@@ -3594,20 +3594,35 @@ async function connectWallet() {
     }
   });  
 
-  walletDisconnect.addEventListener('click', async () => {
-    try {
-      if (wallet && wallet.isConnected) {
-        await wallet.disconnect();
-        publicKey = null;
-        walletBalance = 0;
-        updateWalletUI();
-        updateBurnModalStatus();
-        walletDropdown.classList.remove('active');
-      }
-    } catch (error) {
-      console.error('Disconnect error:', error);
+walletDisconnect.addEventListener('click', async () => {
+  try {
+    if (wallet && wallet.isConnected) {
+      await wallet.disconnect();
+      
+      // Clear all wallet data
+      publicKey = null;
+      walletBalance = 0;
+      
+      // Force update UI to disconnected state
+      walletBtnText.textContent = 'Connect Wallet';
+      walletShortAddress.textContent = '';
+      walletFullAddress.textContent = 'Not connected';
+      syntaBalance.textContent = '0.00';
+      walletTopBtn.classList.remove('connected');
+      
+      // Close dropdown
+      walletDropdown.classList.remove('active');
+      
+      // Clear any stored session
+      localStorage.removeItem('walletConnected');
+      sessionStorage.removeItem('walletConnected');
+      
+      console.log('Wallet disconnected successfully');
     }
-  });
+  } catch (error) {
+    console.error('Disconnect error:', error);
+  }
+});
 
   burnPlanet.addEventListener('click', (e) => {
     e.preventDefault();
@@ -4147,6 +4162,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
