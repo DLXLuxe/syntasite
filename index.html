@@ -3429,10 +3429,9 @@ document.addEventListener('DOMContentLoaded', function() {
   let publicKey = null;
   let walletBalance = 0;
 
-  // Simple function to check if Phantom is installed
-  function isPhantomInstalled() {
-    return window.solana && window.solana.isPhantom;
-  }
+function isWalletInstalled() {
+  return !!window.solana; // Just check if ANY wallet exists
+}
 
   // Initialize - just set up event listeners, don't auto-connect
   async function init() {
@@ -3539,25 +3538,27 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Connect wallet
-  async function connectWallet() {
-    try {
-      if (!isPhantomInstalled()) {
-        const shouldInstall = confirm('Phantom wallet not found. Would you like to install it?');
-        if (shouldInstall) {
-          window.open('https://phantom.app/', '_blank');
-        }
-        return;
-      }
-      
-      wallet = window.solana;
-      await wallet.connect();
-      // The 'connect' event will handle the rest
-      
-    } catch (error) {
-      console.error('Connection error:', error);
-      alert('Failed to connect wallet: ' + error.message);
+ async function connectWallet() {
+  try {
+    // Just check if ANY Solana wallet exists
+    if (!window.solana) {
+      alert('Please install Phantom or another Solana wallet');
+      window.open('https://phantom.app/', '_blank');
+      return;
     }
+    
+    // Connect to whatever wallet is there (Phantom, Backpack, etc.)
+    const resp = await window.solana.connect();
+    publicKey = resp.publicKey;
+    await fetchBalance();
+    updateUI();
+    updateBurnStatus();
+    
+  } catch (error) {
+    console.error('Connection error:', error);
+    alert('Failed to connect wallet');
   }
+}
 
   // Disconnect wallet
   async function disconnectWallet() {
@@ -4161,4 +4162,5 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
