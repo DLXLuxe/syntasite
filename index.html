@@ -5,29 +5,6 @@
 <title>SYNTA</title>
 <script src="https://unpkg.com/@solana/web3.js@1.87.6/lib/index.iife.min.js"></script>
 <style>
-  /* Fix cookie banner buttons */
-.cookie-consent-banner button,
-.cookie-btn,
-#cookieSettingsBtn,
-#cookieEssentialBtn,
-#cookieAcceptBtn,
-.cookie-settings-close,
-.cookie-btn-save {
-  pointer-events: auto !important;
-  cursor: pointer !important;
-  z-index: 1000000 !important;
-  position: relative !important;
-}
-
-.cookie-settings-panel {
-  pointer-events: auto !important;
-  z-index: 1000001 !important;
-}
-
-/* Make sure the banner itself doesn't block clicks */
-.cookie-consent-banner {
-  pointer-events: all !important;
-}
 .cookie-consent-banner {
   position: fixed;
   bottom: 20px;
@@ -3444,8 +3421,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const burnHistoryList = document.getElementById('burnHistoryList');
   
   const BURN_ADDRESS = '1nc1nerator11111111111111111111111111111111';
-  const SYNTA_MINT = '3fYERzTUUiHG6M9J9hcfzTgAfiK6FCPUkvThvQR94vVH';
-  const DECIMALS = 6;
+  const SYNTA_MINT = '2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La';
+  const DECIMALS = 9;
   const NETWORK = 'https://api.mainnet-beta.solana.com';
   
   let wallet = null;
@@ -3659,41 +3636,29 @@ walletDisconnect.addEventListener('click', async () => {
     });
   });  
 
-confirmBurn.addEventListener('click', async () => {
-  // Use the global publicKey from your wallet connection
-  if (!window.publicKey) {
-    alert('Please connect your wallet using the button at the top right');
-    return;
+  confirmBurn.addEventListener('click', async () => {
+    if (!publicKey) {
+      alert('Please connect your wallet using the button at the top right');
+      return;
+    }
+    // ... rest of your confirmBurn code
+  });
+
+  function closeBurnModal() {
+    burnModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    resetTransactionStatus();
   }
   
-  const amount = parseFloat(burnAmount.value);
-  if (!amount || amount <= 0) {
-    alert('Please enter a valid amount');
-    return;
-  }
-  
-  if (amount > window.walletBalance) {
-    alert(`Insufficient balance. You have ${window.walletBalance.toFixed(2)} tokens`);
-    return;
-  }
-  
-  try {
-    txStatus.classList.add('active');
-    statusMessage.textContent = 'Starting burn process...';
-    
-    // Show success for testing
-    setTimeout(() => {
-      statusMessage.innerHTML = '✅ Burn Successful!';
-      txHash.textContent = 'Test transaction - working!';
-      updateBalance();
-      updateWalletUI();
-      updateBurnModalStatus();
-    }, 2000);
-    
-  } catch (error) {
-    console.error('Burn error:', error);
-    statusMessage.textContent = `❌ Error: ${error.message}`;
-  }
+  function resetTransactionStatus() {
+    txStatus.classList.remove('active');
+    statusMessage.textContent = 'Processing...';
+    statusMessage.style.color = '#7cf9ff';
+    txHash.textContent = '';
+    burnAmount.value = '100';
+  }  
+
+  init();
 });
 // ===== JUPITER WIDGET =====
 document.addEventListener('DOMContentLoaded', function() {
@@ -4183,33 +4148,3 @@ function enableMarketing() {
 </div>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
