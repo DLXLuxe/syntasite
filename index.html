@@ -5,6 +5,32 @@
 <title>SYNTA</title>
 <script src="https://unpkg.com/@solana/web3.js@1.87.6/lib/index.iife.min.js"></script>
 <style>
+  /* Loading animation for connect button */
+.wallet-connect-btn.loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.wallet-connect-btn.loading::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin-left: -10px;
+  margin-top: -10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: button-spin 0.8s linear infinite;
+}
+
+@keyframes button-spin {
+  to { transform: rotate(360deg); }
+}
 .cookie-consent-banner {
   position: fixed;
   bottom: 20px;
@@ -3564,10 +3590,15 @@ async function fetchBalance() {
   }
 
   // Connect wallet
- async function connectWallet() {
+async function connectWallet() {
   try {
+    // Add loading class to button
+    walletTopBtn.classList.add('loading');
+    walletBtnText.textContent = 'Connecting...';
+    
     // Just check if ANY Solana wallet exists
     if (!window.solana) {
+      walletTopBtn.classList.remove('loading');
       alert('Please install Phantom or another Solana wallet');
       window.open('https://phantom.app/', '_blank');
       return;
@@ -3580,8 +3611,13 @@ async function fetchBalance() {
     updateUI();
     updateBurnStatus();
     
+    // Remove loading class
+    walletTopBtn.classList.remove('loading');
+    
   } catch (error) {
     console.error('Connection error:', error);
+    walletTopBtn.classList.remove('loading');
+    walletBtnText.textContent = 'Connect Wallet';
     alert('Failed to connect wallet');
   }
 }
@@ -4188,6 +4224,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
