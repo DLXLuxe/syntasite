@@ -3541,29 +3541,35 @@ window.walletBalance = walletBalance;
       alert(`Connection failed: ${error.message}`);
     }
   }
-  copyWalletAddress.addEventListener('click', () => {
-    if (publicKey) {
-      navigator.clipboard.writeText(publicKey.toString()).then(() => {
-        const originalText = copyWalletAddress.innerHTML;
-        copyWalletAddress.innerHTML = '✅ Copied!';
-        setTimeout(() => {
-          copyWalletAddress.innerHTML = originalText;
-        }, 2000);
-      });
-    }
-  });  
+copyWalletAddress.addEventListener('click', () => {
+  if (publicKey) {
+    navigator.clipboard.writeText(publicKey.toString()).then(() => {
+      const originalText = copyWalletAddress.innerHTML;
+      copyWalletAddress.innerHTML = '✅ Copied!';
+      setTimeout(() => {
+        copyWalletAddress.innerHTML = originalText;
+      }, 2000);
+    });
+  }
+});
+
+// FIXED DISCONNECT BUTTON CODE
 if (walletDisconnect) {
+  // Remove any existing listeners by cloning
   const newDisconnectBtn = walletDisconnect.cloneNode(true);
   walletDisconnect.parentNode.replaceChild(newDisconnectBtn, walletDisconnect);
-  walletDisconnect = document.getElementById('walletDisconnect'); 
   
-  walletDisconnect.addEventListener('click', async function(e) {
+  // Re-assign the variable to the new button
+  const freshDisconnectBtn = document.getElementById('walletDisconnect');
+  
+  freshDisconnectBtn.addEventListener('click', async function(e) {
     e.preventDefault();
     e.stopPropagation();
     
-    console.log('Disconnect clicked'); 
+    console.log('Disconnect clicked - fixing button');
     
     try {
+      // Try multiple disconnect methods
       if (window.solana) {
         if (window.solana.disconnect) {
           await window.solana.disconnect();
@@ -3571,56 +3577,109 @@ if (walletDisconnect) {
           await window.solana._disconnect();
         }
       }
-            publicKey = null;
+      
+      // Clear all wallet state
+      publicKey = null;
       walletBalance = 0;
-
-      updateWalletUI();
-      updateBurnModalStatus();
-
+      
+      // Update UI elements
+      if (typeof updateWalletUI === 'function') updateWalletUI();
+      if (typeof updateBurnModalStatus === 'function') updateBurnModalStatus();
+      
+      // Hide dropdown
       const walletDropdown = document.getElementById('walletDropdown');
       if (walletDropdown) {
         walletDropdown.classList.remove('active');
       }
-
+      
+      // Clear any stored connection data
       localStorage.removeItem('walletConnected');
       localStorage.removeItem('walletAddress');
       
       console.log('Wallet disconnected successfully');
-
+      
+      // Manual UI reset as backup
       const walletBtn = document.getElementById('walletTopBtn');
-      if (walletBtn) {
-        walletBtn.classList.remove('connected');
-        const walletBtnText = document.getElementById('walletBtnText');
-        const walletShortAddress = document.getElementById('walletShortAddress');
-        if (walletBtnText) walletBtnText.textContent = 'Connect Wallet';
-        if (walletShortAddress) walletShortAddress.textContent = '';
-      }
-      
+      const walletBtnText = document.getElementById('walletBtnText');
+      const walletShortAddress = document.getElementById('walletShortAddress');
       const walletFullAddress = document.getElementById('walletFullAddress');
-      if (walletFullAddress) walletFullAddress.textContent = 'Not connected';
-      
       const syntaBalance = document.getElementById('syntaBalance');
-      if (syntaBalance) syntaBalance.textContent = '0.00';
-      
       const burnWalletStatus = document.getElementById('burnWalletStatus');
+      
+      if (walletBtn) walletBtn.classList.remove('connected');
+      if (walletBtnText) walletBtnText.textContent = 'Connect Wallet';
+      if (walletShortAddress) walletShortAddress.textContent = '';
+      if (walletFullAddress) walletFullAddress.textContent = 'Not connected';
+      if (syntaBalance) syntaBalance.textContent = '0.00';
       if (burnWalletStatus) {
         burnWalletStatus.innerHTML = 'Status: <span style="color: #ff9966;">Not Connected</span>';
       }
       
     } catch (error) {
       console.error('Disconnect error:', error);
+      // Force reset even on error
       publicKey = null;
       walletBalance = 0;
-      updateWalletUI();
-      updateBurnModalStatus();
+      if (typeof updateWalletUI === 'function') updateWalletUI();
+      if (typeof updateBurnModalStatus === 'function') updateBurnModalStatus();
+    }
+  });
+  
+  console.log('Disconnect button reinitialized');
+}
+
+// FIXED COPY BUTTON - Make sure it works too
+if (copyWalletAddress) {
+  // Also refresh the copy button to ensure it works
+  const newCopyBtn = copyWalletAddress.cloneNode(true);
+  copyWalletAddress.parentNode.replaceChild(newCopyBtn, copyWalletAddress);
+  
+  const freshCopyBtn = document.getElementById('copyWalletAddress');
+  
+  freshCopyBtn.addEventListener('click', () => {
+    if (publicKey) {
+      const address = publicKey.toString();
+      navigator.clipboard.writeText(address).then(() => {
+        const originalText = freshCopyBtn.innerHTML;
+        freshCopyBtn.innerHTML = '✅ Copied!';
+        setTimeout(() => {
+          freshCopyBtn.innerHTML = originalText;
+        }, 2000);
+      }).catch(err => {
+        console.error('Copy failed:', err);
+        alert('Failed to copy address');
+      });
+    } else {
+      alert('No wallet connected');
     }
   });
 }
-    burnPlanet.addEventListener('click', (e) => {
-    e.preventDefault();
-    burnModal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  });  
+
+burnPlanet.addEventListener('click', (e) => {
+  e.preventDefault();
+  burnModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+});  
+
+cancelBurn.addEventListener('click', () => {
+  closeBurnModal();
+});  
+
+burnModal.addEventListener('click', (e) => {
+  if (e.target === burnModal) {
+    closeBurnModal();
+  }
+});  
+
+copyBurnAddress.addEventListener('click', () => {
+  navigator.clipboard.writeText(BURN_ADDRESS).then(() => {
+    const originalText = copyBurnAddress.innerHTML;
+    copyBurnAddress.innerHTML = '✅ Copied!';
+    setTimeout(() => {
+      copyBurnAddress.innerHTML = originalText;
+    }, 2000);
+  });
+});  
   cancelBurn.addEventListener('click', () => {
     closeBurnModal();
   });  
@@ -3818,22 +3877,6 @@ function showSuccessNotification(amount, signature) {
  init();
 // Ensure disconnect listener is attached after wallet initialization
 setTimeout(ensureDisconnectListener, 1500);
-});
-document.getElementById('walletTopBtn').addEventListener('click', (e) => {
-  e.stopPropagation();
-  e.preventDefault(); // Prevent default if it's a button
-  
-  if (publicKey) {
-    document.getElementById('walletDropdown').classList.toggle('active');
-  } else {
-    connectWallet();
-  }
-});
-document.addEventListener('click', (e) => {
-  const walletDockItem = document.querySelector('.wallet-dock-item');
-  if (walletDockItem && !walletDockItem.contains(e.target)) {
-    document.getElementById('walletDropdown').classList.remove('active');
-  }
 });
 document.querySelectorAll('.dropdown-container').forEach(container => {
   container.addEventListener('mouseenter', () => {
@@ -4336,6 +4379,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
