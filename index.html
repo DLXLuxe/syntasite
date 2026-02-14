@@ -3755,14 +3755,23 @@ console.log('From account:', fromTokenAccount.toString());
     console.log('From account:', fromTokenAccount.toString());
     
     // Get the burn address token account
+// Get the burn address token account
+console.log('Creating burn wallet from address:', BURN_ADDRESS);
 const burnWallet = new solanaWeb3.PublicKey(BURN_ADDRESS);
-console.log('Burn wallet:', burnWallet.toString());
+console.log('Burn wallet created:', burnWallet.toString());
+console.log('Burn wallet toBuffer exists:', typeof burnWallet.toBuffer === 'function');
+
+console.log('TOKEN_PROGRAM_ID:', solanaWeb3.TOKEN_PROGRAM_ID.toString());
+console.log('SYNTA_MINT:', SYNTA_MINT);
+
+const mintPubkey = new solanaWeb3.PublicKey(SYNTA_MINT);
+console.log('Mint pubkey created:', mintPubkey.toString());
 
 const toTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
   [
     burnWallet.toBuffer(),
     solanaWeb3.TOKEN_PROGRAM_ID.toBuffer(),
-    new solanaWeb3.PublicKey(SYNTA_MINT).toBuffer()
+    mintPubkey.toBuffer()
   ],
   solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID
 )[0];
@@ -4394,6 +4403,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
