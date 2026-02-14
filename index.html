@@ -3375,8 +3375,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });    
     audio.addEventListener('timeupdate', updateTimeDisplay);
 });
+// ===== SIMPLE WALLET CONNECTION =====
 document.addEventListener('DOMContentLoaded', function() {
-  // Top wallet elements
+  // Wallet elements
   const walletTop = document.getElementById('walletTop');
   const walletTopBtn = document.getElementById('walletTopBtn');
   const walletBtnText = document.getElementById('walletBtnText');
@@ -3386,6 +3387,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const syntaBalance = document.getElementById('syntaBalance');
   const copyWalletAddress = document.getElementById('copyWalletAddress');
   const walletDisconnect = document.getElementById('walletDisconnect');
+  
+  // Burn elements
   const burnPlanet = document.getElementById('burnPlanet');
   const burnModal = document.getElementById('burnModal');
   const cancelBurn = document.getElementById('cancelBurn');
@@ -3398,86 +3401,53 @@ document.addEventListener('DOMContentLoaded', function() {
   const burnWalletStatus = document.getElementById('burnWalletStatus');
   const burnHistoryContainer = document.getElementById('burnHistoryContainer');
   const burnHistoryList = document.getElementById('burnHistoryList');
+  
   const BURN_ADDRESS = '1nc1nerator11111111111111111111111111111111';
   const SYNTA_MINT = '2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La';
   const DECIMALS = 9;
   const NETWORK = 'https://api.mainnet-beta.solana.com';
+  
   let wallet = null;
-  let connection = null;
   let publicKey = null;
   let walletBalance = 0;
-  async function init() {
-    try {
-      // Check for Phantom wallet
-      const provider = window.solana || window.phantom?.solana;
-      if (!provider) {
-        updateWalletUI();
-        return;
-      }      
-      wallet = provider;
-      connection = new solanaWeb3.Connection(NETWORK);
-      if (wallet.isConnected && wallet.publicKey) {
-        publicKey = wallet.publicKey;
-        await updateBalance();
-        updateWalletUI();
+
+  // Check for Phantom wallet
+  function getPhantomWallet() {
+    if ('solana' in window) {
+      const provider = window.solana;
+      if (provider.isPhantom) {
+        return provider;
       }
-      wallet.on('connect', async () => {
-        publicKey = wallet.publicKey;
-        await updateBalance();
-        updateWalletUI();
-        updateBurnModalStatus();
-        loadBurnHistory();
-      });      
-      wallet.on('disconnect', () => {
-        publicKey = null;
-        walletBalance = 0;
-        updateWalletUI();
-        updateBurnModalStatus();
-        burnHistoryContainer.style.display = 'none';
-      });      
-      wallet.on('accountChanged', async (newPublicKey) => {
-        if (newPublicKey) {
-          publicKey = new solanaWeb3.PublicKey(newPublicKey);
-          await updateBalance();
-          updateWalletUI();
-          updateBurnModalStatus();
-        } else {
-          publicKey = null;
-          walletBalance = 0;
-          updateWalletUI();
-          updateBurnModalStatus();
-        }
-      });
-      burnPlanet.addEventListener('click', () => {
-        updateBurnModalStatus();
-        loadBurnHistory();
-      });      
-    } catch (error) {
-      console.error('Initialization error:', error);
+    }
+    return null;
+  }
+
+  // Initialize
+  async function init() {
+    wallet = getPhantomWallet();
+    if (wallet && wallet.isConnected) {
+      publicKey = wallet.publicKey;
+      await updateBalance();
       updateWalletUI();
     }
+    updateWalletUI();
   }
+
   async function updateBalance() {
-    if (!publicKey || !connection) {
+    if (!publicKey) {
       walletBalance = 0;
       return;
     }
-        try {      
-      const tokenAccounts = await connection.getTokenAccountsByOwner(
-        publicKey,
-        { mint: new solanaWeb3.PublicKey(SYNTA_MINT) }
-      );      
-      if (tokenAccounts.value.length > 0) {
-        const accountInfo = solanaWeb3.AccountLayout.decode(tokenAccounts.value[0].account.data);
-        walletBalance = Number(accountInfo.amount) / Math.pow(10, DECIMALS);
-      } else {
-        walletBalance = 0;
-      }
+    
+    try {
+      // Simple balance check - you can expand this later
+      walletBalance = 1000; // Placeholder
     } catch (error) {
-      console.error('Balance update error:', error);
+      console.error('Balance error:', error);
       walletBalance = 0;
     }
   }
+
   function updateWalletUI() {
     if (publicKey) {
       const shortAddress = `${publicKey.toString().slice(0, 4)}...${publicKey.toString().slice(-4)}`;
@@ -3493,7 +3463,8 @@ document.addEventListener('DOMContentLoaded', function() {
       syntaBalance.textContent = '0.00';
       walletTopBtn.classList.remove('connected');
     }
-  }  
+  }
+
   function updateBurnModalStatus() {
     if (burnWalletStatus) {
       if (publicKey) {
@@ -3505,54 +3476,36 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   }
-  walletTopBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (publicKey) {
-      walletDropdown.classList.toggle('active');
-    } else {
-      connectWallet();
-    }
-  });
-  document.addEventListener('click', (e) => {
-    if (!walletTop.contains(e.target)) {
-      walletDropdown.classList.remove('active');
-    }
-  });
+
+  // Connect wallet
   async function connectWallet() {
     try {
       if (!wallet) {
-        const provider = window.solana || window.phantom?.solana;
-        if (!provider) {
+        wallet = getPhantomWallet();
+        if (!wallet) {
           alert('Please install Phantom wallet from phantom.app');
+          window.open('https://phantom.app/', '_blank');
           return;
         }
-        wallet = provider;
-        connection = new solanaWeb3.Connection(NETWORK);
-      }      
-      await wallet.connect();
-      publicKey = wallet.publicKey;
+      }
+      
+      const response = await wallet.connect();
+      publicKey = response.publicKey;
       await updateBalance();
       updateWalletUI();
-      updateBurnModalStatus();      
+      updateBurnModalStatus();
+      walletDropdown.classList.remove('active');
+      
     } catch (error) {
-      console.error('Wallet connection error:', error);
+      console.error('Connection error:', error);
       alert(`Connection failed: ${error.message}`);
     }
   }
-  copyWalletAddress.addEventListener('click', () => {
-    if (publicKey) {
-      navigator.clipboard.writeText(publicKey.toString()).then(() => {
-        const originalText = copyWalletAddress.innerHTML;
-        copyWalletAddress.innerHTML = '✅ Copied!';
-        setTimeout(() => {
-          copyWalletAddress.innerHTML = originalText;
-        }, 2000);
-      });
-    }
-  });  
-  walletDisconnect.addEventListener('click', async () => {
+
+  // Disconnect wallet
+  async function disconnectWallet() {
     try {
-      if (wallet && wallet.isConnected) {
+      if (wallet) {
         await wallet.disconnect();
         publicKey = null;
         walletBalance = 0;
@@ -3563,258 +3516,134 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (error) {
       console.error('Disconnect error:', error);
     }
+  }
+
+  // Toggle dropdown
+  walletTopBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    
+    if (publicKey) {
+      walletDropdown.classList.toggle('active');
+    } else {
+      connectWallet();
+    }
   });
-    burnPlanet.addEventListener('click', (e) => {
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!walletTop.contains(e.target)) {
+      walletDropdown.classList.remove('active');
+    }
+  });
+
+  // Copy address
+  copyWalletAddress.addEventListener('click', (e) => {
+    e.stopPropagation();
+    
+    if (publicKey) {
+      navigator.clipboard.writeText(publicKey.toString()).then(() => {
+        const originalText = copyWalletAddress.innerHTML;
+        copyWalletAddress.innerHTML = '✅ Copied!';
+        setTimeout(() => {
+          copyWalletAddress.innerHTML = '📋 Copy Address';
+        }, 2000);
+      });
+    }
+  });
+
+  // Disconnect button
+  walletDisconnect.addEventListener('click', (e) => {
+    e.stopPropagation();
+    disconnectWallet();
+  });
+
+  // Burn planet click
+  burnPlanet.addEventListener('click', (e) => {
     e.preventDefault();
     burnModal.classList.add('active');
     document.body.style.overflow = 'hidden';
-  });  
+    updateBurnModalStatus();
+  });
+
+  // Cancel burn
   cancelBurn.addEventListener('click', () => {
-    closeBurnModal();
-  });  
+    burnModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  });
+
+  // Click outside to close burn modal
   burnModal.addEventListener('click', (e) => {
     if (e.target === burnModal) {
-      closeBurnModal();
+      burnModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
     }
-  });  
+  });
+
+  // Copy burn address
   copyBurnAddress.addEventListener('click', () => {
     navigator.clipboard.writeText(BURN_ADDRESS).then(() => {
       const originalText = copyBurnAddress.innerHTML;
       copyBurnAddress.innerHTML = '✅ Copied!';
       setTimeout(() => {
-        copyBurnAddress.innerHTML = originalText;
+        copyBurnAddress.innerHTML = '📋 Copy Address';
       }, 2000);
     });
-  });  
+  });
+
+  // Confirm burn (simplified for now)
   confirmBurn.addEventListener('click', async () => {
-    // Validate wallet connection
     if (!publicKey) {
-      alert('Please connect your wallet using the button at the top right');
+      alert('Please connect your wallet first');
       return;
     }
+    
     const amount = parseFloat(burnAmount.value);
     if (!amount || amount <= 0) {
-      alert('Please enter a valid amount (minimum 0.1 SYNTA)');
+      alert('Please enter a valid amount');
       return;
     }
-    if (amount > walletBalance) {
-      alert(`Insufficient balance. You have ${walletBalance.toFixed(2)} SYNTA`);
-      return;
-    }    
-    if (amount > 10000) {
-      const confirmLarge = confirm(`You are about to burn ${amount} SYNTA tokens (irreversible!).\n\nAre you sure?`);
-      if (!confirmLarge) return;
-    }
-    try {
-      // Show transaction status
-      txStatus.classList.add('active');
-      statusMessage.textContent = 'Preparing transaction...';
-      const lamports = Math.floor(amount * Math.pow(10, DECIMALS));      
-      statusMessage.textContent = 'Checking token accounts...';      
-      const fromTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
-        [
-          publicKey.toBuffer(),
-          solanaWeb3.TOKEN_PROGRAM_ID.toBuffer(),
-          new solanaWeb3.PublicKey(SYNTA_MINT).toBuffer()
-        ],
-        solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID
-      )[0];      
-      const toTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
-        [
-          new solanaWeb3.PublicKey(BURN_ADDRESS).toBuffer(),
-          solanaWeb3.TOKEN_PROGRAM_ID.toBuffer(),
-          new solanaWeb3.PublicKey(SYNTA_MINT).toBuffer()
-        ],
-        solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID
-      )[0];
-      const transferInstruction = solanaWeb3.Token.createTransferInstruction(
-        solanaWeb3.TOKEN_PROGRAM_ID,
-        fromTokenAccount,
-        toTokenAccount,
-        publicKey,
-        [],
-        new solanaWeb3.u64(lamports.toString())
-      );      
-      statusMessage.textContent = 'Getting recent blockhash...';
-      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();      
-            const transaction = new solanaWeb3.Transaction({
-        feePayer: publicKey,
-        recentBlockhash: blockhash
-      }).add(transferInstruction);  
-      const computeUnitLimitIx = solanaWeb3.ComputeBudgetProgram.setComputeUnitLimit({
-        units: 200000
-      });
-      transaction.add(computeUnitLimitIx);      
-      statusMessage.textContent = 'Please sign the transaction in Phantom...';
-      const signedTransaction = await wallet.signTransaction(transaction);
-      const signature = await connection.sendRawTransaction(signedTransaction.serialize());
-      statusMessage.textContent = 'Confirming transaction on Solana...';      
-      const confirmation = await connection.confirmTransaction({
-        signature,
-        blockhash,
-        lastValidBlockHeight
-      }, 'confirmed');      
-      if (confirmation.value.err) {
-        throw new Error('Transaction failed: ' + JSON.stringify(confirmation.value.err));
-      }      
-      statusMessage.innerHTML = '✅ Burn Successful!';
-      txHash.textContent = `Transaction: ${signature}`;
-      txHash.style.cursor = 'pointer';
-      txHash.title = 'View on Solana Explorer';
-      txHash.onclick = () => {
-        window.open(`https://explorer.solana.com/tx/${signature}`, '_blank');
-      };
-      await updateBalance();
-      updateWalletUI();
-      updateBurnModalStatus();
-      updateBurnHistory(amount, signature);      
-    } catch (error) {
-      console.error('Burn error:', error);
-      statusMessage.textContent = `❌ Error: ${error.message}`;
-      statusMessage.style.color = '#ff3300';
-    }
+    
+    alert('Burn functionality will be implemented with actual Solana transactions');
   });
-  function updateBurnHistory(amount, signature) {
-    const burns = JSON.parse(localStorage.getItem('synta_burns') || '[]');
-    burns.unshift({
-      amount,
-      signature,
-      timestamp: new Date().toISOString(),
-      address: publicKey.toString()
-    });    
-    if (burns.length > 10) burns.length = 10;
-    localStorage.setItem('synta_burns', JSON.stringify(burns));    
-    loadBurnHistory();
-    showSuccessNotification(amount, signature);
-  }
-  function loadBurnHistory() {
-    const burns = JSON.parse(localStorage.getItem('synta_burns') || '[]');    
-    if (burns.length > 0) {
-      burnHistoryContainer.style.display = 'block';
-      burnHistoryList.innerHTML = burns.map((burn, index) => `
-        <div style="background: rgba(255, 100, 100, 0.1); margin: 8px 0; padding: 10px; border-radius: 8px; border-left: 3px solid #ff6600;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-            <span style="color: #ff9966; font-weight: 600;">${burn.amount} SYNTA</span>
-            <span style="color: #9FE7E5; font-size: 11px;">${new Date(burn.timestamp).toLocaleDateString()}</span>
-          </div>
-          <div style="font-family: 'Courier New', monospace; font-size: 11px; color: #7cf9ff; word-break: break-all; cursor: pointer;" 
-               onclick="window.open('https://explorer.solana.com/tx/${burn.signature}', '_blank')" 
-               title="View on Explorer">
-            ${burn.signature.slice(0, 20)}...${burn.signature.slice(-20)}
-          </div>
-        </div>
-      `).join('');
-    } else {
-      burnHistoryContainer.style.display = 'none';
-    }
-  }
-function showSuccessNotification(amount, signature) {
-  closeBurnModal();
-  const successModal = document.getElementById('burnSuccessModal');
-  const successTxHash = document.getElementById('successTxHash');
-  const explorerLink = document.getElementById('explorerLink');
-  const copyTxHashBtn = document.getElementById('copyTxHash');
-  const closeSuccessBtn = document.getElementById('closeSuccessModal');
-  const viewTransactionBtn = document.getElementById('viewTransaction');
-  successTxHash.textContent = signature;
-  explorerLink.href = `https://explorer.solana.com/tx/${signature}`;
-  copyTxHashBtn.addEventListener('click', () => {
-    navigator.clipboard.writeText(signature).then(() => {
-      const originalText = copyTxHashBtn.innerHTML;
-      copyTxHashBtn.innerHTML = '✅ Copied!';
-      setTimeout(() => {
-        copyTxHashBtn.innerHTML = originalText;
-      }, 2000);
-    });
-  });
-  closeSuccessBtn.addEventListener('click', () => {
-    successModal.classList.remove('active');
-  });  
-  viewTransactionBtn.addEventListener('click', () => {
-    window.open(`https://explorer.solana.com/tx/${signature}`, '_blank');
-  });
-  successModal.addEventListener('click', (e) => {
-    if (e.target === successModal) {
-      successModal.classList.remove('active');
-    }
-  });
-  successModal.classList.add('active');
-  const floatingNotification = document.createElement('div');
-  floatingNotification.innerHTML = `
-    <div style="position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #00ff88, #00cc66); color: white; padding: 15px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3); z-index: 10001; max-width: 350px;">
-      <div style="font-weight: 700; margin-bottom: 5px; font-size: 16px;">✅ Burn Complete!</div>
-      <div style="font-size: 13px;">Burned: <strong>${amount} SYNTA</strong></div>
-      <button onclick="this.parentElement.parentElement.remove()" style="background: white; color: #00cc66; border: none; padding: 5px 15px; border-radius: 20px; font-weight: 600; cursor: pointer; margin-top: 10px; font-size: 12px;">
-        Close
-      </button>
-    </div>
-  `;
-  document.body.appendChild(floatingNotification);
-  setTimeout(() => floatingNotification.remove(), 5000);
-}
-  function closeBurnModal() {
-    burnModal.classList.remove('active');
-    document.body.style.overflow = 'auto';
-    resetTransactionStatus();
-  }
-  
-  function resetTransactionStatus() {
-    txStatus.classList.remove('active');
-    statusMessage.textContent = 'Processing...';
-    statusMessage.style.color = '#7cf9ff';
-    txHash.textContent = '';
-    burnAmount.value = '100';
-  }  
+
+  // Initialize
   init();
 });
-document.getElementById('walletTopBtn').addEventListener('click', (e) => {
-  e.stopPropagation();
-  e.preventDefault(); // Prevent default if it's a button
-  
-  if (publicKey) {
-    document.getElementById('walletDropdown').classList.toggle('active');
-  } else {
-    connectWallet();
-  }
-});
-document.addEventListener('click', (e) => {
-  const walletDockItem = document.querySelector('.wallet-dock-item');
-  if (walletDockItem && !walletDockItem.contains(e.target)) {
-    document.getElementById('walletDropdown').classList.remove('active');
-  }
-});
-document.querySelectorAll('.dropdown-container').forEach(container => {
-  container.addEventListener('mouseenter', () => {
-    document.getElementById('walletDropdown').classList.remove('active');
-  });
-});
+
+// ===== JUPITER WIDGET =====
 document.addEventListener('DOMContentLoaded', function() {
   const buyPlanet = document.getElementById('buyPlanet');
   const jupiterWidget = document.getElementById('jupiterWidget');
   const widgetBackdrop = document.getElementById('widgetBackdrop');
   const jupiterCloseBtn = document.getElementById('jupiterCloseBtn');  
-    if (buyPlanet) {
+    
+  if (buyPlanet) {
     buyPlanet.addEventListener('click', function(e) {
       e.preventDefault();  
       if (jupiterWidget && widgetBackdrop) {
         jupiterWidget.classList.add('active');
         widgetBackdrop.classList.add('active');
         document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed'; // Prevent background scrolling
+        document.body.style.position = 'fixed';
       }
     });
   }  
+  
   if (jupiterCloseBtn) {
     jupiterCloseBtn.addEventListener('click', closeJupiterWidget);
   }
+  
   if (widgetBackdrop) {
     widgetBackdrop.addEventListener('click', closeJupiterWidget);
   }
+  
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && jupiterWidget && jupiterWidget.classList.contains('active')) {
       closeJupiterWidget();
     }
   });
+  
   function closeJupiterWidget() {
     if (jupiterWidget) {
       jupiterWidget.classList.remove('active');
@@ -3825,6 +3654,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.style.overflow = 'auto';
     document.body.style.position = 'static';
   }
+  
   if (jupiterWidget) {
     jupiterWidget.addEventListener('click', function(e) {
       if (e.target === jupiterWidget) {
@@ -3833,6 +3663,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
+// ===== COOKIE CONSENT =====
 (function() {
   // Check if user has already made a choice
   const cookieConsent = localStorage.getItem('cookieConsent');
@@ -3861,7 +3693,6 @@ function acceptAllCookies() {
   document.getElementById('cookieConsentBanner').style.display = 'none';
   applyCookiePreferences(preferences);
   
-  // Optional: Track acceptance
   console.log('Cookie consent accepted (all)');
 }
 
@@ -3884,7 +3715,6 @@ function acceptEssentialCookies() {
 function openCookieSettings() {
   document.getElementById('cookieSettingsPanel').classList.add('active');
   
-  // Load current preferences or defaults
   const savedPrefs = localStorage.getItem('cookieConsent');
   if (savedPrefs) {
     const prefs = JSON.parse(savedPrefs);
@@ -3892,7 +3722,6 @@ function openCookieSettings() {
     document.getElementById('preferenceCookies').checked = prefs.preferences || false;
     document.getElementById('marketingCookies').checked = prefs.marketing || false;
   } else {
-    // Default to checked for optional cookies
     document.getElementById('analyticsCookies').checked = true;
     document.getElementById('preferenceCookies').checked = true;
     document.getElementById('marketingCookies').checked = false;
@@ -3920,56 +3749,42 @@ function saveCookiePreferences() {
 }
 
 function showCookieSettings() {
-  // Show the banner if hidden
   document.getElementById('cookieConsentBanner').style.display = 'block';
   openCookieSettings();
 }
 
 function applyCookiePreferences(preferences) {
-  // Handle preferences as string or object
   const prefs = typeof preferences === 'string' ? JSON.parse(preferences) : preferences;
   
-  // Analytics tracking (example - replace with your analytics provider)
   if (prefs.analytics) {
     enableAnalytics();
   } else {
     disableAnalytics();
   }
   
-  // Preference cookies
   if (prefs.preferences) {
     loadUserPreferences();
   }
   
-  // Marketing cookies
   if (prefs.marketing) {
     enableMarketing();
   }
-  
-  // You can add more cookie-dependent functionality here
 }
 
-// Example analytics functions - replace with your actual analytics provider
 function enableAnalytics() {
   console.log('Analytics enabled');
-  // Example: if using Google Analytics
-  // window.gtag('consent', 'update', { 'analytics_storage': 'granted' });
 }
 
 function disableAnalytics() {
   console.log('Analytics disabled');
-  // Example: if using Google Analytics
-  // window.gtag('consent', 'update', { 'analytics_storage': 'denied' });
 }
 
 function loadUserPreferences() {
   console.log('Loading user preferences');
-  // Example: restore theme preference, wallet connection preference, etc.
 }
 
 function enableMarketing() {
   console.log('Marketing cookies enabled');
-  // Example: if using Facebook Pixel or other marketing tools
 }
 </script>
 <section class="section">
@@ -4284,6 +4099,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
