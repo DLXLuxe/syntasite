@@ -4,146 +4,7 @@
 <meta charset="UTF-8" />
 <title>SYNTA</title>
 <style>
-  /* Simple wallet dropdown like burn modal */
-.wallet-simple-dropdown {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  width: 320px;
-  z-index: 10000;
-  animation: fadeInDropdown 0.2s ease;
-}
-
-.wallet-dropdown-content {
-  background: linear-gradient(145deg, #0f172a, #1e293b);
-  border: 1px solid rgba(124, 249, 255, 0.3);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(124, 249, 255, 0.2);
-  backdrop-filter: blur(10px);
-}
-
-.wallet-dropdown-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid rgba(124, 249, 255, 0.2);
-  position: relative;
-}
-
-.wallet-status-icon {
-  font-size: 20px;
-}
-
-.wallet-status-text {
-  color: #00ffd5;
-  font-weight: 600;
-  flex-grow: 1;
-}
-
-.wallet-close-dropdown {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(124, 249, 255, 0.3);
-  color: #7cf9ff;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 16px;
-  transition: all 0.2s ease;
-}
-
-.wallet-close-dropdown:hover {
-  background: rgba(124, 249, 255, 0.2);
-  transform: scale(1.1);
-}
-
-.wallet-info-simple,
-.wallet-balance-simple {
-  margin-bottom: 20px;
-}
-
-.wallet-label {
-  color: #9FE7E5;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-}
-
-.wallet-address-full {
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
-  color: #7cf9ff;
-  word-break: break-all;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(124, 249, 255, 0.2);
-}
-
-.balance-amount-simple {
-  font-size: 24px;
-  font-weight: 700;
-  color: #00ffd5;
-  text-shadow: 0 0 10px rgba(0, 255, 213, 0.5);
-}
-
-.wallet-actions-simple {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.wallet-simple-btn {
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-  width: 100%;
-}
-
-.wallet-simple-btn.copy-btn {
-  background: rgba(124, 249, 255, 0.15);
-  color: #7cf9ff;
-  border: 1px solid rgba(124, 249, 255, 0.3);
-}
-
-.wallet-simple-btn.copy-btn:hover {
-  background: rgba(124, 249, 255, 0.25);
-  transform: translateY(-2px);
-}
-
-.wallet-simple-btn.disconnect-btn {
-  background: rgba(255, 100, 100, 0.15);
-  color: #ff9966;
-  border: 1px solid rgba(255, 100, 100, 0.3);
-}
-
-.wallet-simple-btn.disconnect-btn:hover {
-  background: rgba(255, 100, 100, 0.25);
-  transform: translateY(-2px);
-}
-
-@keyframes fadeInDropdown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-  .cookie-consent-banner {
+.cookie-consent-banner {
   position: fixed;
   bottom: 20px;
   left: 20px;
@@ -3194,38 +3055,26 @@ target="_blank"
           class="dex-button">DEX Screener</a>
     </div>
   </div>
-    <!-- Replace this entire wallet-dock-item div -->
-<div class="wallet-dock-item" id="walletTop">
-  <button class="dock-item wallet-connect-btn" id="walletTopBtn">
-    <span class="wallet-text" id="walletBtnText">Connect Wallet</span>
-    <span class="wallet-address" id="walletShortAddress"></span>
-  </button>
-  
-  <!-- Simple dropdown like the burn modal style -->
-  <div class="wallet-simple-dropdown" id="walletDropdown" style="display: none;">
-    <div class="wallet-dropdown-content">
-      <div class="wallet-dropdown-header">
-    
-        <div class="wallet-status-text">Connected</div>
-        <button class="wallet-close-dropdown" id="closeWalletDropdown">✕</button>
+    <div class="wallet-dock-item" id="walletTop">
+    <button class="dock-item wallet-connect-btn" id="walletTopBtn">
+            <span class="wallet-text" id="walletBtnText">Connect Wallet</span>
+      <span class="wallet-address" id="walletShortAddress"></span>
+    </button>
+    <div class="wallet-dropdown" id="walletDropdown">
+      <div class="wallet-info">
+        <div class="wallet-info-title">Connected Wallet</div>
+        <div class="wallet-address-full" id="walletFullAddress"></div>
       </div>
-      
-      <div class="wallet-info-simple">
-        <div class="wallet-label">Wallet Address</div>
-        <div class="wallet-address-full" id="walletFullAddressSimple"></div>
+      <div class="wallet-balance">
+        <div class="balance-label">SYNTA Balance</div>
+        <div class="balance-amount" id="syntaBalance">0.00</div>
       </div>
-      
-      <div class="wallet-balance-simple">
-        <div class="wallet-label">SYNTA Balance</div>
-        <div class="balance-amount-simple" id="syntaBalanceSimple">0.00</div>
-      </div>
-      
-      <div class="wallet-actions-simple">
-        <button class="wallet-simple-btn copy-btn" id="copyWalletAddressSimple">
-           Copy Address
+      <div class="wallet-actions">
+        <button class="wallet-action-btn copy" id="copyWalletAddress">
+          📋 Copy Address
         </button>
-        <button class="wallet-simple-btn disconnect-btn" id="walletDisconnectSimple">
-           Disconnect
+        <button class="wallet-action-btn disconnect" id="walletDisconnect">
+          Disconnect
         </button>
       </div>
     </div>
@@ -3927,77 +3776,12 @@ document.getElementById('walletTopBtn').addEventListener('click', (e) => {
     connectWallet();
   }
 });
-// Wallet dropdown handling with proper event propagation
-walletTopBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  e.preventDefault();
-  
-  if (publicKey) {
-    walletDropdown.classList.toggle('active');
-  } else {
-    connectWallet();
-  }
-});
-
-// Handle clicks outside the wallet component to close dropdown
 document.addEventListener('click', (e) => {
   const walletDockItem = document.querySelector('.wallet-dock-item');
-  const walletDropdown = document.getElementById('walletDropdown');
-  
-  // Check if click is outside the wallet component AND not on the dropdown itself
   if (walletDockItem && !walletDockItem.contains(e.target)) {
-    walletDropdown.classList.remove('active');
+    document.getElementById('walletDropdown').classList.remove('active');
   }
 });
-
-// Prevent clicks inside dropdown from closing it
-walletDropdown.addEventListener('click', (e) => {
-  e.stopPropagation(); // This is crucial - stops event from reaching document click handler
-});
-
-// Update the copy button handler
-copyWalletAddress.addEventListener('click', (e) => {
-  e.stopPropagation(); // Add this line
-  
-  if (publicKey) {
-    navigator.clipboard.writeText(publicKey.toString()).then(() => {
-      const originalText = copyWalletAddress.innerHTML;
-      copyWalletAddress.innerHTML = '✅ Copied!';
-      setTimeout(() => {
-        copyWalletAddress.innerHTML = originalText;
-      }, 2000);
-    });
-  }
-});
-
-// Update the disconnect button handler
-walletDisconnect.addEventListener('click', async (e) => {
-  e.stopPropagation(); // Add this line
-  
-  try {
-    if (wallet && wallet.isConnected) {
-      await wallet.disconnect();
-      publicKey = null;
-      walletBalance = 0;
-      updateWalletUI();
-      updateBurnModalStatus();
-      walletDropdown.classList.remove('active');
-    }
-  } catch (error) {
-    console.error('Disconnect error:', error);
-  }
-});
-
-// Also add click handler for the full address copy if you have one
-if (walletFullAddress) {
-  walletFullAddress.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (publicKey) {
-      navigator.clipboard.writeText(publicKey.toString());
-      // Optional: Show feedback
-    }
-  });
-}
 document.querySelectorAll('.dropdown-container').forEach(container => {
   container.addEventListener('mouseenter', () => {
     document.getElementById('walletDropdown').classList.remove('active');
@@ -4499,11 +4283,6 @@ function enableMarketing() {
 </div>
 </body>
 </html>
-
-
-
-
-
 
 
 
