@@ -3549,20 +3549,70 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
   });  
-  walletDisconnect.addEventListener('click', async () => {
+if (walletDisconnect) {
+  const newDisconnectBtn = walletDisconnect.cloneNode(true);
+  walletDisconnect.parentNode.replaceChild(newDisconnectBtn, walletDisconnect);
+  walletDisconnect = document.getElementById('walletDisconnect'); 
+  
+  walletDisconnect.addEventListener('click', async function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('Disconnect clicked'); 
+    
     try {
-      if (wallet && wallet.isConnected) {
-        await wallet.disconnect();
-        publicKey = null;
-        walletBalance = 0;
-        updateWalletUI();
-        updateBurnModalStatus();
+      if (window.solana) {
+        if (window.solana.disconnect) {
+          await window.solana.disconnect();
+        } else if (window.solana.isConnected && window.solana._disconnect) {
+          await window.solana._disconnect();
+        }
+      }
+            publicKey = null;
+      walletBalance = 0;
+
+      updateWalletUI();
+      updateBurnModalStatus();
+
+      const walletDropdown = document.getElementById('walletDropdown');
+      if (walletDropdown) {
         walletDropdown.classList.remove('active');
       }
+
+      localStorage.removeItem('walletConnected');
+      localStorage.removeItem('walletAddress');
+      
+      console.log('Wallet disconnected successfully');
+
+      const walletBtn = document.getElementById('walletTopBtn');
+      if (walletBtn) {
+        walletBtn.classList.remove('connected');
+        const walletBtnText = document.getElementById('walletBtnText');
+        const walletShortAddress = document.getElementById('walletShortAddress');
+        if (walletBtnText) walletBtnText.textContent = 'Connect Wallet';
+        if (walletShortAddress) walletShortAddress.textContent = '';
+      }
+      
+      const walletFullAddress = document.getElementById('walletFullAddress');
+      if (walletFullAddress) walletFullAddress.textContent = 'Not connected';
+      
+      const syntaBalance = document.getElementById('syntaBalance');
+      if (syntaBalance) syntaBalance.textContent = '0.00';
+      
+      const burnWalletStatus = document.getElementById('burnWalletStatus');
+      if (burnWalletStatus) {
+        burnWalletStatus.innerHTML = 'Status: <span style="color: #ff9966;">Not Connected</span>';
+      }
+      
     } catch (error) {
       console.error('Disconnect error:', error);
+      publicKey = null;
+      walletBalance = 0;
+      updateWalletUI();
+      updateBurnModalStatus();
     }
   });
+}
     burnPlanet.addEventListener('click', (e) => {
     e.preventDefault();
     burnModal.classList.add('active');
@@ -3586,7 +3636,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });  
   confirmBurn.addEventListener('click', async () => {
-    // Validate wallet connection
     if (!publicKey) {
       alert('Please connect your wallet using the button at the top right');
       return;
@@ -3605,7 +3654,6 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!confirmLarge) return;
     }
     try {
-      // Show transaction status
       txStatus.classList.add('active');
       statusMessage.textContent = 'Preparing transaction...';
       const lamports = Math.floor(amount * Math.pow(10, DECIMALS));      
@@ -4283,6 +4331,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
