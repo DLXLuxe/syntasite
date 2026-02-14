@@ -3577,19 +3577,12 @@ async function connectWallet() {
 walletDisconnect.addEventListener('click', async () => {
   try {
     if (wallet) {
-      // Try to disconnect from the wallet extension
-      try {
-        await wallet.disconnect();
-      } catch (e) {
-        console.log('Disconnect error but continuing:', e);
-      }
+      // This actually disconnects from the Phantom extension
+      await wallet.disconnect();
       
-      // Clear ALL wallet data
+      // Clear all wallet data
       publicKey = null;
       walletBalance = 0;
-      
-      // DON'T set wallet = null - keep the wallet object but mark as disconnected
-      // This prevents the extension from thinking it's still connected
       
       // Force update UI to disconnected state
       walletBtnText.textContent = 'Connect Wallet';
@@ -3601,16 +3594,7 @@ walletDisconnect.addEventListener('click', async () => {
       // Close dropdown
       walletDropdown.classList.remove('active');
       
-      // Clear any stored session
-      localStorage.removeItem('walletConnected');
-      localStorage.removeItem('walletName');
-      localStorage.removeItem('walletPublicKey');
-      sessionStorage.clear();
-      
-      // Reset connection but keep wallet reference
-      connection = new solanaWeb3.Connection(NETWORK);
-      
-      console.log('✅ Wallet disconnected in app');
+      console.log('✅ Wallet disconnected from extension');
       
       // Force UI update
       updateWalletUI();
@@ -4159,6 +4143,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
