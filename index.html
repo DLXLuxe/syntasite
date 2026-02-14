@@ -3432,14 +3432,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function init() {
   try {
-    // Set up event listeners but DON'T auto-connect
+    // Set up connection but don't auto-connect
+    connection = new solanaWeb3.Connection(NETWORK);
+    
+    // Check if there's a wallet but DON'T auto-connect
     const provider = window.solana || window.phantom?.solana;
     if (provider) {
       wallet = provider;
-      connection = new solanaWeb3.Connection(NETWORK);
       
-      // Listen for connection events but don't trigger them
+      // Set up event listeners
       wallet.on('connect', async () => {
+        console.log('Wallet connected event');
         publicKey = wallet.publicKey;
         await updateBalance();
         updateWalletUI();
@@ -3448,25 +3451,12 @@ async function init() {
       });      
       
       wallet.on('disconnect', () => {
+        console.log('Wallet disconnected event');
         publicKey = null;
         walletBalance = 0;
         updateWalletUI();
         updateBurnModalStatus();
         burnHistoryContainer.style.display = 'none';
-      });      
-      
-      wallet.on('accountChanged', async (newPublicKey) => {
-        if (newPublicKey) {
-          publicKey = new solanaWeb3.PublicKey(newPublicKey);
-          await updateBalance();
-          updateWalletUI();
-          updateBurnModalStatus();
-        } else {
-          publicKey = null;
-          walletBalance = 0;
-          updateWalletUI();
-          updateBurnModalStatus();
-        }
       });
     }
     
@@ -4170,6 +4160,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
