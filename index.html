@@ -3552,16 +3552,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 async function connectWallet() {
+  // Show wallet selection options
+  const walletType = prompt(
+    'Choose wallet type:\n' +
+    '1 - Phantom\n' +
+    '2 - Backpack\n' +
+    '3 - Glow\n' +
+    '4 - Solflare\n' +
+    'Enter number:'
+  );
+  
   try {
-    if (!wallet) {
-      const provider = window.solana || window.phantom?.solana;
-      if (!provider) {
-        alert('Please install Phantom wallet from phantom.app');
-        return;
-      }
-      wallet = provider;
-      connection = new solanaWeb3.Connection(NETWORK);
-    }      
+    // Check if any wallet is installed
+    if (!window.solana) {
+      alert('No Solana wallet found! Please install one first.');
+      return;
+    }
+    
+    wallet = window.solana;
+    connection = new solanaWeb3.Connection(NETWORK);
     await wallet.connect();
     publicKey = wallet.publicKey;
     await updateBalance();
@@ -4138,6 +4147,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
