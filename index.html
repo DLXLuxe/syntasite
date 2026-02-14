@@ -4064,7 +4064,6 @@ function showCookieSettings() {
   document.getElementById('cookieConsentBanner').style.display = 'block';
   openCookieSettings();
 }
-
 function applyCookiePreferences(preferences) {
   // Handle preferences as string or object
   const prefs = typeof preferences === 'string' ? JSON.parse(preferences) : preferences;
@@ -4085,32 +4084,24 @@ function applyCookiePreferences(preferences) {
   if (prefs.marketing) {
     enableMarketing();
   }
-  
-  // You can add more cookie-dependent functionality here
 }
 
-// Example analytics functions - replace with your actual analytics provider
 function enableAnalytics() {
   console.log('Analytics enabled');
-  // Example: if using Google Analytics
-  // window.gtag('consent', 'update', { 'analytics_storage': 'granted' });
 }
 
 function disableAnalytics() {
   console.log('Analytics disabled');
-  // Example: if using Google Analytics
-  // window.gtag('consent', 'update', { 'analytics_storage': 'denied' });
 }
 
 function loadUserPreferences() {
   console.log('Loading user preferences');
-  // Example: restore theme preference, wallet connection preference, etc.
 }
 
 function enableMarketing() {
   console.log('Marketing cookies enabled');
-  // Example: if using Facebook Pixel or other marketing tools
 }
+
 </script>
 <section class="section">
   <div class="grid">
@@ -4424,6 +4415,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
