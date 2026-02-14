@@ -3746,10 +3746,10 @@ console.log('Owner public key:', ownerPublicKey.toString());
 const fromTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
   [
     ownerPublicKey.toBuffer(),
-    solanaWeb3.TOKEN_PROGRAM_ID.toBuffer(),
+    solanaWeb3.Token.TOKEN_PROGRAM_ID.toBuffer(),
     new solanaWeb3.PublicKey(SYNTA_MINT).toBuffer()
   ],
-  solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID
+  solanaWeb3.Token.ASSOCIATED_PROGRAM_ID
 )[0];
 console.log('From account:', fromTokenAccount.toString());
     
@@ -3766,7 +3766,7 @@ try {
   throw new Error('Invalid burn address');
 }
 
-console.log('TOKEN_PROGRAM_ID:', solanaWeb3.TOKEN_PROGRAM_ID.toString());
+console.log('TOKEN_PROGRAM_ID:', solanaWeb3.Token.TOKEN_PROGRAM_ID.toString());
 
 let mintPubkey;
 try {
@@ -3781,7 +3781,7 @@ try {
 if (!burnWallet || typeof burnWallet.toBuffer !== 'function') {
   throw new Error('Burn wallet not properly initialized');
 }
-if (!solanaWeb3.TOKEN_PROGRAM_ID || !solanaWeb3.TOKEN_PROGRAM_ID.toBuffer) {
+if (!solanaWeb3.Token.TOKEN_PROGRAM_ID || !solanaWeb3.Token.TOKEN_PROGRAM_ID.toBuffer) {
   throw new Error('TOKEN_PROGRAM_ID not available');
 }
 if (!mintPubkey || typeof mintPubkey.toBuffer !== 'function') {
@@ -3793,10 +3793,10 @@ console.log('All objects validated, calling findProgramAddressSync');
 const toTokenAccount = solanaWeb3.PublicKey.findProgramAddressSync(
   [
     burnWallet.toBuffer(),
-    solanaWeb3.TOKEN_PROGRAM_ID.toBuffer(),
+    solanaWeb3.Token.TOKEN_PROGRAM_ID.toBuffer(),
     mintPubkey.toBuffer()
   ],
-  solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID
+ solanaWeb3.Token.ASSOCIATED_PROGRAM_ID
 )[0];
 console.log('To account:', toTokenAccount.toString());
 
@@ -3825,8 +3825,8 @@ console.log('To account:', toTokenAccount.toString());
       console.log('Creating burn token account...');
       
       const createAccountIx = solanaWeb3.Token.createAssociatedTokenAccountInstruction(
-        solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID,
-        solanaWeb3.TOKEN_PROGRAM_ID,
+        solanaWeb3.Token.ASSOCIATED_PROGRAM_ID
+        solanaWeb3.Token.TOKEN_PROGRAM_ID,
         new solanaWeb3.PublicKey(SYNTA_MINT),
         toTokenAccount,
         burnWallet,
@@ -3839,7 +3839,7 @@ console.log('To account:', toTokenAccount.toString());
     
     // Create transfer instruction
     const transferInstruction = solanaWeb3.Token.createTransferInstruction(
-      solanaWeb3.TOKEN_PROGRAM_ID,
+      solanaWeb3.Token.TOKEN_PROGRAM_ID,
       fromTokenAccount,
       toTokenAccount,
       ownerPublicKey,
@@ -4426,6 +4426,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
