@@ -3555,12 +3555,8 @@ async function connectWallet() {
   try {
     // Check if any Solana wallet is installed
     if (!window.solana) {
-      const choice = confirm('No wallet found! Click OK to install Phantom, or Cancel for other wallets');
-      if (choice) {
-        window.open('https://phantom.app/', '_blank');
-      } else {
-        window.open('https://walletguide.com/solana-wallets', '_blank');
-      }
+      alert('Please install a Solana wallet like Phantom, Backpack, or Solflare');
+      window.open('https://phantom.app/', '_blank');
       return;
     }
     
@@ -4142,6 +4138,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
