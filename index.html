@@ -3552,20 +3552,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 async function connectWallet() {
-  // Show wallet selection options
-  const walletType = prompt(
-    'Choose wallet type:\n' +
-    '1 - Phantom\n' +
-    '2 - Backpack\n' +
-    '3 - Glow\n' +
-    '4 - Solflare\n' +
-    'Enter number:'
-  );
-  
   try {
-    // Check if any wallet is installed
+    // Check if any Solana wallet is installed
     if (!window.solana) {
-      alert('No Solana wallet found! Please install one first.');
+      alert('Please install a Solana wallet like Phantom, Backpack, or Solflare');
+      window.open('https://phantom.app/', '_blank');
       return;
     }
     
@@ -4162,6 +4153,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
