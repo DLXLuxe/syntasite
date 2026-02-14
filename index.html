@@ -3548,6 +3548,13 @@ function loadBurnHistory() {
     console.log('Error loading burn history:', e);
   }
 }
+  function showSuccessNotification(amount, signature) {
+  // This is called but not defined
+  console.log('Burn successful:', amount, signature);
+  closeBurnModal();
+  // You can add a simple alert for now
+  alert(`✅ Successfully burned ${amount} SYNTA!`);
+}
   walletTopBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     if (publicKey) {
@@ -4170,5 +4177,6 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
