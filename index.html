@@ -3055,26 +3055,38 @@ target="_blank"
           class="dex-button">DEX Screener</a>
     </div>
   </div>
-    <div class="wallet-dock-item" id="walletTop">
-    <button class="dock-item wallet-connect-btn" id="walletTopBtn">
-            <span class="wallet-text" id="walletBtnText">Connect Wallet</span>
-      <span class="wallet-address" id="walletShortAddress"></span>
-    </button>
-    <div class="wallet-dropdown" id="walletDropdown">
-      <div class="wallet-info">
-        <div class="wallet-info-title">Connected Wallet</div>
-        <div class="wallet-address-full" id="walletFullAddress"></div>
+    <!-- Replace this entire wallet-dock-item div -->
+<div class="wallet-dock-item" id="walletTop">
+  <button class="dock-item wallet-connect-btn" id="walletTopBtn">
+    <span class="wallet-text" id="walletBtnText">Connect Wallet</span>
+    <span class="wallet-address" id="walletShortAddress"></span>
+  </button>
+  
+  <!-- Simple dropdown like the burn modal style -->
+  <div class="wallet-simple-dropdown" id="walletDropdown" style="display: none;">
+    <div class="wallet-dropdown-content">
+      <div class="wallet-dropdown-header">
+    
+        <div class="wallet-status-text">Connected</div>
+        <button class="wallet-close-dropdown" id="closeWalletDropdown">✕</button>
       </div>
-      <div class="wallet-balance">
-        <div class="balance-label">SYNTA Balance</div>
-        <div class="balance-amount" id="syntaBalance">0.00</div>
+      
+      <div class="wallet-info-simple">
+        <div class="wallet-label">Wallet Address</div>
+        <div class="wallet-address-full" id="walletFullAddressSimple"></div>
       </div>
-      <div class="wallet-actions">
-        <button class="wallet-action-btn copy" id="copyWalletAddress">
-          📋 Copy Address
+      
+      <div class="wallet-balance-simple">
+        <div class="wallet-label">SYNTA Balance</div>
+        <div class="balance-amount-simple" id="syntaBalanceSimple">0.00</div>
+      </div>
+      
+      <div class="wallet-actions-simple">
+        <button class="wallet-simple-btn copy-btn" id="copyWalletAddressSimple">
+           Copy Address
         </button>
-        <button class="wallet-action-btn disconnect" id="walletDisconnect">
-          Disconnect
+        <button class="wallet-simple-btn disconnect-btn" id="walletDisconnectSimple">
+           Disconnect
         </button>
       </div>
     </div>
@@ -4348,6 +4360,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
