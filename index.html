@@ -3681,23 +3681,6 @@ copyBurnAddress.addEventListener('click', () => {
     }, 2000);
   });
 });  
-  cancelBurn.addEventListener('click', () => {
-    closeBurnModal();
-  });  
-  burnModal.addEventListener('click', (e) => {
-    if (e.target === burnModal) {
-      closeBurnModal();
-    }
-  });  
-  copyBurnAddress.addEventListener('click', () => {
-    navigator.clipboard.writeText(BURN_ADDRESS).then(() => {
-      const originalText = copyBurnAddress.innerHTML;
-      copyBurnAddress.innerHTML = '✅ Copied!';
-      setTimeout(() => {
-        copyBurnAddress.innerHTML = originalText;
-      }, 2000);
-    });
-  });  
   confirmBurn.addEventListener('click', async () => {
     if (!publicKey) {
       alert('Please connect your wallet using the button at the top right');
@@ -4441,6 +4424,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
