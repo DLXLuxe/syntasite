@@ -3723,18 +3723,25 @@ confirmBurn.addEventListener('click', async () => {
     
     statusMessage.textContent = 'Finding token accounts...';
     
-    // Make sure publicKey is a PublicKey object
-    const ownerPublicKey = publicKey;
-    
-    // Get the user's token account (associated token account)
-    const fromTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
-      [
-        ownerPublicKey.toBuffer(),
-        solanaWeb3.TOKEN_PROGRAM_ID.toBuffer(),
-        new solanaWeb3.PublicKey(SYNTA_MINT).toBuffer()
-      ],
-      solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID
-    )[0];
+   // Make sure publicKey is a PublicKey object
+let ownerPublicKey;
+if (typeof publicKey === 'string') {
+  ownerPublicKey = new solanaWeb3.PublicKey(publicKey);
+} else {
+  ownerPublicKey = publicKey;
+}
+console.log('Owner public key:', ownerPublicKey.toString());
+
+// Get the user's token account (associated token account)
+const fromTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
+  [
+    ownerPublicKey.toBuffer(),
+    solanaWeb3.TOKEN_PROGRAM_ID.toBuffer(),
+    new solanaWeb3.PublicKey(SYNTA_MINT).toBuffer()
+  ],
+  solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID
+)[0];
+console.log('From account:', fromTokenAccount.toString());
     console.log('From account:', fromTokenAccount.toString());
     
     // Get the burn address token account
@@ -4374,6 +4381,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
