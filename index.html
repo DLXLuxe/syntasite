@@ -3194,6 +3194,11 @@ target="_blank"
 </div>
 </div>
 <script>
+  // Add this missing function
+function updateTimeDisplay() {
+  // This is called by the audio player but doesn't exist
+  console.log('Time updated');
+}
 // If you need to update the token data dynamically
 function updateTokenData(data) {
     if (data.tokenId) {
@@ -3396,6 +3401,18 @@ document.addEventListener('DOMContentLoaded', function() {
     audio.addEventListener('timeupdate', updateTimeDisplay);
 });
 // ===== SIMPLE WALLET CONNECTION (Jupiter style) =====
+  // Try multiple RPCs
+const RPCS = [
+  'https://api.mainnet-beta.solana.com',
+  'https://solana.publicnode.com',
+  'https://rpc.ankr.com/solana',
+  'https://solana.rpc.extrnode.com'
+];
+let currentRpcIndex = 0;
+
+function getConnection() {
+  return new solanaWeb3.Connection(RPCS[currentRpcIndex]);
+}
 document.addEventListener('DOMContentLoaded', function() {
   // Elements
   const walletTop = document.getElementById('walletTop');
@@ -3448,56 +3465,60 @@ function isWalletInstalled() {
 }
 
   // Initialize - just set up event listeners, don't auto-connect
-  async function init() {
-    console.log('Initializing wallet...');
+async function init() {
+  console.log('Initializing wallet...');
+  
+  // Simple check - just see if wallet exists
+  if (window.solana) {
+    wallet = window.solana;
+    console.log('Wallet found:', wallet.isPhantom ? 'Phantom' : 'Other wallet');
     
-    if (isPhantomInstalled()) {
-      wallet = window.solana;
-      
-      // Check if already connected
-      if (wallet.isConnected && wallet.publicKey) {
-        publicKey = wallet.publicKey;
-        await fetchBalance();
-        updateUI();
-      }
-      
-      // Listen for connection events
-      wallet.on('connect', async () => {
-        console.log('Wallet connected');
-        publicKey = wallet.publicKey;
-        await fetchBalance();
-        updateUI();
-        updateBurnStatus();
-      });
-      
-      wallet.on('disconnect', () => {
-        console.log('Wallet disconnected');
-        publicKey = null;
-        walletBalance = 0;
-        updateUI();
-        updateBurnStatus();
-      });
+    // Check if already connected
+    if (wallet.isConnected && wallet.publicKey) {
+      publicKey = wallet.publicKey;
+      await fetchBalance();
+      updateUI();
     }
     
-    // Always start with disconnected UI
-    updateUI();
-    updateBurnStatus();
+    // Listen for connection events
+    wallet.on('connect', async () => {
+      console.log('Wallet connected');
+      publicKey = wallet.publicKey;
+      await fetchBalance();
+      updateUI();
+      updateBurnStatus();
+    });
     
-    // Event listeners
-    burnPlanet.addEventListener('click', () => {
-      burnModal.classList.add('active');
-      document.body.style.overflow = 'hidden';
+    wallet.on('disconnect', () => {
+      console.log('Wallet disconnected');
+      publicKey = null;
+      walletBalance = 0;
+      updateUI();
       updateBurnStatus();
     });
   }
+  
+  // Always start with disconnected UI
+  updateUI();
+  updateBurnStatus();
+  
+  // Event listeners
+  burnPlanet.addEventListener('click', () => {
+    burnModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    updateBurnStatus();
+  });
+}
 
   // Fetch token balance
-  async function fetchBalance() {
-    if (!publicKey) return 0;
-    
+async function fetchBalance() {
+  if (!publicKey) return 0;
+  
+  for (let i = 0; i < RPCS.length; i++) {
+    currentRpcIndex = i;
     try {
-      const connection = new solanaWeb3.Connection(NETWORK);
-      console.log('Fetching balance for:', publicKey.toString());
+      const connection = getConnection();
+      console.log('Trying RPC:', RPCS[i]);
       
       const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
         publicKey,
@@ -3508,17 +3529,22 @@ function isWalletInstalled() {
         const balance = tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount;
         console.log('Balance found:', balance);
         walletBalance = balance || 0;
+        return walletBalance;
       } else {
         console.log('No token account found');
         walletBalance = 0;
+        return 0;
       }
     } catch (error) {
-      console.error('Error fetching balance:', error);
-      walletBalance = 0;
+      console.log(`RPC ${RPCS[i]} failed:`, error.message);
+      // Try next RPC
     }
-    
-    return walletBalance;
   }
+  
+  console.error('All RPCs failed');
+  walletBalance = 0;
+  return 0;
+}
 
   // Update UI
   function updateUI() {
@@ -4176,6 +4202,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
