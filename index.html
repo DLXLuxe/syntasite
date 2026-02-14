@@ -3430,22 +3430,15 @@ document.addEventListener('DOMContentLoaded', function() {
   let publicKey = null;
   let walletBalance = 0;
 
-  async function init() {
-    try {
-      const provider = window.solana || window.phantom?.solana;
-      if (!provider) {
-        updateWalletUI();
-        return;
-      }      
+async function init() {
+  try {
+    // Set up event listeners but DON'T auto-connect
+    const provider = window.solana || window.phantom?.solana;
+    if (provider) {
       wallet = provider;
       connection = new solanaWeb3.Connection(NETWORK);
       
-      if (wallet.isConnected && wallet.publicKey) {
-        publicKey = wallet.publicKey;
-        await updateBalance();
-        updateWalletUI();
-      }
-      
+      // Listen for connection events but don't trigger them
       wallet.on('connect', async () => {
         publicKey = wallet.publicKey;
         await updateBalance();
@@ -3475,17 +3468,23 @@ document.addEventListener('DOMContentLoaded', function() {
           updateBurnModalStatus();
         }
       });
-      
-      burnPlanet.addEventListener('click', () => {
-        updateBurnModalStatus();
-        loadBurnHistory();
-      });      
-    } catch (error) {
-      console.error('Initialization error:', error);
-      updateWalletUI();
     }
+    
+    // Always start disconnected
+    publicKey = null;
+    walletBalance = 0;
+    updateWalletUI();
+    updateBurnModalStatus();
+    
+    burnPlanet.addEventListener('click', () => {
+      updateBurnModalStatus();
+      loadBurnHistory();
+    });      
+  } catch (error) {
+    console.error('Initialization error:', error);
+    updateWalletUI();
   }
-
+}
   async function updateBalance() {
     if (!publicKey || !connection) {
       walletBalance = 0;
@@ -4153,6 +4152,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
