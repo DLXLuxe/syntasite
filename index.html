@@ -3463,6 +3463,16 @@ document.addEventListener('DOMContentLoaded', function() {
   const burnHistoryList = document.getElementById('burnHistoryList');
   
   const BURN_ADDRESS = '1nc1nerator11111111111111111111111111111111';
+console.log('Burn address:', BURN_ADDRESS);
+console.log('Burn address length:', BURN_ADDRESS.length);
+
+// Test if it's a valid public key
+try {
+  const testKey = new solanaWeb3.PublicKey(BURN_ADDRESS);
+  console.log('✅ Burn address is valid:', testKey.toString());
+} catch (e) {
+  console.error('❌ Burn address is invalid:', e.message);
+}
   const SYNTA_MINT = 'mjD1S7irWJ3h5xEH9XAN5KhtuoLpmThbdc22Ru6pump';
   const DECIMALS = 6;
 
@@ -4384,6 +4394,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
