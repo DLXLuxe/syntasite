@@ -3718,6 +3718,7 @@ confirmBurn.addEventListener('click', async () => {
   try {
     // Calculate lamports (amount * 10^decimals)
     const lamports = Math.floor(amount * Math.pow(10, DECIMALS));
+    console.log('Amount:', amount, 'Lamports:', lamports);
     
     statusMessage.textContent = 'Finding token accounts...';
     
@@ -3730,6 +3731,7 @@ confirmBurn.addEventListener('click', async () => {
       ],
       solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID
     )[0];
+    console.log('From account:', fromTokenAccount.toString());
     
     // Get the burn address token account
     const toTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
@@ -3740,11 +3742,43 @@ confirmBurn.addEventListener('click', async () => {
       ],
       solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID
     )[0];
+    console.log('To account:', toTokenAccount.toString());
     
-    statusMessage.textContent = 'Creating transfer instruction...';
+    statusMessage.textContent = 'Checking accounts...';
     
     // Create connection with current working RPC
     const connection = getConnection();
+    
+    // Check if from account exists
+    const fromAccountInfo = await connection.getAccountInfo(fromTokenAccount);
+    console.log('From account exists:', !!fromAccountInfo);
+    if (!fromAccountInfo) {
+      throw new Error('Your token account does not exist. You may need to create it first.');
+    }
+    
+    // Start building transaction
+    const transaction = new solanaWeb3.Transaction();
+    
+    // Check if to account exists, if not, add instruction to create it
+    const toAccountInfo = await connection.getAccountInfo(toTokenAccount);
+    console.log('To account exists:', !!toAccountInfo);
+    
+    if (!toAccountInfo) {
+      statusMessage.textContent = 'Creating burn account...';
+      console.log('Creating burn token account...');
+      
+      const createAccountIx = solanaWeb3.Token.createAssociatedTokenAccountInstruction(
+        solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID,
+        solanaWeb3.TOKEN_PROGRAM_ID,
+        new solanaWeb3.PublicKey(SYNTA_MINT),
+        toTokenAccount,
+        new solanaWeb3.PublicKey(BURN_ADDRESS),
+        publicKey // Payer
+      );
+      transaction.add(createAccountIx);
+    }
+    
+    statusMessage.textContent = 'Creating transfer instruction...';
     
     // Create transfer instruction
     const transferInstruction = solanaWeb3.Token.createTransferInstruction(
@@ -3755,15 +3789,12 @@ confirmBurn.addEventListener('click', async () => {
       [],
       lamports
     );
+    transaction.add(transferInstruction);
     
     statusMessage.textContent = 'Getting recent blockhash...';
     const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
-    
-    // Create transaction
-    const transaction = new solanaWeb3.Transaction({
-      feePayer: publicKey,
-      recentBlockhash: blockhash
-    }).add(transferInstruction);
+    transaction.recentBlockhash = blockhash;
+    transaction.feePayer = publicKey;
     
     // Add compute unit limit for stability
     const computeUnitLimitIx = solanaWeb3.ComputeBudgetProgram.setComputeUnitLimit({
@@ -3775,9 +3806,11 @@ confirmBurn.addEventListener('click', async () => {
     
     // Sign transaction
     const signedTransaction = await wallet.signTransaction(transaction);
+    console.log('Transaction signed');
     
     statusMessage.textContent = 'Sending transaction...';
     const signature = await connection.sendRawTransaction(signedTransaction.serialize());
+    console.log('Transaction sent:', signature);
     
     statusMessage.textContent = 'Confirming transaction...';
     const confirmation = await connection.confirmTransaction({
@@ -3785,6 +3818,8 @@ confirmBurn.addEventListener('click', async () => {
       blockhash,
       lastValidBlockHeight
     }, 'confirmed');
+    
+    console.log('Confirmation:', confirmation);
     
     if (confirmation.value.err) {
       throw new Error('Transaction failed: ' + JSON.stringify(confirmation.value.err));
@@ -4334,6 +4369,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
