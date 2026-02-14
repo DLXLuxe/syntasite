@@ -3403,7 +3403,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // ===== SIMPLE WALLET CONNECTION (Jupiter style) =====
   // Try multiple RPCs
 const RPCS = [
-  'https://api.mainnet-beta.solana.com',
   'https://solana.publicnode.com',
   'https://rpc.ankr.com/solana',
   'https://solana.rpc.extrnode.com'
@@ -3440,22 +3439,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const BURN_ADDRESS = '1nc1nerator11111111111111111111111111111111';
   const SYNTA_MINT = '2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La';
   const DECIMALS = 9;
-const NETWORK = 'https://api.mainnet-beta.solana.com'; // Keep this for now
 
-// TEST FUNCTION - Add this right here
-async function testConnection() {
-  try {
-    console.log('Testing connection to Solana...');
-    const testConnection = new solanaWeb3.Connection(NETWORK);
-    const version = await testConnection.getVersion();
-    console.log('✅ Connection successful! Solana version:', version);
-    return true;
-  } catch (error) {
-    console.error('❌ Connection failed:', error);
-    return false;
-  }
-}
-  
+
+ 
   let wallet = null;
   let publicKey = null;
   let walletBalance = 0;
@@ -4202,6 +4188,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
