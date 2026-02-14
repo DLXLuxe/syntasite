@@ -3405,6 +3405,9 @@ document.addEventListener('DOMContentLoaded', function() {
   let connection = null;
   let publicKey = null;
   let walletBalance = 0;
+  // Make variables globally accessible
+window.publicKey = publicKey;
+window.walletBalance = walletBalance;
   async function init() {
     try {
       // Check for Phantom wallet
@@ -4333,6 +4336,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
