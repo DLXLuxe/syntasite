@@ -3573,12 +3573,18 @@ async function connectWallet() {
       });
     }
   });  
-
 walletDisconnect.addEventListener('click', async () => {
   try {
     if (wallet) {
-      // This actually disconnects from the Phantom extension
-      await wallet.disconnect();
+      // Try both methods
+      try {
+        await wallet.disconnect();
+      } catch (e) {}
+      
+      // Also try to disconnect via the provider
+      if (wallet._disconnect) {
+        await wallet._disconnect();
+      }
       
       // Clear all wallet data
       publicKey = null;
@@ -3594,9 +3600,8 @@ walletDisconnect.addEventListener('click', async () => {
       // Close dropdown
       walletDropdown.classList.remove('active');
       
-      console.log('✅ Wallet disconnected from extension');
+      console.log('✅ Wallet disconnected');
       
-      // Force UI update
       updateWalletUI();
       updateBurnModalStatus();
     }
@@ -4143,6 +4148,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
