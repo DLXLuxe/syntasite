@@ -3587,8 +3587,9 @@ walletDisconnect.addEventListener('click', async () => {
       // Clear ALL wallet data
       publicKey = null;
       walletBalance = 0;
-      wallet = null; // Clear wallet reference
-      connection = null;
+      
+      // DON'T set wallet = null - keep the wallet object but mark as disconnected
+      // This prevents the extension from thinking it's still connected
       
       // Force update UI to disconnected state
       walletBtnText.textContent = 'Connect Wallet';
@@ -3600,22 +3601,20 @@ walletDisconnect.addEventListener('click', async () => {
       // Close dropdown
       walletDropdown.classList.remove('active');
       
-      // Clear all storage
+      // Clear any stored session
       localStorage.removeItem('walletConnected');
       localStorage.removeItem('walletName');
       localStorage.removeItem('walletPublicKey');
       sessionStorage.clear();
       
-      // Reset connection
+      // Reset connection but keep wallet reference
       connection = new solanaWeb3.Connection(NETWORK);
       
-      console.log('✅ Wallet fully disconnected');
+      console.log('✅ Wallet disconnected in app');
       
-      // Force a small delay and update again
-      setTimeout(() => {
-        updateWalletUI();
-        updateBurnModalStatus();
-      }, 100);
+      // Force UI update
+      updateWalletUI();
+      updateBurnModalStatus();
     }
   } catch (error) {
     console.error('Disconnect error:', error);
@@ -4160,6 +4159,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
