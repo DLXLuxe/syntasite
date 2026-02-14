@@ -3719,13 +3719,17 @@ confirmBurn.addEventListener('click', async () => {
     // Calculate lamports (amount * 10^decimals)
     const lamports = Math.floor(amount * Math.pow(10, DECIMALS));
     console.log('Amount:', amount, 'Lamports:', lamports);
+    console.log('PublicKey:', publicKey.toString());
     
     statusMessage.textContent = 'Finding token accounts...';
+    
+    // Make sure publicKey is a PublicKey object
+    const ownerPublicKey = publicKey;
     
     // Get the user's token account (associated token account)
     const fromTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
       [
-        publicKey.toBuffer(),
+        ownerPublicKey.toBuffer(),
         solanaWeb3.TOKEN_PROGRAM_ID.toBuffer(),
         new solanaWeb3.PublicKey(SYNTA_MINT).toBuffer()
       ],
@@ -3734,9 +3738,10 @@ confirmBurn.addEventListener('click', async () => {
     console.log('From account:', fromTokenAccount.toString());
     
     // Get the burn address token account
+    const burnWallet = new solanaWeb3.PublicKey(BURN_ADDRESS);
     const toTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
       [
-        new solanaWeb3.PublicKey(BURN_ADDRESS).toBuffer(),
+        burnWallet.toBuffer(),
         solanaWeb3.TOKEN_PROGRAM_ID.toBuffer(),
         new solanaWeb3.PublicKey(SYNTA_MINT).toBuffer()
       ],
@@ -3772,8 +3777,8 @@ confirmBurn.addEventListener('click', async () => {
         solanaWeb3.TOKEN_PROGRAM_ID,
         new solanaWeb3.PublicKey(SYNTA_MINT),
         toTokenAccount,
-        new solanaWeb3.PublicKey(BURN_ADDRESS),
-        publicKey // Payer
+        burnWallet,
+        ownerPublicKey // Payer
       );
       transaction.add(createAccountIx);
     }
@@ -3785,7 +3790,7 @@ confirmBurn.addEventListener('click', async () => {
       solanaWeb3.TOKEN_PROGRAM_ID,
       fromTokenAccount,
       toTokenAccount,
-      publicKey,
+      ownerPublicKey,
       [],
       lamports
     );
@@ -3794,7 +3799,7 @@ confirmBurn.addEventListener('click', async () => {
     statusMessage.textContent = 'Getting recent blockhash...';
     const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash;
-    transaction.feePayer = publicKey;
+    transaction.feePayer = ownerPublicKey;
     
     // Add compute unit limit for stability
     const computeUnitLimitIx = solanaWeb3.ComputeBudgetProgram.setComputeUnitLimit({
@@ -4369,6 +4374,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
