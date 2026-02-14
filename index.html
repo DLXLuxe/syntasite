@@ -3423,7 +3423,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const BURN_ADDRESS = '1nc1nerator11111111111111111111111111111111';
   const SYNTA_MINT = '2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La';
   const DECIMALS = 9;
- const NETWORK = 'https://api.helius.xyz/?api-key=free';
+  const NETWORK = 'https://api.mainnet-beta.solana.com';
   
   let wallet = null;
   let connection = null;
@@ -3525,35 +3525,7 @@ async function init() {
       }
     }
   }
-function loadBurnHistory() {
-  try {
-    const burns = JSON.parse(localStorage.getItem('synta_burns') || '[]');
-    if (burns.length > 0 && burnHistoryContainer) {
-      burnHistoryContainer.style.display = 'block';
-      if (burnHistoryList) {
-        burnHistoryList.innerHTML = burns.map((burn) => `
-          <div style="background: rgba(255, 100, 100, 0.1); margin: 8px 0; padding: 10px; border-radius: 8px; border-left: 3px solid #ff6600;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-              <span style="color: #ff9966; font-weight: 600;">${burn.amount} SYNTA</span>
-              <span style="color: #9FE7E5; font-size: 11px;">${new Date(burn.timestamp).toLocaleDateString()}</span>
-            </div>
-          </div>
-        `).join('');
-      }
-    } else if (burnHistoryContainer) {
-      burnHistoryContainer.style.display = 'none';
-    }
-  } catch (e) {
-    console.log('Error loading burn history:', e);
-  }
-}
-  function showSuccessNotification(amount, signature) {
-  // This is called but not defined
-  console.log('Burn successful:', amount, signature);
-  closeBurnModal();
-  // You can add a simple alert for now
-  alert(`✅ Successfully burned ${amount} SYNTA!`);
-}
+
   walletTopBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     if (publicKey) {
@@ -4176,8 +4148,3 @@ function enableMarketing() {
 </div>
 </body>
 </html>
-
-
-
-
-
