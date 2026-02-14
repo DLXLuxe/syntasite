@@ -3776,12 +3776,77 @@ document.getElementById('walletTopBtn').addEventListener('click', (e) => {
     connectWallet();
   }
 });
-document.addEventListener('click', (e) => {
-  const walletDockItem = document.querySelector('.wallet-dock-item');
-  if (walletDockItem && !walletDockItem.contains(e.target)) {
-    document.getElementById('walletDropdown').classList.remove('active');
+// Wallet dropdown handling with proper event propagation
+walletTopBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  e.preventDefault();
+  
+  if (publicKey) {
+    walletDropdown.classList.toggle('active');
+  } else {
+    connectWallet();
   }
 });
+
+// Handle clicks outside the wallet component to close dropdown
+document.addEventListener('click', (e) => {
+  const walletDockItem = document.querySelector('.wallet-dock-item');
+  const walletDropdown = document.getElementById('walletDropdown');
+  
+  // Check if click is outside the wallet component AND not on the dropdown itself
+  if (walletDockItem && !walletDockItem.contains(e.target)) {
+    walletDropdown.classList.remove('active');
+  }
+});
+
+// Prevent clicks inside dropdown from closing it
+walletDropdown.addEventListener('click', (e) => {
+  e.stopPropagation(); // This is crucial - stops event from reaching document click handler
+});
+
+// Update the copy button handler
+copyWalletAddress.addEventListener('click', (e) => {
+  e.stopPropagation(); // Add this line
+  
+  if (publicKey) {
+    navigator.clipboard.writeText(publicKey.toString()).then(() => {
+      const originalText = copyWalletAddress.innerHTML;
+      copyWalletAddress.innerHTML = '✅ Copied!';
+      setTimeout(() => {
+        copyWalletAddress.innerHTML = originalText;
+      }, 2000);
+    });
+  }
+});
+
+// Update the disconnect button handler
+walletDisconnect.addEventListener('click', async (e) => {
+  e.stopPropagation(); // Add this line
+  
+  try {
+    if (wallet && wallet.isConnected) {
+      await wallet.disconnect();
+      publicKey = null;
+      walletBalance = 0;
+      updateWalletUI();
+      updateBurnModalStatus();
+      walletDropdown.classList.remove('active');
+    }
+  } catch (error) {
+    console.error('Disconnect error:', error);
+  }
+});
+
+// Also add click handler for the full address copy if you have one
+if (walletFullAddress) {
+  walletFullAddress.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (publicKey) {
+      navigator.clipboard.writeText(publicKey.toString());
+      // Optional: Show feedback
+    }
+  });
+}
 document.querySelectorAll('.dropdown-container').forEach(container => {
   container.addEventListener('mouseenter', () => {
     document.getElementById('walletDropdown').classList.remove('active');
@@ -4283,6 +4348,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
