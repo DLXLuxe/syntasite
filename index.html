@@ -3788,26 +3788,10 @@ if (!mintPubkey || typeof mintPubkey.toBuffer !== 'function') {
   throw new Error('Mint pubkey not properly initialized');
 }
 
+
 console.log('All objects validated, calling findProgramAddressSync');
 const toTokenAccount = solanaWeb3.PublicKey.findProgramAddressSync(
   [
-    // Add this right before line 3749
-console.log('burnWallet at line 3749:', burnWallet);
-if (!burnWallet) {
-  throw new Error('burnWallet is undefined at line 3749');
-}
-if (!burnWallet.toBuffer) {
-  throw new Error('burnWallet.toBuffer is not a function');
-}
-
-const toTokenAccount = solanaWeb3.PublicKey.findProgramAddressSync(
-  [
-    burnWallet.toBuffer(),  // This is line 3749
-    solanaWeb3.TOKEN_PROGRAM_ID.toBuffer(),
-    mintPubkey.toBuffer()
-  ],
-  solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID
-)[0];
     burnWallet.toBuffer(),
     solanaWeb3.TOKEN_PROGRAM_ID.toBuffer(),
     mintPubkey.toBuffer()
@@ -4442,6 +4426,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
