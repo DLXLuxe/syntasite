@@ -3045,6 +3045,30 @@ transform: translateZ(0);
   display: block !important;
   pointer-events: auto !important;
 }
+  /* Success modal buttons fix */
+.burn-success-modal.active {
+  display: flex !important;
+  pointer-events: auto !important;
+}
+
+.burn-success-modal button,
+.hash-copy-btn,
+.success-btn,
+#copyTxHash,
+#closeSuccessModal,
+#viewTransaction {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  z-index: 1000000 !important;
+  position: relative !important;
+  opacity: 1 !important;
+}
+
+.hash-copy-btn:hover,
+.success-btn:hover {
+  transform: translateY(-2px) !important;
+  transition: all 0.3s ease !important;
+}
 </style>
 </head>
 <body>
@@ -3959,13 +3983,48 @@ confirmBurn.addEventListener('click', async () => {
     updateUI();
     updateBurnStatus();
     
-    // Show success modal
-    const successModal = document.getElementById('burnSuccessModal');
-    if (successModal) {
-      document.getElementById('successTxHash').textContent = signature;
-      document.getElementById('explorerLink').href = `https://explorer.solana.com/tx/${signature}`;
-      successModal.classList.add('active');
-    }
+// Show success modal
+const successModal = document.getElementById('burnSuccessModal');
+const successTxHash = document.getElementById('successTxHash');
+const explorerLink = document.getElementById('explorerLink');
+const copyTxHashBtn = document.getElementById('copyTxHash');
+const closeSuccessBtn = document.getElementById('closeSuccessModal');
+const viewTransactionBtn = document.getElementById('viewTransaction');
+
+if (successModal && successTxHash) {
+  successTxHash.textContent = signature;
+  if (explorerLink) {
+    explorerLink.href = `https://explorer.solana.com/tx/${signature}`;
+  }
+  
+  // Make Copy button work
+  if (copyTxHashBtn) {
+    copyTxHashBtn.onclick = (e) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(signature);
+      copyTxHashBtn.innerHTML = '✅ Copied!';
+      setTimeout(() => {
+        copyTxHashBtn.innerHTML = '📋 Copy Hash';
+      }, 2000);
+    };
+  }
+  
+  // Make View Transaction button work
+  if (viewTransactionBtn) {
+    viewTransactionBtn.onclick = () => {
+      window.open(`https://explorer.solana.com/tx/${signature}`, '_blank');
+    };
+  }
+  
+  // Make Close button work
+  if (closeSuccessBtn) {
+    closeSuccessBtn.onclick = () => {
+      successModal.classList.remove('active');
+    };
+  }
+  
+  successModal.classList.add('active');
+}
     
   } catch (error) {
     console.error('Burn error:', error);
@@ -4360,6 +4419,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
