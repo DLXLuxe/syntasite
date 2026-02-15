@@ -3933,7 +3933,7 @@ console.log('To account:', toTokenAccount.toString());
       { pubkey: solanaWeb3.SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
     ],
     programId: ASSOCIATED_TOKEN_PROGRAM_ID,
-    data: Buffer.from([])
+    data: new Uint8Array([])
   });
   transaction.add(createAccountIx);
 }
@@ -4426,6 +4426,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
