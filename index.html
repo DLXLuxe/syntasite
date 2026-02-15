@@ -3941,6 +3941,18 @@ console.log('To account:', toTokenAccount.toString());
 statusMessage.textContent = 'Creating transfer instruction...';
 console.log('Creating transfer instruction with amount:', lamports, 'decimals:', DECIMALS);
 
+// Create a buffer for the amount (little-endian u64)
+const amountBuffer = new ArrayBuffer(8);
+const amountView = new DataView(amountBuffer);
+amountView.setBigUint64(0, BigInt(lamports), true); // true = little-endian
+
+// Create the instruction data
+// Format: instruction byte (0x0b for transfer checked) + amount (8 bytes) + decimals (1 byte)
+const instructionData = new Uint8Array(1 + 8 + 1);
+instructionData[0] = 0x0b; // transfer checked instruction index for Token-2022
+instructionData.set(new Uint8Array(amountBuffer), 1);
+instructionData[9] = DECIMALS; // decimals at offset 9
+
 // Manually create transfer checked instruction for Token-2022
 const transferInstruction = new solanaWeb3.TransactionInstruction({
   keys: [
@@ -3950,11 +3962,7 @@ const transferInstruction = new solanaWeb3.TransactionInstruction({
     { pubkey: ownerPublicKey, isSigner: true, isWritable: false },        // authority
   ],
   programId: TOKEN_2022_PROGRAM_ID,
-  data: new Uint8Array([
-    0x0b, // transfer checked instruction index
-    ...new Uint8Array(new solanaWeb3.util.uint64(lamports).toArray()), // amount
-    ...new Uint8Array([DECIMALS]), // decimals
-  ])
+  data: instructionData
 });
 transaction.add(transferInstruction);
     
@@ -4431,6 +4439,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
