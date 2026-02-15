@@ -3748,8 +3748,7 @@ if (typeof publicKey === 'string') {
 }
 console.log('Owner public key:', ownerPublicKey.toString());
 
-// Get the user's token account (associated token account)
-const TOKEN_2022_PROGRAM_ID = new solanaWeb3.PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
+
 
 const fromTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
   [
@@ -4419,6 +4418,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
