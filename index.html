@@ -3765,26 +3765,7 @@ async function connectWallet() {
     alert('Failed to connect wallet');
   }
 }
-  // Add this at the end of your connectWallet function, right after await wallet.connect()
-setTimeout(() => {
-  walletTopBtn.classList.remove('loading');
-  if (publicKey) {
-    walletBtnText.textContent = 'Wallet';
-  } else {
-    walletBtnText.textContent = 'Connect Wallet';
-  }
-}, 5000); // Remove loading after 5 seconds no matter what
-    
-    // Remove loading class
-    walletTopBtn.classList.remove('loading');
-    
-  } catch (error) {
-    console.error('Connection error:', error);
-    walletTopBtn.classList.remove('loading');
-    walletBtnText.textContent = 'Connect Wallet';
-    alert('Failed to connect wallet');
-  }
-}
+
 
 // Disconnect wallet
 async function disconnectWallet() {
@@ -4449,6 +4430,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
