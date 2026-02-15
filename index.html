@@ -3729,7 +3729,7 @@ async function fetchBalance() {
     }
   }
 
-  // Connect wallet
+// Connect wallet
 async function connectWallet() {
   try {
     // Add loading class to button
@@ -3739,6 +3739,7 @@ async function connectWallet() {
     // Just check if ANY Solana wallet exists
     if (!window.solana) {
       walletTopBtn.classList.remove('loading');
+      walletBtnText.textContent = 'Connect Wallet';
       alert('Please install Phantom or another Solana wallet');
       window.open('https://phantom.app/', '_blank');
       return;
@@ -3750,6 +3751,28 @@ async function connectWallet() {
     await fetchBalance();
     updateUI();
     updateBurnStatus();
+    
+    // Remove loading class on success
+    walletTopBtn.classList.remove('loading');
+    walletBtnText.textContent = 'Wallet';
+    
+  } catch (error) {
+    console.error('Connection error:', error);
+    // Remove loading class on error
+    walletTopBtn.classList.remove('loading');
+    walletBtnText.textContent = 'Connect Wallet';
+    alert('Failed to connect wallet');
+  }
+}
+  // Add this at the end of your connectWallet function, right after await wallet.connect()
+setTimeout(() => {
+  walletTopBtn.classList.remove('loading');
+  if (publicKey) {
+    walletBtnText.textContent = 'Wallet';
+  } else {
+    walletBtnText.textContent = 'Connect Wallet';
+  }
+}, 5000); // Remove loading after 5 seconds no matter what
     
     // Remove loading class
     walletTopBtn.classList.remove('loading');
@@ -3765,6 +3788,10 @@ async function connectWallet() {
 // Disconnect wallet
 async function disconnectWallet() {
   try {
+    // Add loading class to button
+    walletTopBtn.classList.add('loading');
+    walletBtnText.textContent = 'Disconnecting...';
+    
     if (wallet) {
       await wallet.disconnect();
     }
@@ -3781,6 +3808,10 @@ async function disconnectWallet() {
   updateUI();
   updateBurnStatus();
   walletDropdown.classList.remove('active');
+  
+  // Remove loading class
+  walletTopBtn.classList.remove('loading');
+  walletBtnText.textContent = 'Connect Wallet';
   
   console.log('Wallet disconnected and reset');
 }
@@ -4417,6 +4448,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
