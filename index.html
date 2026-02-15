@@ -3762,22 +3762,28 @@ async function connectWallet() {
   }
 }
 
-  // Disconnect wallet
-  async function disconnectWallet() {
-    try {
-      if (wallet) {
-        await wallet.disconnect();
-        // The 'disconnect' event will handle the rest
-      }
-    } catch (error) {
-      console.error('Disconnect error:', error);
-      // Force disconnect UI even if error
-      publicKey = null;
-      walletBalance = 0;
-      updateUI();
-      updateBurnStatus();
+// Disconnect wallet
+async function disconnectWallet() {
+  try {
+    if (wallet) {
+      await wallet.disconnect();
     }
+  } catch (error) {
+    console.error('Disconnect error:', error);
   }
+  
+  // Force clear ALL wallet data regardless of what happened above
+  publicKey = null;
+  walletBalance = 0;
+  wallet = window.solana; // Re-initialize wallet object but not connected
+  
+  // Force update UI
+  updateUI();
+  updateBurnStatus();
+  walletDropdown.classList.remove('active');
+  
+  console.log('Wallet disconnected and reset');
+}
 
   // Copy address
   copyWalletAddress.addEventListener('click', () => {
@@ -4411,6 +4417,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
