@@ -3816,8 +3816,8 @@ console.log('To account:', toTokenAccount.toString());
       statusMessage.textContent = 'Creating burn account...';
       console.log('Creating burn token account...');
 const createAccountIx = solanaWeb3.Token.createAssociatedTokenAccountInstruction(
-  solanaWeb3.Token.ASSOCIATED_PROGRAM_ID,
-  solanaWeb3.Token.TOKEN_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  TOKEN_2022_PROGRAM_ID,
   new solanaWeb3.PublicKey(SYNTA_MINT),
   toTokenAccount,
   burnWallet,
@@ -4417,6 +4417,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
