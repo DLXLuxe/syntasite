@@ -3939,18 +3939,23 @@ console.log('To account:', toTokenAccount.toString());
 }
     
 statusMessage.textContent = 'Creating transfer instruction...';
+console.log('Creating transfer instruction with amount:', lamports, 'decimals:', DECIMALS);
 
-// For Token-2022, use transferChecked with decimals
-const transferInstruction = solanaWeb3.Token.createTransferCheckedInstruction(
-  TOKEN_2022_PROGRAM_ID,
-  fromTokenAccount,
-  new solanaWeb3.PublicKey(SYNTA_MINT),  // Mint address required for transferChecked
-  toTokenAccount,
-  ownerPublicKey,
-  [],
-  lamports,
-  DECIMALS  // Your token decimals (6)
-);
+// Manually create transfer checked instruction for Token-2022
+const transferInstruction = new solanaWeb3.TransactionInstruction({
+  keys: [
+    { pubkey: fromTokenAccount, isSigner: false, isWritable: true },      // source
+    { pubkey: new solanaWeb3.PublicKey(SYNTA_MINT), isSigner: false, isWritable: false }, // mint
+    { pubkey: toTokenAccount, isSigner: false, isWritable: true },        // destination
+    { pubkey: ownerPublicKey, isSigner: true, isWritable: false },        // authority
+  ],
+  programId: TOKEN_2022_PROGRAM_ID,
+  data: new Uint8Array([
+    0x0b, // transfer checked instruction index
+    ...new Uint8Array(new solanaWeb3.util.uint64(lamports).toArray()), // amount
+    ...new Uint8Array([DECIMALS]), // decimals
+  ])
+});
 transaction.add(transferInstruction);
     
     statusMessage.textContent = 'Getting recent blockhash...';
@@ -4426,6 +4431,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
