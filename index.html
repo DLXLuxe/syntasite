@@ -5,32 +5,7 @@
 <title>SYNTA</title>
 <script src="https://unpkg.com/@solana/web3.js@1.87.6/lib/index.iife.min.js"></script>
 <style>
-  /* Loading animation for connect button */
-.wallet-connect-btn.loading {
-  position: relative;
-  color: transparent !important;
-  pointer-events: none;
-  opacity: 0.8;
-}
-
-.wallet-connect-btn.loading::after {
-  content: '';
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  top: 50%;
-  left: 50%;
-  margin-left: -10px;
-  margin-top: -10px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: button-spin 0.8s linear infinite;
-}
-
-@keyframes button-spin {
-  to { transform: rotate(360deg); }
-}
+ 
 .cookie-consent-banner {
   position: fixed;
   bottom: 20px;
@@ -393,6 +368,32 @@ input:disabled + .cookie-toggle-slider:before {
   }
 }
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
+   /* Loading animation for connect button */
+.wallet-connect-btn.loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.wallet-connect-btn.loading::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin-left: -10px;
+  margin-top: -10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: button-spin 0.8s linear infinite;
+}
+
+@keyframes button-spin {
+  to { transform: rotate(360deg); }
+}
 .manifesto-frame {
   max-width: 800px;
   margin: 300px auto 0px auto; 
@@ -4448,6 +4449,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
