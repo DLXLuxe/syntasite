@@ -3220,6 +3220,112 @@ target="_blank"
 </div>
 </div>
 <script>
+  function acceptAllCookies() {
+  const preferences = {
+    essential: true,
+    analytics: true,
+    preferences: true,
+    marketing: true,
+    timestamp: new Date().toISOString()
+  };
+  
+  localStorage.setItem('cookieConsent', JSON.stringify(preferences));
+  document.getElementById('cookieConsentBanner').style.display = 'none';
+  applyCookiePreferences(preferences);
+  
+  console.log('Cookie consent accepted (all)');
+}
+
+function acceptEssentialCookies() {
+  const preferences = {
+    essential: true,
+    analytics: false,
+    preferences: false,
+    marketing: false,
+    timestamp: new Date().toISOString()
+  };
+  
+  localStorage.setItem('cookieConsent', JSON.stringify(preferences));
+  document.getElementById('cookieConsentBanner').style.display = 'none';
+  applyCookiePreferences(preferences);
+  
+  console.log('Cookie consent accepted (essential only)');
+}
+
+function openCookieSettings() {
+  document.getElementById('cookieSettingsPanel').classList.add('active');
+  
+  const savedPrefs = localStorage.getItem('cookieConsent');
+  if (savedPrefs) {
+    const prefs = JSON.parse(savedPrefs);
+    document.getElementById('analyticsCookies').checked = prefs.analytics || false;
+    document.getElementById('preferenceCookies').checked = prefs.preferences || false;
+    document.getElementById('marketingCookies').checked = prefs.marketing || false;
+  } else {
+    document.getElementById('analyticsCookies').checked = true;
+    document.getElementById('preferenceCookies').checked = true;
+    document.getElementById('marketingCookies').checked = false;
+  }
+}
+
+function closeCookieSettings() {
+  document.getElementById('cookieSettingsPanel').classList.remove('active');
+}
+
+function saveCookiePreferences() {
+  const preferences = {
+    essential: true,
+    analytics: document.getElementById('analyticsCookies').checked,
+    preferences: document.getElementById('preferenceCookies').checked,
+    marketing: document.getElementById('marketingCookies').checked,
+    timestamp: new Date().toISOString()
+  };
+  
+  localStorage.setItem('cookieConsent', JSON.stringify(preferences));
+  document.getElementById('cookieConsentBanner').style.display = 'none';
+  applyCookiePreferences(preferences);
+  
+  console.log('Cookie preferences saved:', preferences);
+}
+
+function showCookieSettings() {
+  document.getElementById('cookieConsentBanner').style.display = 'block';
+  openCookieSettings();
+}
+
+function applyCookiePreferences(preferences) {
+  const prefs = typeof preferences === 'string' ? JSON.parse(preferences) : preferences;
+  
+  if (prefs.analytics) {
+    enableAnalytics();
+  } else {
+    disableAnalytics();
+  }
+  
+  if (prefs.preferences) {
+    loadUserPreferences();
+  }
+  
+  if (prefs.marketing) {
+    enableMarketing();
+  }
+}
+
+function enableAnalytics() {
+  console.log('Analytics enabled');
+}
+
+function disableAnalytics() {
+  console.log('Analytics disabled');
+}
+
+function loadUserPreferences() {
+  console.log('Loading user preferences');
+}
+
+function enableMarketing() {
+  console.log('Marketing cookies enabled');
+}
   // Add this missing function
 function updateTimeDisplay() {
   // This is called by the audio player but doesn't exist
@@ -3999,112 +4105,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 })();
 
-function acceptAllCookies() {
-  const preferences = {
-    essential: true,
-    analytics: true,
-    preferences: true,
-    marketing: true,
-    timestamp: new Date().toISOString()
-  };
-  
-  localStorage.setItem('cookieConsent', JSON.stringify(preferences));
-  document.getElementById('cookieConsentBanner').style.display = 'none';
-  applyCookiePreferences(preferences);
-  
-  console.log('Cookie consent accepted (all)');
-}
 
-function acceptEssentialCookies() {
-  const preferences = {
-    essential: true,
-    analytics: false,
-    preferences: false,
-    marketing: false,
-    timestamp: new Date().toISOString()
-  };
-  
-  localStorage.setItem('cookieConsent', JSON.stringify(preferences));
-  document.getElementById('cookieConsentBanner').style.display = 'none';
-  applyCookiePreferences(preferences);
-  
-  console.log('Cookie consent accepted (essential only)');
-}
-
-function openCookieSettings() {
-  document.getElementById('cookieSettingsPanel').classList.add('active');
-  
-  const savedPrefs = localStorage.getItem('cookieConsent');
-  if (savedPrefs) {
-    const prefs = JSON.parse(savedPrefs);
-    document.getElementById('analyticsCookies').checked = prefs.analytics || false;
-    document.getElementById('preferenceCookies').checked = prefs.preferences || false;
-    document.getElementById('marketingCookies').checked = prefs.marketing || false;
-  } else {
-    document.getElementById('analyticsCookies').checked = true;
-    document.getElementById('preferenceCookies').checked = true;
-    document.getElementById('marketingCookies').checked = false;
-  }
-}
-
-function closeCookieSettings() {
-  document.getElementById('cookieSettingsPanel').classList.remove('active');
-}
-
-function saveCookiePreferences() {
-  const preferences = {
-    essential: true,
-    analytics: document.getElementById('analyticsCookies').checked,
-    preferences: document.getElementById('preferenceCookies').checked,
-    marketing: document.getElementById('marketingCookies').checked,
-    timestamp: new Date().toISOString()
-  };
-  
-  localStorage.setItem('cookieConsent', JSON.stringify(preferences));
-  document.getElementById('cookieConsentBanner').style.display = 'none';
-  applyCookiePreferences(preferences);
-  
-  console.log('Cookie preferences saved:', preferences);
-}
-
-function showCookieSettings() {
-  document.getElementById('cookieConsentBanner').style.display = 'block';
-  openCookieSettings();
-}
-
-function applyCookiePreferences(preferences) {
-  const prefs = typeof preferences === 'string' ? JSON.parse(preferences) : preferences;
-  
-  if (prefs.analytics) {
-    enableAnalytics();
-  } else {
-    disableAnalytics();
-  }
-  
-  if (prefs.preferences) {
-    loadUserPreferences();
-  }
-  
-  if (prefs.marketing) {
-    enableMarketing();
-  }
-}
-
-function enableAnalytics() {
-  console.log('Analytics enabled');
-}
-
-function disableAnalytics() {
-  console.log('Analytics disabled');
-}
-
-function loadUserPreferences() {
-  console.log('Loading user preferences');
-}
-
-function enableMarketing() {
-  console.log('Marketing cookies enabled');
-}
 </script>
 <section class="section">
   <div class="grid">
@@ -4418,6 +4419,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
