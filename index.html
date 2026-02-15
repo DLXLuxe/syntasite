@@ -3825,15 +3825,7 @@ async function connectWallet() {
     document.body.style.overflow = 'auto';
   });
 
-  // Close modal when clicking outside
-  burnModal.addEventListener('click', (e) => {
-    if (e.target === burnModal) {
-      burnModal.classList.remove('active');
-      document.body.style.overflow = 'auto';
-    }
-  });
-
-confirmBurn.addEventListener('click', async () => {
+ confirmBurn.addEventListener('click', async () => {
   if (!publicKey) {
     alert('Please connect your wallet first');
     return;
@@ -4419,6 +4411,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
