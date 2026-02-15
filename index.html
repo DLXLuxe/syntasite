@@ -3794,6 +3794,7 @@ async function disconnectWallet() {
     const connection = getConnection();
     const solBalance = await connection.getBalance(publicKey);
     console.log('SOL balance:', solBalance / 1e9, 'SOL');
+    if (solBalance < 10000000) {
       alert('⚠️ You need at least 0.01 SOL for transaction fees. Please add SOL to your wallet.');
       return;
     }
@@ -4273,3 +4274,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
