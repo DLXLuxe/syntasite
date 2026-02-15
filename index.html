@@ -3826,18 +3826,20 @@ const createAccountIx = solanaWeb3.Token.createAssociatedTokenAccountInstruction
       transaction.add(createAccountIx);
     }
     
-    statusMessage.textContent = 'Creating transfer instruction...';
-    
-// Create transfer instruction
-const transferInstruction = solanaWeb3.Token.createTransferInstruction(
+statusMessage.textContent = 'Creating transfer instruction...';
+
+// For Token-2022, use transferChecked with decimals
+const transferInstruction = solanaWeb3.Token.createTransferCheckedInstruction(
   TOKEN_2022_PROGRAM_ID,
   fromTokenAccount,
+  new solanaWeb3.PublicKey(SYNTA_MINT),  // Mint address required for transferChecked
   toTokenAccount,
   ownerPublicKey,
   [],
-  lamports
+  lamports,
+  DECIMALS  // Your token decimals (6)
 );
-    transaction.add(transferInstruction);
+transaction.add(transferInstruction);
     
     statusMessage.textContent = 'Getting recent blockhash...';
     const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
@@ -4417,6 +4419,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
