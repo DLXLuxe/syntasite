@@ -3918,18 +3918,25 @@ console.log('To account:', toTokenAccount.toString());
     console.log('To account exists:', !!toAccountInfo);
     
     if (!toAccountInfo) {
-      statusMessage.textContent = 'Creating burn account...';
-      console.log('Creating burn token account...');
-const createAccountIx = solanaWeb3.Token.createAssociatedTokenAccountInstruction(
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_2022_PROGRAM_ID,
-  new solanaWeb3.PublicKey(SYNTA_MINT),
-  toTokenAccount,
-  burnWallet,
-  ownerPublicKey // Payer
-);
-      transaction.add(createAccountIx);
-    }
+  statusMessage.textContent = 'Creating burn account...';
+  console.log('Creating burn token account...');
+  
+  // Manually create the instruction for Token-2022
+  const createAccountIx = new solanaWeb3.TransactionInstruction({
+    keys: [
+      { pubkey: ownerPublicKey, isSigner: true, isWritable: true },      // payer
+      { pubkey: toTokenAccount, isSigner: false, isWritable: true },     // ata
+      { pubkey: burnWallet, isSigner: false, isWritable: false },        // owner (burn address)
+      { pubkey: new solanaWeb3.PublicKey(SYNTA_MINT), isSigner: false, isWritable: false }, // mint
+      { pubkey: solanaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
+      { pubkey: TOKEN_2022_PROGRAM_ID, isSigner: false, isWritable: false },
+      { pubkey: solanaWeb3.SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
+    ],
+    programId: ASSOCIATED_TOKEN_PROGRAM_ID,
+    data: Buffer.from([])
+  });
+  transaction.add(createAccountIx);
+}
     
 statusMessage.textContent = 'Creating transfer instruction...';
 
@@ -4419,6 +4426,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
