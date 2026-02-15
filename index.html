@@ -3730,6 +3730,12 @@ confirmBurn.addEventListener('click', async () => {
     const lamports = Math.floor(amount * Math.pow(10, DECIMALS));
     console.log('Amount:', amount, 'Lamports:', lamports);
     console.log('PublicKey:', publicKey.toString());
+
+// Token-2022 Program ID
+const TOKEN_2022_PROGRAM_ID = new solanaWeb3.PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
+// Associated Token Program ID (same for both token standards)
+const ASSOCIATED_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
+
     
     statusMessage.textContent = 'Finding token accounts...';
     
@@ -3751,7 +3757,7 @@ const fromTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
     TOKEN_2022_PROGRAM_ID.toBuffer(),
     new solanaWeb3.PublicKey(SYNTA_MINT).toBuffer()
   ],
-  solanaWeb3.Token.ASSOCIATED_PROGRAM_ID
+  ASSOCIATED_TOKEN_PROGRAM_ID
 )[0];
 console.log('From account:', fromTokenAccount.toString());
 
@@ -3782,7 +3788,7 @@ const toTokenAccount = solanaWeb3.PublicKey.findProgramAddressSync(
     TOKEN_2022_PROGRAM_ID.toBuffer(),
     mintPubkey.toBuffer()
   ],
-  solanaWeb3.Token.ASSOCIATED_PROGRAM_ID
+  ASSOCIATED_TOKEN_PROGRAM_ID
 )[0];
 console.log('To account:', toTokenAccount.toString());
 
@@ -3809,15 +3815,14 @@ console.log('To account:', toTokenAccount.toString());
     if (!toAccountInfo) {
       statusMessage.textContent = 'Creating burn account...';
       console.log('Creating burn token account...');
-      
-      const createAccountIx = solanaWeb3.Token.createAssociatedTokenAccountInstruction(
-        solanaWeb3.Token.ASSOCIATED_PROGRAM_ID,
-        solanaWeb3.Token.TOKEN_PROGRAM_ID,
-        new solanaWeb3.PublicKey(SYNTA_MINT),
-        toTokenAccount,
-        burnWallet,
-        ownerPublicKey // Payer
-      );
+const createAccountIx = solanaWeb3.Token.createAssociatedTokenAccountInstruction(
+  solanaWeb3.Token.ASSOCIATED_PROGRAM_ID,
+  solanaWeb3.Token.TOKEN_PROGRAM_ID,
+  new solanaWeb3.PublicKey(SYNTA_MINT),
+  toTokenAccount,
+  burnWallet,
+  ownerPublicKey // Payer
+);
       transaction.add(createAccountIx);
     }
     
@@ -4412,6 +4417,7 @@ function enableMarketing() {
 </div>
 </body>
 </html>
+
 
 
 
