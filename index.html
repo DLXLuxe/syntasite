@@ -3834,79 +3834,102 @@ confirmBurn.addEventListener('click', async () => {
   try {
     // Calculate lamports (amount * 10^decimals)
     const lamports = Math.floor(amount * Math.pow(10, DECIMALS));
+    console.log('========== BURN DEBUG ==========');
     console.log('Amount:', amount, 'Lamports:', lamports);
     console.log('PublicKey:', publicKey.toString());
+    console.log('Token Mint:', SYNTA_MINT);
+    console.log('Decimals:', DECIMALS);
 
-// Token-2022 Program ID
-const TOKEN_2022_PROGRAM_ID = new solanaWeb3.PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
-// Associated Token Program ID (same for both token standards)
-const ASSOCIATED_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
-
+    // Token-2022 Program ID
+    const TOKEN_2022_PROGRAM_ID = new solanaWeb3.PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
+    const ASSOCIATED_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
     
     statusMessage.textContent = 'Finding token accounts...';
     
-   // Make sure publicKey is a PublicKey object
-let ownerPublicKey;
-if (typeof publicKey === 'string') {
-  ownerPublicKey = new solanaWeb3.PublicKey(publicKey);
-} else {
-  ownerPublicKey = publicKey;
-}
-console.log('Owner public key:', ownerPublicKey.toString());
+    // Make sure publicKey is a PublicKey object
+    let ownerPublicKey;
+    if (typeof publicKey === 'string') {
+      ownerPublicKey = new solanaWeb3.PublicKey(publicKey);
+    } else {
+      ownerPublicKey = publicKey;
+    }
+    console.log('Owner public key:', ownerPublicKey.toString());
 
+    // Get the user's token account
+    const fromTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
+      [
+        ownerPublicKey.toBuffer(),
+        TOKEN_2022_PROGRAM_ID.toBuffer(),
+        new solanaWeb3.PublicKey(SYNTA_MINT).toBuffer()
+      ],
+      ASSOCIATED_TOKEN_PROGRAM_ID
+    )[0];
+    console.log('From account:', fromTokenAccount.toString());
 
+    // Get the burn address token account
+    console.log('Creating burn wallet from address:', BURN_ADDRESS);
+    let burnWallet;
+    try {
+      burnWallet = new solanaWeb3.PublicKey(BURN_ADDRESS);
+      console.log('Burn wallet created:', burnWallet.toString());
+    } catch (e) {
+      console.error('Failed to create burn wallet:', e);
+      throw new Error('Invalid burn address');
+    }
 
-const fromTokenAccount = await solanaWeb3.PublicKey.findProgramAddressSync(
-  [
-    ownerPublicKey.toBuffer(),
-    TOKEN_2022_PROGRAM_ID.toBuffer(),
-    new solanaWeb3.PublicKey(SYNTA_MINT).toBuffer()
-  ],
-  ASSOCIATED_TOKEN_PROGRAM_ID
-)[0];
-console.log('From account:', fromTokenAccount.toString());
+    let mintPubkey;
+    try {
+      mintPubkey = new solanaWeb3.PublicKey(SYNTA_MINT);
+      console.log('Mint pubkey created:', mintPubkey.toString());
+    } catch (e) {
+      console.error('Failed to create mint pubkey:', e);
+      throw new Error('Invalid token mint address');
+    }
 
-// Get the burn address token account
-console.log('Creating burn wallet from address:', BURN_ADDRESS);
-let burnWallet;
-try {
-  burnWallet = new solanaWeb3.PublicKey(BURN_ADDRESS);
-  console.log('Burn wallet created:', burnWallet.toString());
-} catch (e) {
-  console.error('Failed to create burn wallet:', e);
-  throw new Error('Invalid burn address');
-}
+    console.log('Calling findProgramAddressSync for burn account');
+    const toTokenAccount = solanaWeb3.PublicKey.findProgramAddressSync(
+      [
+        burnWallet.toBuffer(),
+        TOKEN_2022_PROGRAM_ID.toBuffer(),
+        mintPubkey.toBuffer()
+      ],
+      ASSOCIATED_TOKEN_PROGRAM_ID
+    )[0];
+    console.log('To account:', toTokenAccount.toString());
 
-let mintPubkey;
-try {
-  mintPubkey = new solanaWeb3.PublicKey(SYNTA_MINT);
-  console.log('Mint pubkey created:', mintPubkey.toString());
-} catch (e) {
-  console.error('Failed to create mint pubkey:', e);
-  throw new Error('Invalid token mint address');
-}
-
-console.log('All objects validated, calling findProgramAddressSync');
-const toTokenAccount = solanaWeb3.PublicKey.findProgramAddressSync(
-  [
-    burnWallet.toBuffer(),
-    TOKEN_2022_PROGRAM_ID.toBuffer(),
-    mintPubkey.toBuffer()
-  ],
-  ASSOCIATED_TOKEN_PROGRAM_ID
-)[0];
-console.log('To account:', toTokenAccount.toString());
-
-    
     statusMessage.textContent = 'Checking accounts...';
     
     // Create connection with current working RPC
     const connection = getConnection();
     
-    // Check if from account exists
+    // Check if from account exists and get balance
     const fromAccountInfo = await connection.getAccountInfo(fromTokenAccount);
     console.log('From account exists:', !!fromAccountInfo);
-    if (!fromAccountInfo) {
+    
+    if (fromAccountInfo) {
+      // Decode token account data
+      try {
+        const accountData = solanaWeb3.AccountLayout.decode(fromAccountInfo.data);
+        const rawBalance = accountData.amount;
+        console.log('Raw balance from account:', rawBalance.toString());
+        console.log('Calculated balance:', Number(rawBalance) / Math.pow(10, DECIMALS));
+        console.log('Trying to burn lamports:', lamports);
+        
+        if (Number(rawBalance) < lamports) {
+          throw new Error(`Insufficient balance: Have ${Number(rawBalance)/Math.pow(10, DECIMALS)} but trying to burn ${amount}`);
+        }
+        
+        // Check if mint matches
+        const accountMint = new solanaWeb3.PublicKey(accountData.mint).toString();
+        console.log('Account mint:', accountMint);
+        console.log('Expected mint:', SYNTA_MINT);
+        if (accountMint !== SYNTA_MINT) {
+          throw new Error('Token account mint does not match expected mint');
+        }
+      } catch (e) {
+        console.log('Error decoding account:', e);
+      }
+    } else {
       throw new Error('Your token account does not exist. You may need to create it first.');
     }
     
@@ -3918,54 +3941,56 @@ console.log('To account:', toTokenAccount.toString());
     console.log('To account exists:', !!toAccountInfo);
     
     if (!toAccountInfo) {
-  statusMessage.textContent = 'Creating burn account...';
-  console.log('Creating burn token account...');
-  
-  // Manually create the instruction for Token-2022
-  const createAccountIx = new solanaWeb3.TransactionInstruction({
-    keys: [
-      { pubkey: ownerPublicKey, isSigner: true, isWritable: true },      // payer
-      { pubkey: toTokenAccount, isSigner: false, isWritable: true },     // ata
-      { pubkey: burnWallet, isSigner: false, isWritable: false },        // owner (burn address)
-      { pubkey: new solanaWeb3.PublicKey(SYNTA_MINT), isSigner: false, isWritable: false }, // mint
-      { pubkey: solanaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
-      { pubkey: TOKEN_2022_PROGRAM_ID, isSigner: false, isWritable: false },
-      { pubkey: solanaWeb3.SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
-    ],
-    programId: ASSOCIATED_TOKEN_PROGRAM_ID,
-    data: new Uint8Array([])
-  });
-  transaction.add(createAccountIx);
-}
+      statusMessage.textContent = 'Creating burn account...';
+      console.log('Creating burn token account...');
+      
+      const createAccountIx = new solanaWeb3.TransactionInstruction({
+        keys: [
+          { pubkey: ownerPublicKey, isSigner: true, isWritable: true },
+          { pubkey: toTokenAccount, isSigner: false, isWritable: true },
+          { pubkey: burnWallet, isSigner: false, isWritable: false },
+          { pubkey: mintPubkey, isSigner: false, isWritable: false },
+          { pubkey: solanaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
+          { pubkey: TOKEN_2022_PROGRAM_ID, isSigner: false, isWritable: false },
+          { pubkey: solanaWeb3.SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
+        ],
+        programId: ASSOCIATED_TOKEN_PROGRAM_ID,
+        data: new Uint8Array([])
+      });
+      transaction.add(createAccountIx);
+      console.log('Added create account instruction');
+    }
     
-statusMessage.textContent = 'Creating transfer instruction...';
-console.log('Creating transfer instruction with amount:', lamports, 'decimals:', DECIMALS);
+    statusMessage.textContent = 'Creating transfer instruction...';
+    console.log('Creating transfer instruction with amount:', lamports, 'decimals:', DECIMALS);
 
-// Create a buffer for the amount (little-endian u64)
-const amountBuffer = new ArrayBuffer(8);
-const amountView = new DataView(amountBuffer);
-amountView.setBigUint64(0, BigInt(lamports), true); // true = little-endian
+    // Create a buffer for the amount (little-endian u64)
+    const amountBuffer = new ArrayBuffer(8);
+    const amountView = new DataView(amountBuffer);
+    amountView.setBigUint64(0, BigInt(lamports), true);
 
-// Create the instruction data
-// Format: instruction byte (0x0b for transfer checked) + amount (8 bytes) + decimals (1 byte)
-const instructionData = new Uint8Array(1 + 8 + 1);
-instructionData[0] = 0x0b; // transfer checked instruction index for Token-2022
-instructionData.set(new Uint8Array(amountBuffer), 1);
-instructionData[9] = DECIMALS; // decimals at offset 9
+    // Create the instruction data
+    const instructionData = new Uint8Array(1 + 8 + 1);
+    instructionData[0] = 0x0b; // transfer checked instruction index for Token-2022
+    instructionData.set(new Uint8Array(amountBuffer), 1);
+    instructionData[9] = DECIMALS;
 
-// Manually create transfer checked instruction for Token-2022
-const transferInstruction = new solanaWeb3.TransactionInstruction({
-  keys: [
-    { pubkey: fromTokenAccount, isSigner: false, isWritable: true },      // source
-    { pubkey: new solanaWeb3.PublicKey(SYNTA_MINT), isSigner: false, isWritable: false }, // mint
-    { pubkey: toTokenAccount, isSigner: false, isWritable: true },        // destination
-    { pubkey: ownerPublicKey, isSigner: true, isWritable: false },        // authority
-  ],
-  programId: TOKEN_2022_PROGRAM_ID,
-  data: instructionData
-});
-transaction.add(transferInstruction);
-    
+    console.log('Instruction data created, length:', instructionData.length);
+    console.log('Instruction bytes:', Array.from(instructionData).map(b => b.toString(16).padStart(2,'0')).join(' '));
+
+    const transferInstruction = new solanaWeb3.TransactionInstruction({
+      keys: [
+        { pubkey: fromTokenAccount, isSigner: false, isWritable: true },
+        { pubkey: mintPubkey, isSigner: false, isWritable: false },
+        { pubkey: toTokenAccount, isSigner: false, isWritable: true },
+        { pubkey: ownerPublicKey, isSigner: true, isWritable: false },
+      ],
+      programId: TOKEN_2022_PROGRAM_ID,
+      data: instructionData
+    });
+    transaction.add(transferInstruction);
+    console.log('Added transfer instruction');
+
     statusMessage.textContent = 'Getting recent blockhash...';
     const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash;
@@ -3977,12 +4002,14 @@ transaction.add(transferInstruction);
     });
     transaction.add(computeUnitLimitIx);
     
+    console.log('Transaction instructions:', transaction.instructions.length);
+    
     statusMessage.textContent = 'Please sign the transaction in your wallet...';
     
     // Sign transaction
     const signedTransaction = await wallet.signTransaction(transaction);
     console.log('Transaction signed');
-    
+
     statusMessage.textContent = 'Sending transaction...';
     const signature = await connection.sendRawTransaction(signedTransaction.serialize());
     console.log('Transaction sent:', signature);
@@ -4046,7 +4073,6 @@ transaction.add(transferInstruction);
     statusMessage.textContent = `❌ Error: ${error.message}`;
     statusMessage.style.color = '#ff3300';
     
-    // Log more details if available
     if (error.logs) {
       console.log('Transaction logs:', error.logs);
     }
@@ -4439,6 +4465,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
