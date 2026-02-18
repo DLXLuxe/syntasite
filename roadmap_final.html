@@ -150,11 +150,12 @@ body {
 }
 
 /* Phase Cards */
-.phase-card {
-    display: flex;
-    margin-bottom: 60px;
-    position: relative;
-}
+   .phase-card {
+        justify-content: flex-start !important;
+        margin-left: 60px;
+        margin-bottom: 40px;
+        position: relative;
+    }
 
 .phase-card:nth-child(odd) {
     justify-content: flex-end;
@@ -186,17 +187,13 @@ body {
 
 /* Phase Status Dot */
 .phase-dot {
-    position: absolute;
-    left: 50%;
-    top: 40px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 3px solid rgba(124, 249, 255, 0.3);
-    background: #0a0a1a;
-    transform: translateX(-50%);
-    z-index: 2;
-}
+        left: -40px; /* Half of dot width (20px) + timeline position (30px) */
+        top: 40px;
+        width: 20px;
+        height: 20px;
+        transform: none;
+        position: absolute;
+    }
 
 .phase-card.active .phase-dot {
     background: #00ffd5;
@@ -838,3 +835,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </body>
 
 </html>
+
