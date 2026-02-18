@@ -150,12 +150,11 @@ body {
 }
 
 /* Phase Cards */
-   .phase-card {
-        justify-content: flex-start !important;
-        margin-left: 60px;
-        margin-bottom: 40px;
-        position: relative;
-    }
+.phase-card {
+    display: flex;
+    margin-bottom: 60px;
+    position: relative;
+}
 
 .phase-card:nth-child(odd) {
     justify-content: flex-end;
@@ -187,13 +186,17 @@ body {
 
 /* Phase Status Dot */
 .phase-dot {
-        left: -40px; /* Half of dot width (20px) + timeline position (30px) */
-        top: 40px;
-        width: 20px;
-        height: 20px;
-        transform: none;
-        position: absolute;
-    }
+    position: absolute;
+    left: 50%;
+    top: 40px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid rgba(124, 249, 255, 0.3);
+    background: #0a0a1a;
+    transform: translateX(-50%);
+    z-index: 2;
+}
 
 .phase-card.active .phase-dot {
     background: #00ffd5;
@@ -579,8 +582,12 @@ body {
     }
     
     .phase-dot {
-        left: 20px;
+        left: -40px; /* Half of dot width (20px) + timeline position (30px) */
+        top: 40px;
+        width: 20px;
+        height: 20px;
         transform: none;
+        position: absolute;
     }
     
     .mystery-grid {
@@ -622,11 +629,11 @@ body {
 <!-- Navigation -->
 <nav class="roadmap-nav">
     <div class="nav-container">
-        <a href="index.html" class="logo-link">
+        <a href="index_final.html" class="logo-link">
             <img src="synta.png" alt="SYNTA Logo" class="logo-img">
             <span>SYNTA</span>
         </a>
-        <a href="index.html" class="back-btn">
+        <a href="index_final.html" class="back-btn">
             ← Back to Main
         </a>
     </div>
@@ -833,6 +840,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 </body>
-
 </html>
-
