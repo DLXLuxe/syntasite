@@ -3933,14 +3933,6 @@ async function disconnectWallet() {
     }
   });
   walletDisconnect.addEventListener('click', disconnectWallet);
-  walletTopBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (publicKey) {
-      walletDropdown.classList.toggle('active');
-    } else {
-      connectWallet();
-    }
-  });
   document.addEventListener('click', (e) => {
     if (!walletTop.contains(e.target)) {
       walletDropdown.classList.remove('active');
@@ -4475,6 +4467,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
