@@ -3687,15 +3687,83 @@ async function connectWallet() {
   try {
     walletTopBtn.classList.add('loading');
     walletBtnText.textContent = 'Connecting...';
+    
     if (!window.solana) {
       walletTopBtn.classList.remove('loading');
       walletBtnText.textContent = 'Connect Wallet';
-      alert('Please install Phantom or another Solana wallet');
-      window.open('https://phantom.app/', '_blank');
+      
+      // Detect if on mobile
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        // On mobile, redirect to Phantom app or suggest installation
+        if (confirm('Phantom wallet not detected. Open Phantom app or install?')) {
+          // Try to open Phantom deep link
+          window.location.href = 'phantom://browse';
+          
+          // Fallback to app store after 2 seconds
+          setTimeout(() => {
+            if (isMobile) {
+              const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+              if (isIOS) {
+                window.location.href = 'https://apps.apple.com/app/phantom-solana-wallet/id1598432977';
+              } else {
+                window.location.href = 'https://play.google.com/store/apps/details?id=app.phantom';
+              }
+            }
+          }, 2000);
+        }
+      } else {
+        alert('Please install Phantom or another Solana wallet');
+        window.open('https://phantom.app/', '_blank');
+      }
       return;
     }
-    const resp = await window.solana.connect();
-    publicKey = resp.publicKey;
+    
+    // Check if on mobile and using in-app browser
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile && window.solana.isPhantom) {
+      // For mobile, use the mobile-specific connection method
+      try {
+        // Clear any existing session first
+        if (window.solana._publicKey) {
+          try {
+            await window.solana.disconnect();
+          } catch (e) {}
+        }
+        
+        // Request connection with mobile optimizations
+        const resp = await window.solana.connect({
+          onlyIfTrusted: false,
+          mobile: true
+        });
+        
+        publicKey = resp.publicKey;
+        
+      } catch (error) {
+        console.error('Mobile connection error:', error);
+        
+        // Try alternative mobile connection method
+        try {
+          const resp = await window.solana.request({
+            method: 'connect',
+            params: {}
+          });
+          
+          if (resp.publicKey) {
+            publicKey = new solanaWeb3.PublicKey(resp.publicKey);
+          }
+        } catch (secondError) {
+          throw new Error('Mobile connection failed. Make sure Phantom is installed and unlocked.');
+        }
+      }
+    } else {
+      // Desktop connection
+      const resp = await window.solana.connect();
+      publicKey = resp.publicKey;
+    }
+    
     await fetchBalance();
     updateUI();
     updateBurnStatus();
@@ -3706,8 +3774,80 @@ async function connectWallet() {
     console.error('Connection error:', error);
     walletTopBtn.classList.remove('loading');
     walletBtnText.textContent = 'Connect Wallet';
-    alert('Failed to connect wallet');
+    
+    // Show user-friendly error message
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      alert('Failed to connect wallet. Make sure Phantom app is installed and you are using the in-app browser.');
+    } else {
+      alert('Failed to connect wallet. Please try again.');
+    }
   }
+}
+   // Detect if running in Phantom's in-app browser
+function isPhantomInAppBrowser() {
+  return window.solana?.isPhantom && 
+         /Phantom/i.test(navigator.userAgent) && 
+         /Mobile/i.test(navigator.userAgent);
+}
+
+// Initialize connection with mobile detection
+async function init() {
+  console.log('Initializing wallet...');
+  
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  
+  if (isMobile) {
+    console.log('Mobile device detected');
+    
+    // On mobile, check if we're in Phantom browser
+    if (isPhantomInAppBrowser()) {
+      console.log('In Phantom in-app browser');
+      // Can attempt auto-connect
+    } else {
+      // Not in Phantom browser, show instructions
+      setTimeout(() => {
+        console.log('Not in Phantom browser');
+      }, 1000);
+    }
+  }
+  
+  if (window.solana) {
+    wallet = window.solana;
+    console.log('Wallet found:', wallet.isPhantom ? 'Phantom' : 'Other wallet');
+    
+    // Check if already connected
+    if (wallet.isConnected && wallet.publicKey) {
+      publicKey = wallet.publicKey;
+      await fetchBalance();
+      updateUI();
+    }
+    
+    wallet.on('connect', async () => {
+      console.log('Wallet connected');
+      publicKey = wallet.publicKey;
+      await fetchBalance();
+      updateUI();
+      updateBurnStatus();
+    });
+    
+    wallet.on('disconnect', () => {
+      console.log('Wallet disconnected');
+      publicKey = null;
+      walletBalance = 0;
+      updateUI();
+      updateBurnStatus();
+    });
+  }
+  
+  updateUI();
+  updateBurnStatus();
+  
+  burnPlanet.addEventListener('click', () => {
+    burnModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    updateBurnStatus();
+  });
 }
 async function disconnectWallet() {
   try {
@@ -4282,5 +4422,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
