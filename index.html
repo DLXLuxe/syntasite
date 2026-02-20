@@ -3590,39 +3590,6 @@ try {
 function isWalletInstalled() {
   return !!window.solana; 
 }
-async function init() {
-  console.log('Initializing wallet...');
-  if (window.solana) {
-    wallet = window.solana;
-    console.log('Wallet found:', wallet.isPhantom ? 'Phantom' : 'Other wallet');
-    if (wallet.isConnected && wallet.publicKey) {
-      publicKey = wallet.publicKey;
-      await fetchBalance();
-      updateUI();
-    }
-    wallet.on('connect', async () => {
-      console.log('Wallet connected');
-      publicKey = wallet.publicKey;
-      await fetchBalance();
-      updateUI();
-      updateBurnStatus();
-    });    
-    wallet.on('disconnect', () => {
-      console.log('Wallet disconnected');
-      publicKey = null;
-      walletBalance = 0;
-      updateUI();
-      updateBurnStatus();
-    });
-  }
-  updateUI();
-  updateBurnStatus();
-  burnPlanet.addEventListener('click', () => {
-    burnModal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    updateBurnStatus();
-  });
-}
 async function fetchBalance() {
   if (!publicKey) return 0;
   
@@ -4467,6 +4434,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
