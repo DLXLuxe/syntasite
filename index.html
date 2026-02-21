@@ -3851,6 +3851,18 @@ async function disconnectWallet() {
       copyBurnAddress.innerHTML = ' Copy Address';
     }, 2000);
   });
+  walletTopBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();    
+    if (publicKey) {
+      walletDropdown.classList.toggle('active');
+    } else {
+      if (walletTopBtn.classList.contains('loading')) {
+        return;
+      }
+      connectWallet();
+    }
+  });
   cancelBurn.addEventListener('click', () => {
     burnModal.classList.remove('active');
     document.body.style.overflow = 'auto';
@@ -4373,5 +4385,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
