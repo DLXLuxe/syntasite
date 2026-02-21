@@ -3759,7 +3759,7 @@ async function connectWalletMobile() {
     window.location.href = deepLink;
     setTimeout(() => {
       if (document.hasFocus()) {
-        if (confirm('Phantom app not found. Would you like to install it?')) {
+        if (confirm('Phantom not found. Install it?')) {
           const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
           if (isIOS) {
             window.location.href = 'https://apps.apple.com/app/phantom-solana-wallet/id1598432977';
@@ -3767,6 +3767,8 @@ async function connectWalletMobile() {
             window.location.href = 'https://play.google.com/store/apps/details?id=app.phantom';
           }
         }
+        walletTopBtn.classList.remove('loading');
+        walletBtnText.textContent = 'Connect Wallet';
       }
     }, 2000);    
   } catch (error) {
@@ -3782,38 +3784,30 @@ async function checkPhantomConnection() {
     localStorage.removeItem('phantom_connecting');
     if (window.solana) {
       try {
-        const resp = await window.solana.connect({ onlyIfTrusted: true });
-        if (resp.publicKey) {
-          publicKey = resp.publicKey;
+        if (window.solana.isConnected && window.solana.publicKey) {
+          publicKey = window.solana.publicKey;
           await fetchBalance();
           updateUI();
           updateBurnStatus();
-          console.log('Auto-connected after returning from Phantom!');
+          console.log('Connected after returning from Phantom!');
+        } else {
+          const resp = await window.solana.connect();
+          if (resp.publicKey) {
+            publicKey = resp.publicKey;
+            await fetchBalance();
+            updateUI();
+            updateBurnStatus();
+            console.log('Connected after returning from Phantom!');
+          }
         }
       } catch (error) {
-        console.log('Not auto-connected, user needs to approve in Phantom');
+        console.log('Connection approval needed:', error);
       }
     }    
     walletTopBtn.classList.remove('loading');
-    walletBtnText.textContent = 'Connect Wallet';
+    walletBtnText.textContent = publicKey ? 'Wallet' : 'Connect Wallet';
   }
 }
-walletTopBtn.addEventListener('click', (e) => {
-  e.stopPropagation();  
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);  
-  if (publicKey) {
-    walletDropdown.classList.toggle('active');
-  } else {
-    if (walletTopBtn.classList.contains('loading')) {
-      return;
-    }    
-    if (isMobile && !window.solana) {
-      connectWalletMobile();
-    } else {
-      connectWallet();
-    }
-  }
-});
 async function disconnectWallet() {
   try {
     walletTopBtn.classList.add('loading');
@@ -4379,4 +4373,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
