@@ -3066,200 +3066,248 @@ transform: translateZ(0);
 }
 @media (max-width: 768px) {
   .burn-modal.active {
-    align-items: flex-start;
-    padding: 0;
-    background: rgba(0, 0, 0, 0.95);
-  }  
+    align-items: flex-start !important;
+    padding: 0 !important;
+    background: rgba(0, 0, 0, 0.98) !important;
+  }
+  
   .burn-container {
-    width: 100%;
-    max-width: 100%;
-    height: 100vh;
-    max-height: 100vh;
-    margin: 0;
-    border-radius: 0;
-    display: flex;
-    flex-direction: column;
-  }  
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
   .burn-content {
-    flex: 1;
-    padding: 20px 16px;
-    max-height: none;
-    overflow-y: auto;
-  }  
+    flex: 1 1 auto !important;
+    padding: 20px 16px !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+  }
+  
   .burn-header {
-    padding: 20px 16px;
-    margin-bottom: 0;
-  }  
+    padding: 20px 16px !important;
+    margin-bottom: 0 !important;
+    flex-shrink: 0 !important;
+  }
+  
   .burn-title {
-    font-size: 24px;
-  }  
+    font-size: 24px !important;
+  }
+  
   .burn-subtitle {
-    font-size: 13px;
-  }  
+    font-size: 13px !important;
+  }
+  
   .burn-warning {
-    margin-bottom: 20px;
-    padding: 16px;
-  }  
+    margin-bottom: 20px !important;
+    padding: 16px !important;
+  }
+  
   .burn-address-display {
-    padding: 16px;
-    margin: 16px 0;
-  }  
+    padding: 16px !important;
+    margin: 16px 0 !important;
+  }
+  
   .burn-address {
-    font-size: 13px;
-    word-break: break-all;
-  }  
+    font-size: 13px !important;
+    word-break: break-all !important;
+  }
+  
   .amount-input {
-    padding: 14px;
-    font-size: 16px;
-  }  
+    padding: 14px !important;
+    font-size: 16px !important;
+  }
+  
   .burn-actions {
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 24px;
-  }  
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin-top: 24px !important;
+  }
+  
   .burn-btn {
-    width: 100%;
-    padding: 16px;
-    font-size: 16px;
-  }  
+    width: 100% !important;
+    padding: 16px !important;
+    font-size: 16px !important;
+  }
+  
   .transaction-status {
-    margin-top: 16px;
-    padding: 16px;
-  }  
+    margin-top: 16px !important;
+    padding: 16px !important;
+  }
+  
   .status-hash {
-    font-size: 11px;
-    word-break: break-all;
-  }  
+    font-size: 11px !important;
+    word-break: break-all !important;
+  }
+  
   .burn-footer {
-    padding: 16px;
-    font-size: 12px;
-  }  
+    padding: 16px !important;
+    font-size: 12px !important;
+  }
+  
+  /* Burn Success Modal */
   .burn-success-modal.active {
-    align-items: flex-start;
-    padding: 0;
-    background: rgba(0, 0, 0, 0.98);
-  }  
+    align-items: flex-start !important;
+    padding: 0 !important;
+    background: rgba(0, 0, 0, 0.98) !important;
+  }
+  
   .burn-success-container {
-    width: 100%;
-    max-width: 100%;
-    height: 100vh;
-    max-height: 100vh;
-    margin: 0;
-    border-radius: 0;
-    display: flex;
-    flex-direction: column;
-  }  
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
   .burn-success-header {
-    padding: 24px 16px 16px;
-  }  
+    padding: 24px 16px 16px !important;
+    flex-shrink: 0 !important;
+  }
+  
   .success-icon {
-    font-size: 48px;
-    margin-bottom: 12px;
-  }  
+    font-size: 48px !important;
+    margin-bottom: 12px !important;
+  }
+  
   .success-title {
-    font-size: 24px;
-  } 
+    font-size: 24px !important;
+  }
+  
   .burn-success-content {
-    flex: 1;
-    padding: 16px;
-    max-height: none;
-    overflow-y: auto;
-  }  
+    flex: 1 1 auto !important;
+    padding: 16px !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+  }
+  
   .success-card {
-    padding: 16px;
-    margin-bottom: 16px;
-  }  
+    padding: 16px !important;
+    margin-bottom: 16px !important;
+  }
+  
   .tx-hash-section {
-    padding: 12px;
-  }  
+    padding: 12px !important;
+  }
+  
   .tx-hash {
-    font-size: 12px;
-    padding: 12px;
-    word-break: break-all;
-  }  
+    font-size: 12px !important;
+    padding: 12px !important;
+    word-break: break-all !important;
+  }
+  
   .hash-copy-btn {
-    padding: 14px;
-    font-size: 14px;
-    margin-top: 12px;
-  }  
+    padding: 14px !important;
+    font-size: 14px !important;
+    margin-top: 12px !important;
+  }
+  
   .explorer-link {
-    padding: 14px;
-    font-size: 14px;
-  }  
+    padding: 14px !important;
+    font-size: 14px !important;
+  }
+  
   .next-steps {
-    padding: 16px;
-    margin-bottom: 16px;
-  }  
+    padding: 16px !important;
+    margin-bottom: 16px !important;
+  }
+  
   .steps-list {
-    gap: 16px;
-  }  
+    gap: 16px !important;
+  }
+  
   .step {
-    gap: 12px;
-  }  
+    gap: 12px !important;
+  }
+  
   .step-number {
-    width: 24px;
-    height: 24px;
-    font-size: 12px;
-  }  
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 12px !important;
+  }
+  
   .step-content {
-    font-size: 13px;
-  }  
+    font-size: 13px !important;
+  }
+  
   .quest-notice {
-    padding: 16px;
-  }  
+    padding: 16px !important;
+  }
+  
   .notice-list li {
-    font-size: 13px;
-    padding: 6px 0 6px 24px;
+    font-size: 13px !important;
+    padding: 6px 0 6px 24px !important;
   }
   
   .community-links {
-    gap: 8px;
-    margin-top: 16px;
-  }  
+    gap: 8px !important;
+    margin-top: 16px !important;
+  }
+  
   .community-link {
-    padding: 14px;
-    font-size: 14px;
-  }  
+    padding: 14px !important;
+    font-size: 14px !important;
+  }
+  
   .burn-success-actions {
-    flex-direction: column;
-    gap: 12px;
-    padding: 16px;
-  }  
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 16px !important;
+    flex-shrink: 0 !important;
+  }
+  
   .success-btn {
-    width: 100%;
-    padding: 16px;
-    font-size: 16px;
-  }  
+    width: 100% !important;
+    padding: 16px !important;
+    font-size: 16px !important;
+  }
+  
   .success-footer {
-    padding: 16px;
-    font-size: 12px;
-  }  
+    padding: 16px !important;
+    font-size: 12px !important;
+    flex-shrink: 0 !important;
+  }
+  
   .small-text {
-    font-size: 11px;
-    margin-top: 8px;
+    font-size: 11px !important;
+    margin-top: 8px !important;
   }
 }
+
 @media (max-width: 380px) {
   .burn-title {
-    font-size: 22px;
-  }  
+    font-size: 22px !important;
+  }
+  
   .burn-address {
-    font-size: 12px;
-  }  
+    font-size: 12px !important;
+  }
+  
   .amount-input {
-    padding: 12px;
-    font-size: 15px;
-  }  
+    padding: 12px !important;
+    font-size: 15px !important;
+  }
+  
   .burn-btn {
-    padding: 14px;
-    font-size: 15px;
-  }  
+    padding: 14px !important;
+    font-size: 15px !important;
+  }
+  
   .success-title {
-    font-size: 22px;
-  }  
+    font-size: 22px !important;
+  }
+  
   .tx-hash {
-    font-size: 11px;
-    padding: 10px;
+    font-size: 11px !important;
+    padding: 10px !important;
   }
 }
 </style>
@@ -4601,6 +4649,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
