@@ -3754,9 +3754,9 @@ async function connectWalletMobile() {
     walletTopBtn.classList.add('loading');
     walletBtnText.textContent = 'Opening Phantom...';
     localStorage.setItem('phantom_connecting', 'true');
-    const returnUrl = encodeURIComponent(window.location.href);
-    const deepLink = `phantom://browse?ref=${returnUrl}`;
-    window.location.href = deepLink;
+const returnUrl = encodeURIComponent(window.location.href);
+const universalLink = `https://phantom.app/ul/browse/${returnUrl}`;
+window.location.href = universalLink;
     setTimeout(() => {
       if (document.hasFocus()) {
         if (confirm('Phantom app not found. Would you like to install it?')) {
@@ -4379,4 +4379,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
