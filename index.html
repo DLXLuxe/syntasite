@@ -3735,19 +3735,23 @@ async function init() {
       updateUI();
     }    
     wallet.on('connect', async () => {
-      console.log('Wallet connected');
-      publicKey = wallet.publicKey;
-      await fetchBalance();
-      updateUI();
-      updateBurnStatus();
-    });    
-    wallet.on('disconnect', () => {
-      console.log('Wallet disconnected');
-      publicKey = null;
-      walletBalance = 0;
-      updateUI();
-      updateBurnStatus();
-    });
+  console.log('Wallet connected event');
+  publicKey = wallet.publicKey;
+  await fetchBalance();
+  updateUI();
+  updateBurnStatus();
+  walletTopBtn.classList.remove('loading');
+  walletBtnText.textContent = 'Wallet';
+});
+wallet.on('disconnect', () => {
+  console.log('Wallet disconnected event');
+  publicKey = null;
+  walletBalance = 0;
+  updateUI();
+  updateBurnStatus();
+  walletTopBtn.classList.remove('loading');
+  walletBtnText.textContent = 'Connect Wallet';
+});
   }  
   updateUI();
   updateBurnStatus();  
@@ -3788,22 +3792,34 @@ async function checkPhantomConnection() {
   if (wasConnecting === 'true') {
     console.log('Returned from Phantom app, checking connection...');
     localStorage.removeItem('phantom_connecting');
+    walletTopBtn.classList.remove('loading');    
     if (window.solana) {
-      try {
-        const resp = await window.solana.connect({ onlyIfTrusted: true });
-        if (resp.publicKey) {
-          publicKey = resp.publicKey;
-          await fetchBalance();
-          updateUI();
-          updateBurnStatus();
-          console.log('Auto-connected after returning from Phantom!');
+      if (window.solana.isConnected && window.solana.publicKey) {
+        console.log('Already connected, updating UI');
+        publicKey = window.solana.publicKey;
+        await fetchBalance();
+        updateUI();
+        updateBurnStatus();
+        walletBtnText.textContent = 'Wallet';
+      } else {
+        try {
+          const resp = await window.solana.connect({ onlyIfTrusted: true });
+          if (resp.publicKey) {
+            publicKey = resp.publicKey;
+            await fetchBalance();
+            updateUI();
+            updateBurnStatus();
+            walletBtnText.textContent = 'Wallet';
+            console.log('Auto-connected after returning from Phantom!');
+          }
+        } catch (error) {
+          console.log('Not auto-connected, user needs to approve in Phantom');
+          walletBtnText.textContent = 'Connect Wallet';
         }
-      } catch (error) {
-        console.log('Not auto-connected, user needs to approve in Phantom');
       }
-    }    
+    }
     walletTopBtn.classList.remove('loading');
-    walletBtnText.textContent = 'Connect Wallet';
+    walletBtnText.textContent = publicKey ? 'Wallet' : 'Connect Wallet';
   }
 }
 walletTopBtn.addEventListener('click', (e) => {
@@ -4387,6 +4403,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
