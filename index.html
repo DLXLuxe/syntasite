@@ -3767,6 +3767,9 @@ async function init() {
   if (isMobile) {
     console.log('Mobile device detected');
     
+    // Check if we're returning from Phantom
+    await checkPhantomConnection();
+    
     // On mobile, check if we're in Phantom browser
     if (isPhantomInAppBrowser()) {
       console.log('In Phantom in-app browser');
@@ -3816,13 +3819,17 @@ async function init() {
     updateBurnStatus();
   });
 }
-   async function connectWalletMobile() {
+async function connectWalletMobile() {
   try {
     walletTopBtn.classList.add('loading');
     walletBtnText.textContent = 'Opening Phantom...';
     
-    // Deep link to Phantom
-    const deepLink = `phantom://browse?ref=${encodeURIComponent(window.location.href)}`;
+    // Save a flag that we're attempting connection
+    localStorage.setItem('phantom_connecting', 'true');
+    
+    // Create the deep link with redirect back to your site
+    const returnUrl = encodeURIComponent(window.location.href);
+    const deepLink = `phantom://browse?ref=${returnUrl}`;
     
     // Try to open Phantom app
     window.location.href = deepLink;
@@ -3840,8 +3847,6 @@ async function init() {
           }
         }
       }
-      walletTopBtn.classList.remove('loading');
-      walletBtnText.textContent = 'Connect Wallet';
     }, 2000);
     
   } catch (error) {
@@ -3850,8 +3855,37 @@ async function init() {
     walletBtnText.textContent = 'Connect Wallet';
   }
 }
-
-// Update the click handler to use mobile version when appropriate
+   // Check connection status when page loads
+async function checkPhantomConnection() {
+  const wasConnecting = localStorage.getItem('phantom_connecting');
+  
+  if (wasConnecting === 'true') {
+    console.log('Returned from Phantom app, checking connection...');
+    localStorage.removeItem('phantom_connecting');
+    
+    // Check if we're now connected
+    if (window.solana) {
+      try {
+        // Try to get the current account
+        const resp = await window.solana.connect({ onlyIfTrusted: true });
+        if (resp.publicKey) {
+          publicKey = resp.publicKey;
+          await fetchBalance();
+          updateUI();
+          updateBurnStatus();
+          console.log('Auto-connected after returning from Phantom!');
+        }
+      } catch (error) {
+        console.log('Not auto-connected, user needs to approve in Phantom');
+        // If auto-connect fails, user needs to approve in Phantom
+        // You might want to show a message
+      }
+    }
+    
+    walletTopBtn.classList.remove('loading');
+    walletBtnText.textContent = 'Connect Wallet';
+  }
+}
 walletTopBtn.addEventListener('click', (e) => {
   e.stopPropagation();
   
@@ -3860,6 +3894,11 @@ walletTopBtn.addEventListener('click', (e) => {
   if (publicKey) {
     walletDropdown.classList.toggle('active');
   } else {
+    // Don't allow multiple connection attempts
+    if (walletTopBtn.classList.contains('loading')) {
+      return;
+    }
+    
     if (isMobile && !window.solana) {
       // Mobile without wallet - use deep link
       connectWalletMobile();
@@ -4434,6 +4473,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
