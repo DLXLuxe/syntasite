@@ -1477,28 +1477,109 @@ a[href="quest_final.html"] {
 }
 @media (max-width: 768px) {
   .orbital-dock {
-    display: none; 
-  }
-    .dock-item {
-    padding: 15px 25px;
-    font-size: 16px;
-  }
-    h1 {
-    font-size: clamp(40px, 10vw, 100px);
-    letter-spacing: -2px;
-  }
-    .logo {
-    width: 300px;
-  }
-    .planet {
-    width: 80px;
-    height: 80px;
+    display: none !important;
   }  
-  .floating-radio-player {
-    width: 70px;
+  .planet {
+    display: none !important;
+  }  
+  .dock-side, .dock-core, .right-dropdown {
+    display: none !important;
+  }
+  .mobile-nav {
+    display: flex !important;
+    min-height: 100vh !important;
+    background: #0a0a1a !important;
+    padding: 20px !important;
+    flex-direction: column !important;
+  }
+  .mobile-nav img {
+    width: 150px !important;
+    margin: 0 auto 20px !important;
+    display: block !important;
+  }
+  .mobile-dropdown-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+    margin: 10px 0 !important;
+  }  
+  .mobile-dropdown-btn {
+    width: 100% !important;
+    padding: 16px !important;
+    background: rgba(20, 40, 70, 0.9) !important;
+    border: 1px solid rgba(124, 249, 255, 0.3) !important;
+    border-radius: 40px !important;
+    color: #fff !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    text-align: left !important;
+    position: relative !important;
+    cursor: pointer !important;
+  }    
+  .mobile-dropdown-btn::after {
+    content: '▾' !important;
+    position: absolute !important;
+    right: 20px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: #7cf9ff !important;
+    font-size: 20px !important;
+  }  
+  .mobile-dropdown-content {
+    display: none !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-top: 8px !important;
+    padding: 12px !important;
+    background: rgba(10, 20, 40, 0.95) !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(124, 249, 255, 0.2) !important;
+  }    
+  .mobile-dropdown-content.active {
+    display: flex !important;
+  }    
+  .mobile-dropdown-item {
+    padding: 14px !important;
+    background: rgba(124, 249, 255, 0.1) !important;
+    border-radius: 30px !important;
+    color: #fff !important;
+    text-decoration: none !important;
+    font-size: 14px !important;
+    text-align: center !important;
+    border: 1px solid rgba(124, 249, 255, 0.2) !important;
+  }    
+  .mobile-dropdown-item:hover,
+  .mobile-dropdown-item:active {
+    background: rgba(124, 249, 255, 0.2) !important;
+    border-color: #7cf9ff !important;
+  }
+  #walletTopMobile {
+    width: 100% !important;
+    margin-top: 20px !important;
+  }
+  
+  #walletTopBtnMobile {
+    width: 100% !important;
+    padding: 16px !important;
+    font-size: 16px !important;
+  }
+  .hero {
+    display: none !important;
+  }
+  .certificate-container,
+  .section,
+  footer {
+    display: block !important;
+  }
+    .floating-radio-player {
+    width: 70px !important;
+    bottom: 20px !important;
+    right: 10px !important;
+    top: auto !important;
   }  
   .floating-radio-player:hover {
-    width: 250px;
+    width: 250px !important;
   }
 }
 .certificate-container {
@@ -1508,66 +1589,6 @@ a[href="quest_final.html"] {
   padding: 0 20px;
   display: flex;
   justify-content: center;
-}
-.token-certificate-modern {
-  position: relative; 
-  top: auto; 
-  left: auto; 
-  transform: none; 
-}
-.ca-frame {
-    background: linear-gradient(145deg, #0f172a, #1e293b);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 30px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-.ca-frame::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #10b981);
-}
-.ca-header {
-    text-align: center;
-    margin-bottom: 40px;
-}
-.ca-badge {
-    display: inline-block;
-    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-    color: white;
-    padding: 8px 20px;
-    border-radius: 50px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-}
-.ca-header h1 {
-    font-size: 32px;
-    font-weight: 700;
-    margin: 0 0 8px 0;
-    background: linear-gradient(90deg, #fff, #a5b4fc);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
-.ca-subtitle {
-    color: #94a3b8;
-    font-size: 16px;
-    margin: 0;
-}
-.token-info-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    margin-bottom: 30px;
 }
 @media (min-width: 768px) {
     .token-info-grid {
@@ -4601,6 +4622,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
