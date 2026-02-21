@@ -3205,6 +3205,47 @@ transform: translateZ(0);
 </style>
 </head>
 <body>
+<div class="mobile-nav" style="display: none; padding: 20px; background: #0a0a1a; flex-direction: column;">
+  <img src="synta.png" alt="SYNTA Logo" style="width: 150px; margin: 0 auto 20px; display: block;">  
+  <div class="mobile-dropdown-container">
+    <button class="mobile-dropdown-btn" onclick="toggleMobileDropdown('dex')">BUY ON DEX</button>
+    <div class="mobile-dropdown-content" id="mobile-dex">
+      <a href="https://raydium.io/swap/?inputCurrency=sol&outputCurrency=2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La" target="_blank" class="mobile-dropdown-item">Raydium</a>
+      <a href="https://jup.ag/swap/SOL-2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La" target="_blank" class="mobile-dropdown-item">Jupiter</a>
+      <a href="https://www.orca.so/swap?inputCurrency=sol&outputCurrency=2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La" target="_blank" class="mobile-dropdown-item">Orca</a>
+    </div>
+  </div>
+  <div class="mobile-dropdown-container">
+    <button class="mobile-dropdown-btn" onclick="toggleMobileDropdown('liq')">GIVE LIQUIDITY</button>
+    <div class="mobile-dropdown-content" id="mobile-liq">
+      <a href="https://raydium.io/liquidity/?ammId=YOUR_POOL_ID_HERE" target="_blank" class="mobile-dropdown-item">on Raydium</a>
+      <a href="https://www.orca.so/liquidity" target="_blank" class="mobile-dropdown-item">on Orca</a>
+      <a href="https://app.meteora.ag/pools" target="_blank" class="mobile-dropdown-item">on Meteora</a>
+    </div>
+  </div>
+  <div class="mobile-dropdown-container">
+    <button class="mobile-dropdown-btn" onclick="toggleMobileDropdown('community')">COMMUNITY</button>
+    <div class="mobile-dropdown-content" id="mobile-community">
+      <a href="https://x.com/SYNTAofficial" target="_blank" class="mobile-dropdown-item">Twitter / X</a>
+      <a href="https://discord.gg/StWab7Bcc9" target="_blank" class="mobile-dropdown-item">Discord</a>
+    </div>
+  </div>
+  <div class="mobile-dropdown-container">
+    <button class="mobile-dropdown-btn" onclick="toggleMobileDropdown('about')">ABOUT SYNTA</button>
+    <div class="mobile-dropdown-content" id="mobile-about">
+      <a href="roadmap_final.html" class="mobile-dropdown-item">Roadmap</a>
+      <a href="whitepaper.html" class="mobile-dropdown-item">Whitepaper</a>
+      <a href="https://dexscreener.com/solana/2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La" target="_blank" class="mobile-dropdown-item">DEX Screener</a>
+    </div>
+  </div>
+  <a href="quest_final.html" class="mobile-dropdown-btn" style="text-align: center; text-decoration: none; margin-top: 10px;">QUEST</a>  
+  <div class="wallet-dock-item" id="walletTopMobile" style="margin-top: 20px;">
+    <button class="wallet-connect-btn" id="walletTopBtnMobile" style="width: 100%;">
+      <span class="wallet-text" id="walletBtnTextMobile">Connect Wallet</span>
+      <span class="wallet-address" id="walletShortAddressMobile"></span>
+    </button>
+  </div>
+</div>
 <div class="orbital-dock">
  <div class="dock-side left">
   <div class="dropdown-container">
@@ -4232,6 +4273,25 @@ document.addEventListener('DOMContentLoaded', function() {
     applyCookiePreferences(cookieConsent);
   }
 })();
+function toggleMobileDropdown(id) {
+  const element = document.getElementById(`mobile-${id}`);
+  if (element) {
+    element.classList.toggle('active');
+  }
+}
+document.addEventListener('DOMContentLoaded', function() {
+  const mobileWalletBtn = document.getElementById('walletTopBtnMobile');
+  if (mobileWalletBtn) {
+    mobileWalletBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (publicKey) {
+      } else {
+        if (mobileWalletBtn.classList.contains('loading')) return;
+        connectWallet();
+      }
+    });
+  }
+});
 </script>
 <section class="section">
   <div class="grid">
@@ -4541,6 +4601,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
