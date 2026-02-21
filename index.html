@@ -2270,6 +2270,11 @@ h1 {
   transform: translateX(20px);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
+.community-buttons.active {
+  display: flex;
+  opacity: 1;
+  transform: translateX(0);
+}
 .about-buttons {
   position: absolute;
   top: -100%;
@@ -2283,6 +2288,11 @@ h1 {
   opacity: 0;
   transform: translateX(20px); 
   transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.about-buttons.active {
+  display: flex;
+  opacity: 1;
+  transform: translateX(0);
 }
 .community-drop, .about-drop {
   position: relative;
@@ -2303,12 +2313,6 @@ transform-origin: 40% 50%;
 .dropdown-container:hover .community-drop::after,
 .dropdown-container:hover .about-drop::after {
   transform: translateY(-50%) rotate(360deg);
-}
-.dropdown-container:hover .community-buttons,
-.dropdown-container:hover .about-buttons {
-  display: flex;
-  opacity: 1;
-  transform: translateX(0);
 }
 .floating-radio-player {
     position: absolute;
@@ -2687,6 +2691,11 @@ opacity: 0;
   transition: all 0.35s ease;
   text-align: center;
 }
+.dex-buttons.active {
+  display: flex;
+  opacity: 1;
+  transform: translateX(0);
+}
 .dex-button:hover {
   color: #fff;
   border-color: rgba(160, 220, 255, 0.9);
@@ -2707,6 +2716,11 @@ opacity: 0;
   transform: translateX(-20px);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
+.liquidity-buttons.active {
+  display: flex;
+  opacity: 1;
+  transform: translateX(0);
+}
 .liquidity-drop {
   position: relative;
   padding-right: 65px;
@@ -2724,12 +2738,6 @@ transform-origin: 40% 50%;
 }
 .dropdown-container:hover .liquidity-drop::after {
   transform: translateY(-50%) rotate(360deg);
-}
-.dropdown-container:hover .liquidity-buttons {
-  display: flex;
-}
-.dropdown-container:hover .dex-buttons {
-  display: flex;
 }
 .buy-dex {
   position: relative;
@@ -3373,40 +3381,46 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
   const dropdownContainers = document.querySelectorAll('.dropdown-container');
   
-  dropdownContainers.forEach(function(container) {
-    let timeout;
-    
-    container.addEventListener('mouseenter', function() {
-      clearTimeout(timeout);
-      const dropdown = this.querySelector('.dex-buttons, .liquidity-buttons, .community-buttons, .about-buttons');
-      if (!dropdown) return;
-      if (dropdown.classList.contains('community-buttons') || dropdown.classList.contains('about-buttons')) {
-        dropdown.style.transform = 'translateX(20px)'; 
-      } else {
-        dropdown.style.transform = 'translateX(-20px)'; 
+  // Function to close all dropdowns
+  function closeAllDropdowns(except = null) {
+    document.querySelectorAll('.dex-buttons, .liquidity-buttons, .community-buttons, .about-buttons').forEach(dropdown => {
+      if (dropdown !== except) {
+        dropdown.classList.remove('active');
+        dropdown.style.display = 'none';
       }
-            dropdown.style.opacity = '0';
-      dropdown.style.display = 'flex';
-            dropdown.offsetHeight;      
-      dropdown.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-      dropdown.style.opacity = '1';
-      dropdown.style.transform = 'translateX(0)';
-    });    
-    container.addEventListener('mouseleave', function() {
-      const dropdown = this.querySelector('.dex-buttons, .liquidity-buttons, .community-buttons, .about-buttons');
-      if (!dropdown) return;      
-      timeout = setTimeout(function() {
-        if (dropdown.classList.contains('community-buttons') || dropdown.classList.contains('about-buttons')) {
-          dropdown.style.transform = 'translateX(20px)'; 
-        } else {
-          dropdown.style.transform = 'translateX(-20px)'; 
-        }        
-        dropdown.style.opacity = '0';
-        setTimeout(function() {
-          dropdown.style.display = 'none';
-        }, 600);
-      }, 200);
     });
+  }
+  
+  dropdownContainers.forEach(function(container) {
+    const trigger = container.querySelector('.dock-item');
+    const dropdown = container.querySelector('.dex-buttons, .liquidity-buttons, .community-buttons, .about-buttons');
+    
+    if (!trigger || !dropdown) return;
+    
+    trigger.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      if (dropdown.classList.contains('active')) {
+        dropdown.classList.remove('active');
+        dropdown.style.display = 'none';
+      } else {
+        closeAllDropdowns(dropdown);
+        dropdown.style.display = 'flex';
+        dropdown.offsetHeight;
+        dropdown.classList.add('active');
+      }
+    });
+    
+    dropdown.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  });
+  
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.dropdown-container')) {
+      closeAllDropdowns();
+    }
   });
 });
 document.addEventListener('DOMContentLoaded', function() {
