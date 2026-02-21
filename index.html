@@ -3064,6 +3064,204 @@ transform: translateZ(0);
   transform: translateY(-2px) !important;
   transition: all 0.3s ease !important;
 }
+@media (max-width: 768px) {
+  .burn-modal.active {
+    align-items: flex-start;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.95);
+  }  
+  .burn-container {
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    margin: 0;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }  
+  .burn-content {
+    flex: 1;
+    padding: 20px 16px;
+    max-height: none;
+    overflow-y: auto;
+  }  
+  .burn-header {
+    padding: 20px 16px;
+    margin-bottom: 0;
+  }  
+  .burn-title {
+    font-size: 24px;
+  }  
+  .burn-subtitle {
+    font-size: 13px;
+  }  
+  .burn-warning {
+    margin-bottom: 20px;
+    padding: 16px;
+  }  
+  .burn-address-display {
+    padding: 16px;
+    margin: 16px 0;
+  }  
+  .burn-address {
+    font-size: 13px;
+    word-break: break-all;
+  }  
+  .amount-input {
+    padding: 14px;
+    font-size: 16px;
+  }  
+  .burn-actions {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+  }  
+  .burn-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+  }  
+  .transaction-status {
+    margin-top: 16px;
+    padding: 16px;
+  }  
+  .status-hash {
+    font-size: 11px;
+    word-break: break-all;
+  }  
+  .burn-footer {
+    padding: 16px;
+    font-size: 12px;
+  }  
+  .burn-success-modal.active {
+    align-items: flex-start;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.98);
+  }  
+  .burn-success-container {
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    margin: 0;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }  
+  .burn-success-header {
+    padding: 24px 16px 16px;
+  }  
+  .success-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }  
+  .success-title {
+    font-size: 24px;
+  } 
+  .burn-success-content {
+    flex: 1;
+    padding: 16px;
+    max-height: none;
+    overflow-y: auto;
+  }  
+  .success-card {
+    padding: 16px;
+    margin-bottom: 16px;
+  }  
+  .tx-hash-section {
+    padding: 12px;
+  }  
+  .tx-hash {
+    font-size: 12px;
+    padding: 12px;
+    word-break: break-all;
+  }  
+  .hash-copy-btn {
+    padding: 14px;
+    font-size: 14px;
+    margin-top: 12px;
+  }  
+  .explorer-link {
+    padding: 14px;
+    font-size: 14px;
+  }  
+  .next-steps {
+    padding: 16px;
+    margin-bottom: 16px;
+  }  
+  .steps-list {
+    gap: 16px;
+  }  
+  .step {
+    gap: 12px;
+  }  
+  .step-number {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }  
+  .step-content {
+    font-size: 13px;
+  }  
+  .quest-notice {
+    padding: 16px;
+  }  
+  .notice-list li {
+    font-size: 13px;
+    padding: 6px 0 6px 24px;
+  }
+  
+  .community-links {
+    gap: 8px;
+    margin-top: 16px;
+  }  
+  .community-link {
+    padding: 14px;
+    font-size: 14px;
+  }  
+  .burn-success-actions {
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+  }  
+  .success-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+  }  
+  .success-footer {
+    padding: 16px;
+    font-size: 12px;
+  }  
+  .small-text {
+    font-size: 11px;
+    margin-top: 8px;
+  }
+}
+@media (max-width: 380px) {
+  .burn-title {
+    font-size: 22px;
+  }  
+  .burn-address {
+    font-size: 12px;
+  }  
+  .amount-input {
+    padding: 12px;
+    font-size: 15px;
+  }  
+  .burn-btn {
+    padding: 14px;
+    font-size: 15px;
+  }  
+  .success-title {
+    font-size: 22px;
+  }  
+  .tx-hash {
+    font-size: 11px;
+    padding: 10px;
+  }
+}
 </style>
 </head>
 <body>
@@ -4403,6 +4601,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
