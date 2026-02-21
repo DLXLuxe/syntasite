@@ -3753,10 +3753,12 @@ async function connectWalletMobile() {
   try {
     walletTopBtn.classList.add('loading');
     walletBtnText.textContent = 'Opening Phantom...';
+    
     localStorage.setItem('phantom_connecting', 'true');
-const returnUrl = encodeURIComponent(window.location.href);
-const universalLink = `https://phantom.app/ul/browse/${returnUrl}`;
-window.location.href = universalLink;
+    
+    const returnUrl = encodeURIComponent(window.location.href);
+    const deepLink = `phantom://browse?ref=${returnUrl}`;    
+    window.location.href = deepLink;    
     setTimeout(() => {
       if (document.hasFocus()) {
         if (confirm('Phantom app not found. Would you like to install it?')) {
@@ -3767,6 +3769,8 @@ window.location.href = universalLink;
             window.location.href = 'https://play.google.com/store/apps/details?id=app.phantom';
           }
         }
+        walletTopBtn.classList.remove('loading');
+        walletBtnText.textContent = 'Connect Wallet';
       }
     }, 2000);    
   } catch (error) {
@@ -3779,7 +3783,7 @@ async function checkPhantomConnection() {
   const wasConnecting = localStorage.getItem('phantom_connecting');  
   if (wasConnecting === 'true') {
     console.log('Returned from Phantom app, checking connection...');
-    localStorage.removeItem('phantom_connecting');
+    localStorage.removeItem('phantom_connecting');    
     if (window.solana) {
       try {
         const resp = await window.solana.connect({ onlyIfTrusted: true });
@@ -4379,5 +4383,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
