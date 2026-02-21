@@ -3682,13 +3682,19 @@ async function connectWallet() {
       const resp = await window.solana.connect();
       publicKey = resp.publicKey;
     }    
-        await fetchBalance();
-    console.log('Balance fetched, updating UI');
-    updateUI();
+           await fetchBalance();
+    console.log('Balance fetched:', walletBalance);
+    if (publicKey) {
+      const short = publicKey.toString().slice(0, 4) + '...' + publicKey.toString().slice(-4);
+      walletBtnText.textContent = 'Wallet';
+      walletShortAddress.textContent = short;
+      walletFullAddress.textContent = publicKey.toString();
+      syntaBalance.textContent = walletBalance.toFixed(2);
+      walletTopBtn.classList.add('connected');
+    }    
     updateBurnStatus();
     walletTopBtn.classList.remove('loading');
-    walletBtnText.textContent = 'Wallet';
-    console.log('UI updated, button should show Wallet');
+    console.log('UI updated - button should show Wallet now');
   } catch (error) {
     console.error('Connection error:', error);
     walletTopBtn.classList.remove('loading');
@@ -4381,6 +4387,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
