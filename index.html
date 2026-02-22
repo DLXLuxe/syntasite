@@ -3065,6 +3065,89 @@ transform: translateZ(0);
   transform: translateY(-2px) !important;
   transition: all 0.3s ease !important;
 }
+.rpc-notification {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  max-width: 400px;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border-left: 4px solid #ff9966;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 153, 102, 0.2);
+  z-index: 100000;
+  animation: slideIn 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.rpc-notification-content {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  gap: 12px;
+}
+.rpc-notification-icon {
+  font-size: 24px;
+  animation: pulse 2s infinite;
+}
+.rpc-notification-text {
+  flex: 1;
+}
+.rpc-notification-text strong {
+  color: #ff9966;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 4px;
+}
+.rpc-notification-text p {
+  color: #9FE7E5;
+  font-size: 12px;
+  margin: 0;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+.rpc-notification-close {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 5px;
+  transition: color 0.3s ease;
+}
+.rpc-notification-close:hover {
+  color: #ff9966;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+@media (max-width: 768px) {
+  .rpc-notification {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    max-width: none;
+  }  
+  .rpc-notification-content {
+    padding: 12px;
+  }  
+  .rpc-notification-text strong {
+    font-size: 13px;
+  }  
+  .rpc-notification-text p {
+    font-size: 11px;
+  }
+}
 </style>
 </head>
 <body>
@@ -4096,6 +4179,65 @@ document.addEventListener('DOMContentLoaded', function() {
     applyCookiePreferences(cookieConsent);
   }
 })();
+function showRpcNotification() {
+  const notification = document.getElementById('rpcNotification');
+  if (notification) {
+    notification.style.display = 'block';
+    setTimeout(() => {
+      hideRpcNotification();
+    }, 10000);
+  }
+}
+function hideRpcNotification() {
+  const notification = document.getElementById('rpcNotification');
+  if (notification) {
+    notification.style.display = 'none';
+  }
+}
+let failureCount = 0;
+let notificationShown = false;
+async function fetchBalance() {
+  if (!publicKey) return 0;
+  
+  for (let i = 0; i < RPCS.length; i++) {
+    currentRpcIndex = i;
+    try {
+      const connection = getConnection();
+      console.log('Trying RPC:', RPCS[i]);      
+      const tokenAccounts = await connection.getTokenAccountsByOwner(
+        publicKey,
+        { mint: new solanaWeb3.PublicKey(SYNTA_MINT) },
+        "jsonParsed"
+      );      
+      if (tokenAccounts.value.length > 0) {
+        const balance = tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount;
+        console.log('Balance found:', balance);
+        walletBalance = balance || 0;
+        failureCount = 0;
+        notificationShown = false;
+        hideRpcNotification();
+        return walletBalance;
+      } else {
+        console.log('No token account found');
+        walletBalance = 0;
+        failureCount = 0;
+        notificationShown = false;
+        hideRpcNotification();
+        return 0;
+      }
+    } catch (error) {
+      console.log(`RPC ${RPCS[i]} failed:`, error.message);
+      failureCount++;
+    }
+  }  
+  console.error('All RPCs failed');
+  walletBalance = 0;
+  if (!notificationShown) {
+    showRpcNotification();
+    notificationShown = true;
+  }  
+  return 0;
+}
 </script>
 <section class="section">
   <div class="grid">
@@ -4403,14 +4545,15 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
   </div>
 </div>
+<div id="rpcNotification" class="rpc-notification" style="display: none;">
+  <div class="rpc-notification-content">
+    <div class="rpc-notification-icon">🌐</div>
+    <div class="rpc-notification-text">
+      <strong>Network congestion detected</strong>
+      <p>Your SYNTA balance is temporarily unavailable. Don't worry - your tokens are safe on the blockchain.</p>
+    </div>
+    <button class="rpc-notification-close" onclick="hideRpcNotification()">✕</button>
+  </div>
+</div>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
