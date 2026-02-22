@@ -3068,6 +3068,16 @@ transform: translateZ(0);
   transform: translateY(-2px) !important;
   transition: all 0.3s ease !important;
 }
+   .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
 </style>
 </head>
 <body>
@@ -4408,8 +4418,14 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
   </div>
 </div>
+   <div class="radio-volume-compact">
+  <label for="compactVolumeSlider" class="visually-hidden">Volume Control</label>
+  <input type="range" class="volume-slider-compact" id="compactVolumeSlider" 
+         min="0" max="1" step="0.01" value="0.7">
+</div>
 </body>
 </html>
+
 
 
 
