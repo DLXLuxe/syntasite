@@ -3320,6 +3320,16 @@ target="_blank"
     </div>
 </div>
 </div>
+   <div id="rpcNotification" class="rpc-notification" style="display: none;">
+  <div class="rpc-notification-content">
+    <div class="rpc-notification-icon">🌐</div>
+    <div class="rpc-notification-text">
+      <strong>Network congestion detected</strong>
+      <p>Your SYNTA balance is temporarily unavailable. Don't worry - your tokens are safe on the blockchain.</p>
+    </div>
+    <button class="rpc-notification-close" onclick="hideRpcNotification()">✕</button>
+  </div>
+</div>
 <script>
   function acceptAllCookies() {
   const preferences = {
@@ -4545,15 +4555,6 @@ async function fetchBalance() {
     </div>
   </div>
 </div>
-<div id="rpcNotification" class="rpc-notification" style="display: none;">
-  <div class="rpc-notification-content">
-    <div class="rpc-notification-icon">🌐</div>
-    <div class="rpc-notification-text">
-      <strong>Network congestion detected</strong>
-      <p>Your SYNTA balance is temporarily unavailable. Don't worry - your tokens are safe on the blockchain.</p>
-    </div>
-    <button class="rpc-notification-close" onclick="hideRpcNotification()">✕</button>
-  </div>
-</div>
 </body>
 </html>
+
