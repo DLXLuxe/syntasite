@@ -3591,30 +3591,40 @@ async function fetchBalance() {
   for (let i = 0; i < RPCS.length; i++) {
     currentRpcIndex = i;
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); 
+    const timeoutId = setTimeout(() => controller.abort(), 5000);    
     try {
       const connection = getConnection();
       console.log('Trying RPC:', RPCS[i]);
       const tokenAccounts = await connection.getTokenAccountsByOwner(
         publicKey,
-        { mint: new solanaWeb3.PublicKey(SYNTA_MINT) },
+        { 
+          mint: new solanaWeb3.PublicKey(SYNTA_MINT),
+          commitment: 'confirmed'  
+        },
         "jsonParsed"
-      );
-      clearTimeout(timeoutId);      
-      if (tokenAccounts.value.length > 0) {
-        const balance = tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount;
-        console.log('Balance found:', balance);
-        walletBalance = balance || 0;
-        return walletBalance;
+      );      
+      clearTimeout(timeoutId);
+      if (tokenAccounts?.value?.length > 0) {
+        const accountData = tokenAccounts.value[0]?.account?.data;
+        if (accountData?.parsed?.info?.tokenAmount?.uiAmount !== undefined) {
+          const balance = accountData.parsed.info.tokenAmount.uiAmount;
+          console.log('Balance found:', balance);
+          walletBalance = balance || 0;
+          return walletBalance;
+        } else {
+          console.log('Unexpected response structure:', accountData);
+        }
       } else {
-        console.log('No token account found');
-        walletBalance = 0;
-        return 0;
-      }
+        console.log('No token account found or empty response');
+      }      
+      walletBalance = 0;
+      return 0;      
     } catch (error) {
       clearTimeout(timeoutId);
       if (error.name === 'AbortError' || error.message?.includes('abort')) {
         console.log(`RPC ${RPCS[i]} timed out after 5 seconds`);
+      } else if (error.message?.includes('info')) {
+        console.log(`RPC ${RPCS[i]} returned unexpected format:`, error.message);
       } else {
         console.log(`RPC ${RPCS[i]} failed:`, error.message);
       }
@@ -4438,3 +4448,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
