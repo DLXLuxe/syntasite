@@ -2,13 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="theme-color" content="#0a0a1a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
+   <meta name="theme-color" content="#0a0a1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
 <title>SYNTA</title>
-   <title>SYNTA</title>
-<link rel="icon" type="image/png" href="synta.png">
-<link rel="shortcut icon" href="synta.png" type="image/x-icon">
 <script src="https://unpkg.com/@solana/web3.js@1.87.6/lib/index.iife.min.js"></script>
 <style> 
   html {
@@ -381,6 +377,7 @@ input:disabled + .cookie-toggle-slider:before {
   pointer-events: none;
   opacity: 0.8;
 }
+
 .wallet-connect-btn.loading::after {
   content: '';
   position: absolute;
@@ -1502,6 +1499,8 @@ a[href="quest_final.html"] {
     width: 250px;
   }
 }
+
+
 .certificate-container {
   position: relative; 
   width: 80%;
@@ -2191,6 +2190,7 @@ body {
   overflow-x: hidden;
   background-image: url('background.jpg');
   background-size: cover;
+
 }
 .hero {
    padding: 120px 40px;
@@ -2270,11 +2270,6 @@ h1 {
   transform: translateX(20px);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
-.community-buttons.active {
-  display: flex;
-  opacity: 1;
-  transform: translateX(0);
-}
 .about-buttons {
   position: absolute;
   top: -100%;
@@ -2288,11 +2283,6 @@ h1 {
   opacity: 0;
   transform: translateX(20px); 
   transition: opacity 0.6s ease, transform 0.6s ease;
-}
-.about-buttons.active {
-  display: flex;
-  opacity: 1;
-  transform: translateX(0);
 }
 .community-drop, .about-drop {
   position: relative;
@@ -2313,6 +2303,12 @@ transform-origin: 40% 50%;
 .dropdown-container:hover .community-drop::after,
 .dropdown-container:hover .about-drop::after {
   transform: translateY(-50%) rotate(360deg);
+}
+.dropdown-container:hover .community-buttons,
+.dropdown-container:hover .about-buttons {
+  display: flex;
+  opacity: 1;
+  transform: translateX(0);
 }
 .floating-radio-player {
     position: absolute;
@@ -2481,6 +2477,7 @@ transform-origin: 40% 50%;
 
   animation: float 8s ease-in-out infinite;
 }
+
 .planet.left {
   left: 5%;
   animation-delay: 0s;
@@ -2513,6 +2510,7 @@ transform-origin: 40% 50%;
   visibility: visible;
   transform: translate(-50%, -50%) scale(1);
 }
+
 .jupiter-widget-header {
   display: flex;
   justify-content: space-between;
@@ -2573,6 +2571,7 @@ transform-origin: 40% 50%;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 @media (max-width: 1200px) {
   .jupiter-widget {
     width: 95vw;
@@ -2688,11 +2687,6 @@ opacity: 0;
   transition: all 0.35s ease;
   text-align: center;
 }
-.dex-buttons.active {
-  display: flex;
-  opacity: 1;
-  transform: translateX(0);
-}
 .dex-button:hover {
   color: #fff;
   border-color: rgba(160, 220, 255, 0.9);
@@ -2713,11 +2707,6 @@ opacity: 0;
   transform: translateX(-20px);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
-.liquidity-buttons.active {
-  display: flex;
-  opacity: 1;
-  transform: translateX(0);
-}
 .liquidity-drop {
   position: relative;
   padding-right: 65px;
@@ -2735,6 +2724,12 @@ transform-origin: 40% 50%;
 }
 .dropdown-container:hover .liquidity-drop::after {
   transform: translateY(-50%) rotate(360deg);
+}
+.dropdown-container:hover .liquidity-buttons {
+  display: flex;
+}
+.dropdown-container:hover .dex-buttons {
+  display: flex;
 }
 .buy-dex {
   position: relative;
@@ -2992,6 +2987,7 @@ transform: translateZ(0);
   left: -10px;
   animation-delay: 4s;
 }
+
 @keyframes leftSolarFlare {
   0%, 100% {
     opacity: 0;
@@ -3036,10 +3032,12 @@ transform: translateZ(0);
   z-index: 100000 !important;
   opacity: 1 !important;
 }
+
 .wallet-dropdown {
   pointer-events: auto !important;
   z-index: 99999 !important;
 }
+
 .wallet-dropdown.active {
   display: block !important;
   pointer-events: auto !important;
@@ -3048,6 +3046,7 @@ transform: translateZ(0);
   display: flex !important;
   pointer-events: auto !important;
 }
+
 .burn-success-modal button,
 .hash-copy-btn,
 .success-btn,
@@ -3060,93 +3059,11 @@ transform: translateZ(0);
   position: relative !important;
   opacity: 1 !important;
 }
+
 .hash-copy-btn:hover,
 .success-btn:hover {
   transform: translateY(-2px) !important;
   transition: all 0.3s ease !important;
-}
-.rpc-notification {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
-  max-width: 400px;
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
-  border-left: 4px solid #ff9966;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 153, 102, 0.2);
-  z-index: 100000;
-  animation: slideIn 0.3s ease;
-  backdrop-filter: blur(10px);
-}
-@keyframes slideIn {
-  from {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-.rpc-notification-content {
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  gap: 12px;
-}
-.rpc-notification-icon {
-  font-size: 24px;
-  animation: pulse 2s infinite;
-}
-.rpc-notification-text {
-  flex: 1;
-}
-.rpc-notification-text strong {
-  color: #ff9966;
-  font-size: 14px;
-  display: block;
-  margin-bottom: 4px;
-}
-.rpc-notification-text p {
-  color: #9FE7E5;
-  font-size: 12px;
-  margin: 0;
-  line-height: 1.4;
-  opacity: 0.9;
-}
-.rpc-notification-close {
-  background: none;
-  border: none;
-  color: #666;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 0 5px;
-  transition: color 0.3s ease;
-}
-.rpc-notification-close:hover {
-  color: #ff9966;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 0.7; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.1); }
-}
-@media (max-width: 768px) {
-  .rpc-notification {
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
-    max-width: none;
-  }  
-  .rpc-notification-content {
-    padding: 12px;
-  }  
-  .rpc-notification-text strong {
-    font-size: 13px;
-  }  
-  .rpc-notification-text p {
-    font-size: 11px;
-  }
 }
 </style>
 </head>
@@ -3191,7 +3108,8 @@ transform: translateZ(0);
       <a href="https://discord.gg/StWab7Bcc9" 
          target="_blank" class="dex-button">Discord</a>
     </div>
-  </div>  
+  </div>
+  
   <div class="dropdown-container right-dropdown">
     <a href="#community" class="dock-item about-drop">ABOUT SYNTA</a>
     <div class="about-buttons">
@@ -3309,7 +3227,8 @@ target="_blank"
                     </div>
                 </div>
             </div>
-        </div>        
+        </div>
+        
         <div class="ca-footer">
             <div class="signature">
                 <div class="signature-label">DIGITALLY SIGNED</div>
@@ -3320,16 +3239,6 @@ target="_blank"
     </div>
 </div>
 </div>
-   <div id="rpcNotification" class="rpc-notification" style="display: none;">
-  <div class="rpc-notification-content">
-    <div class="rpc-notification-icon">🌐</div>
-    <div class="rpc-notification-text">
-      <strong>Network congestion detected</strong>
-      <p>Your SYNTA balance is temporarily unavailable. Don't worry - your tokens are safe on the blockchain.</p>
-    </div>
-    <button class="rpc-notification-close" onclick="hideRpcNotification()">✕</button>
-  </div>
-</div>
 <script>
   function acceptAllCookies() {
   const preferences = {
@@ -3338,12 +3247,15 @@ target="_blank"
     preferences: true,
     marketing: true,
     timestamp: new Date().toISOString()
-  };  
+  };
+  
   localStorage.setItem('cookieConsent', JSON.stringify(preferences));
   document.getElementById('cookieConsentBanner').style.display = 'none';
-  applyCookiePreferences(preferences);  
+  applyCookiePreferences(preferences);
+  
   console.log('Cookie consent accepted (all)');
 }
+
 function acceptEssentialCookies() {
   const preferences = {
     essential: true,
@@ -3351,14 +3263,18 @@ function acceptEssentialCookies() {
     preferences: false,
     marketing: false,
     timestamp: new Date().toISOString()
-  };  
+  };
+  
   localStorage.setItem('cookieConsent', JSON.stringify(preferences));
   document.getElementById('cookieConsentBanner').style.display = 'none';
-  applyCookiePreferences(preferences);  
+  applyCookiePreferences(preferences);
+  
   console.log('Cookie consent accepted (essential only)');
 }
+
 function openCookieSettings() {
-  document.getElementById('cookieSettingsPanel').classList.add('active');  
+  document.getElementById('cookieSettingsPanel').classList.add('active');
+  
   const savedPrefs = localStorage.getItem('cookieConsent');
   if (savedPrefs) {
     const prefs = JSON.parse(savedPrefs);
@@ -3371,9 +3287,11 @@ function openCookieSettings() {
     document.getElementById('marketingCookies').checked = false;
   }
 }
+
 function closeCookieSettings() {
   document.getElementById('cookieSettingsPanel').classList.remove('active');
 }
+
 function saveCookiePreferences() {
   const preferences = {
     essential: true,
@@ -3382,38 +3300,49 @@ function saveCookiePreferences() {
     marketing: document.getElementById('marketingCookies').checked,
     timestamp: new Date().toISOString()
   };
+  
   localStorage.setItem('cookieConsent', JSON.stringify(preferences));
   document.getElementById('cookieConsentBanner').style.display = 'none';
   applyCookiePreferences(preferences);
+  
   console.log('Cookie preferences saved:', preferences);
 }
+
 function showCookieSettings() {
   document.getElementById('cookieConsentBanner').style.display = 'block';
   openCookieSettings();
 }
+
 function applyCookiePreferences(preferences) {
-  const prefs = typeof preferences === 'string' ? JSON.parse(preferences) : preferences;  
+  const prefs = typeof preferences === 'string' ? JSON.parse(preferences) : preferences;
+  
   if (prefs.analytics) {
     enableAnalytics();
   } else {
     disableAnalytics();
-  }  
+  }
+  
   if (prefs.preferences) {
     loadUserPreferences();
-  }  
+  }
+  
   if (prefs.marketing) {
     enableMarketing();
   }
 }
+
 function enableAnalytics() {
   console.log('Analytics enabled');
 }
+
 function disableAnalytics() {
   console.log('Analytics disabled');
 }
+
 function loadUserPreferences() {
   console.log('Loading user preferences');
 }
+
 function enableMarketing() {
   console.log('Marketing cookies enabled');
 }
@@ -3443,40 +3372,41 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 document.addEventListener('DOMContentLoaded', function() {
   const dropdownContainers = document.querySelectorAll('.dropdown-container');
-  function closeAllDropdowns(except = null) {
-    document.querySelectorAll('.dex-buttons, .liquidity-buttons, .community-buttons, .about-buttons').forEach(dropdown => {
-      if (dropdown !== except) {
-        dropdown.classList.remove('active');
-        dropdown.style.display = 'none';
-      }
-    });
-  }  
+  
   dropdownContainers.forEach(function(container) {
-    const trigger = container.querySelector('.dock-item');
-    const dropdown = container.querySelector('.dex-buttons, .liquidity-buttons, .community-buttons, .about-buttons');    
-    if (!trigger || !dropdown) return;    
-    trigger.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();      
-      if (dropdown.classList.contains('active')) {
-        dropdown.classList.remove('active');
-        dropdown.style.display = 'none';
-      } else {
-        closeAllDropdowns(dropdown);
-        dropdown.style.display = 'flex';
-        dropdown.offsetHeight;
-        dropdown.classList.add('active');
-      }
-    });
+    let timeout;
     
-    dropdown.addEventListener('click', function(e) {
-      e.stopPropagation();
+    container.addEventListener('mouseenter', function() {
+      clearTimeout(timeout);
+      const dropdown = this.querySelector('.dex-buttons, .liquidity-buttons, .community-buttons, .about-buttons');
+      if (!dropdown) return;
+      if (dropdown.classList.contains('community-buttons') || dropdown.classList.contains('about-buttons')) {
+        dropdown.style.transform = 'translateX(20px)'; 
+      } else {
+        dropdown.style.transform = 'translateX(-20px)'; 
+      }
+            dropdown.style.opacity = '0';
+      dropdown.style.display = 'flex';
+            dropdown.offsetHeight;      
+      dropdown.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      dropdown.style.opacity = '1';
+      dropdown.style.transform = 'translateX(0)';
+    });    
+    container.addEventListener('mouseleave', function() {
+      const dropdown = this.querySelector('.dex-buttons, .liquidity-buttons, .community-buttons, .about-buttons');
+      if (!dropdown) return;      
+      timeout = setTimeout(function() {
+        if (dropdown.classList.contains('community-buttons') || dropdown.classList.contains('about-buttons')) {
+          dropdown.style.transform = 'translateX(20px)'; 
+        } else {
+          dropdown.style.transform = 'translateX(-20px)'; 
+        }        
+        dropdown.style.opacity = '0';
+        setTimeout(function() {
+          dropdown.style.display = 'none';
+        }, 600);
+      }, 200);
     });
-  });  
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('.dropdown-container')) {
-      closeAllDropdowns();
-    }
   });
 });
 document.addEventListener('DOMContentLoaded', function() {
@@ -3557,7 +3487,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
         audio.addEventListener('waiting', function() {
         compactStatus.textContent = 'Buffering...';
-    });    
+    });
+    
     audio.addEventListener('error', function(e) {
         console.error('Audio error:', e);
         compactStatus.textContent = 'Error loading audio';
@@ -3610,11 +3541,9 @@ document.addEventListener('DOMContentLoaded', function() {
     audio.addEventListener('timeupdate', updateTimeDisplay);
 });
 const RPCS = [
-  'https://solana.publicnode.com', 
-  'https://solana.rpc.extrnode.com',
-   'https://api.mainnet-beta.solana.com',
-  'https://solana-api.projectserum.com',
-    'https://rpc.ankr.com/solana',
+  'https://solana.publicnode.com',
+  'https://rpc.ankr.com/solana',
+  'https://solana.rpc.extrnode.com'
 ];
 let currentRpcIndex = 0;
 
@@ -3657,21 +3586,57 @@ try {
   let wallet = null;
   let publicKey = null;
   let walletBalance = 0;
+
 function isWalletInstalled() {
   return !!window.solana; 
 }
+async function init() {
+  console.log('Initializing wallet...');
+  if (window.solana) {
+    wallet = window.solana;
+    console.log('Wallet found:', wallet.isPhantom ? 'Phantom' : 'Other wallet');
+    if (wallet.isConnected && wallet.publicKey) {
+      publicKey = wallet.publicKey;
+      await fetchBalance();
+      updateUI();
+    }
+    wallet.on('connect', async () => {
+      console.log('Wallet connected');
+      publicKey = wallet.publicKey;
+      await fetchBalance();
+      updateUI();
+      updateBurnStatus();
+    });    
+    wallet.on('disconnect', () => {
+      console.log('Wallet disconnected');
+      publicKey = null;
+      walletBalance = 0;
+      updateUI();
+      updateBurnStatus();
+    });
+  }
+  updateUI();
+  updateBurnStatus();
+  burnPlanet.addEventListener('click', () => {
+    burnModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    updateBurnStatus();
+  });
+}
 async function fetchBalance() {
-  if (!publicKey) return 0;  
+  if (!publicKey) return 0;
+  
   for (let i = 0; i < RPCS.length; i++) {
     currentRpcIndex = i;
     try {
       const connection = getConnection();
-      console.log('Trying RPC:', RPCS[i]);      
-      const tokenAccounts = await connection.getTokenAccountsByOwner(
+      console.log('Trying RPC:', RPCS[i]);
+      
+      const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
         publicKey,
-        { mint: new solanaWeb3.PublicKey(SYNTA_MINT) },
-        "jsonParsed"
-      );      
+        { mint: new solanaWeb3.PublicKey(SYNTA_MINT) }
+      );
+      
       if (tokenAccounts.value.length > 0) {
         const balance = tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount;
         console.log('Balance found:', balance);
@@ -3685,7 +3650,8 @@ async function fetchBalance() {
     } catch (error) {
       console.log(`RPC ${RPCS[i]} failed:`, error.message);
     }
-  }  
+  }
+  
   console.error('All RPCs failed');
   walletBalance = 0;
   return 0;
@@ -3720,219 +3686,29 @@ async function fetchBalance() {
 async function connectWallet() {
   try {
     walletTopBtn.classList.add('loading');
-    walletBtnText.textContent = 'Connecting...';    
+    walletBtnText.textContent = 'Connecting...';
     if (!window.solana) {
       walletTopBtn.classList.remove('loading');
       walletBtnText.textContent = 'Connect Wallet';
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);      
-      if (isMobile) {
-        if (confirm('Phantom wallet not detected. Open Phantom app or install?')) {
-          window.location.href = 'phantom://browse';
-          setTimeout(() => {
-            if (isMobile) {
-              const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-              if (isIOS) {
-                window.location.href = 'https://apps.apple.com/app/phantom-solana-wallet/id1598432977';
-              } else {
-                window.location.href = 'https://play.google.com/store/apps/details?id=app.phantom';
-              }
-            }
-          }, 2000);
-        }
-      } else {
-        alert('Please install Phantom or another Solana wallet');
-        window.open('https://phantom.app/', '_blank');
-      }
+      alert('Please install Phantom or another Solana wallet');
+      window.open('https://phantom.app/', '_blank');
       return;
-    }    
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);    
-    if (isMobile && window.solana.isPhantom) {
-      try {
-        if (window.solana._publicKey) {
-          try {
-            await window.solana.disconnect();
-          } catch (e) {}
-        }
-        const resp = await window.solana.connect({
-          onlyIfTrusted: false,
-          mobile: true
-        });        
-        publicKey = resp.publicKey;        
-      } catch (error) {
-        console.error('Mobile connection error:', error);
-        try {
-          const resp = await window.solana.request({
-            method: 'connect',
-            params: {}
-          });
-          
-          if (resp.publicKey) {
-            publicKey = new solanaWeb3.PublicKey(resp.publicKey);
-          }
-        } catch (secondError) {
-          throw new Error('Mobile connection failed. Make sure Phantom is installed and unlocked.');
-        }
-      }
-    } else {
-      const resp = await window.solana.connect();
-      publicKey = resp.publicKey;
-    }    
-           await fetchBalance();
-    console.log('Balance fetched:', walletBalance);
-    if (publicKey) {
-      const short = publicKey.toString().slice(0, 4) + '...' + publicKey.toString().slice(-4);
-      walletBtnText.textContent = 'Wallet';
-      walletShortAddress.textContent = short;
-      walletFullAddress.textContent = publicKey.toString();
-      syntaBalance.textContent = walletBalance.toFixed(2);
-      walletTopBtn.classList.add('connected');
-    }    
+    }
+    const resp = await window.solana.connect();
+    publicKey = resp.publicKey;
+    await fetchBalance();
+    updateUI();
     updateBurnStatus();
     walletTopBtn.classList.remove('loading');
-    console.log('UI updated - button should show Wallet now');
+    walletBtnText.textContent = 'Wallet';
+    
   } catch (error) {
     console.error('Connection error:', error);
     walletTopBtn.classList.remove('loading');
     walletBtnText.textContent = 'Connect Wallet';
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) {
-      alert('Failed to connect wallet. Make sure Phantom app is installed and you are using the in-app browser.');
-    } else {
-      alert('Failed to connect wallet. Please try again.');
-    }
+    alert('Failed to connect wallet');
   }
 }
-function isPhantomInAppBrowser() {
-  return window.solana?.isPhantom && 
-         /Phantom/i.test(navigator.userAgent) && 
-         /Mobile/i.test(navigator.userAgent);
-}
-async function init() {
-  console.log('Initializing wallet...');  
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)  
-  if (isMobile) {
-    console.log('Mobile device detected');
-    await checkPhantomConnection();
-    if (isPhantomInAppBrowser()) {
-      console.log('In Phantom in-app browser');
-    } else {
-      setTimeout(() => {
-        console.log('Not in Phantom browser');
-      }, 1000);
-    }
-  }  
-  if (window.solana) {
-    wallet = window.solana;
-    console.log('Wallet found:', wallet.isPhantom ? 'Phantom' : 'Other wallet');
-    if (wallet.isConnected && wallet.publicKey) {
-      publicKey = wallet.publicKey;
-      await fetchBalance();
-      updateUI();
-    }    
-    wallet.on('connect', async () => {
-  console.log('Wallet connected event');
-  publicKey = wallet.publicKey;
-  await fetchBalance();
-  updateUI();
-  updateBurnStatus();
-  walletTopBtn.classList.remove('loading');
-  walletBtnText.textContent = 'Wallet';
-});
-wallet.on('disconnect', () => {
-  console.log('Wallet disconnected event');
-  publicKey = null;
-  walletBalance = 0;
-  updateUI();
-  updateBurnStatus();
-  walletTopBtn.classList.remove('loading');
-  walletBtnText.textContent = 'Connect Wallet';
-});
-  }  
-  updateUI();
-  updateBurnStatus();  
-  burnPlanet.addEventListener('click', () => {
-    burnModal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    updateBurnStatus();
-  });
-}
-async function connectWalletMobile() {
-  try {
-    walletTopBtn.classList.add('loading');
-    walletBtnText.textContent = 'Opening Phantom...';
-    localStorage.setItem('phantom_connecting', 'true');
-const returnUrl = encodeURIComponent(window.location.href);
-const universalLink = `https://phantom.app/ul/browse/${returnUrl}`;
-window.location.href = universalLink;
-    setTimeout(() => {
-      if (document.hasFocus()) {
-        if (confirm('Phantom app not found. Would you like to install it?')) {
-          const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-          if (isIOS) {
-            window.location.href = 'https://apps.apple.com/app/phantom-solana-wallet/id1598432977';
-          } else {
-            window.location.href = 'https://play.google.com/store/apps/details?id=app.phantom';
-          }
-        }
-      }
-    }, 2000);    
-  } catch (error) {
-    console.error('Mobile connection error:', error);
-    walletTopBtn.classList.remove('loading');
-    walletBtnText.textContent = 'Connect Wallet';
-  }
-}
-async function checkPhantomConnection() {
-  const wasConnecting = localStorage.getItem('phantom_connecting');  
-  if (wasConnecting === 'true') {
-    console.log('Returned from Phantom app, checking connection...');
-    localStorage.removeItem('phantom_connecting');
-    walletTopBtn.classList.remove('loading');    
-    if (window.solana) {
-      if (window.solana.isConnected && window.solana.publicKey) {
-        console.log('Already connected, updating UI');
-        publicKey = window.solana.publicKey;
-        await fetchBalance();
-        updateUI();
-        updateBurnStatus();
-        walletBtnText.textContent = 'Wallet';
-      } else {
-        try {
-          const resp = await window.solana.connect({ onlyIfTrusted: true });
-          if (resp.publicKey) {
-            publicKey = resp.publicKey;
-            await fetchBalance();
-            updateUI();
-            updateBurnStatus();
-            walletBtnText.textContent = 'Wallet';
-            console.log('Auto-connected after returning from Phantom!');
-          }
-        } catch (error) {
-          console.log('Not auto-connected, user needs to approve in Phantom');
-          walletBtnText.textContent = 'Connect Wallet';
-        }
-      }
-    }
-    walletTopBtn.classList.remove('loading');
-    walletBtnText.textContent = publicKey ? 'Wallet' : 'Connect Wallet';
-  }
-}
-walletTopBtn.addEventListener('click', (e) => {
-  e.stopPropagation();  
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);  
-  if (publicKey) {
-    walletDropdown.classList.toggle('active');
-  } else {
-    if (walletTopBtn.classList.contains('loading')) {
-      return;
-    }    
-    if (isMobile && !window.solana) {
-      connectWalletMobile();
-    } else {
-      connectWallet();
-    }
-  }
-});
 async function disconnectWallet() {
   try {
     walletTopBtn.classList.add('loading');
@@ -3964,6 +3740,14 @@ async function disconnectWallet() {
     }
   });
   walletDisconnect.addEventListener('click', disconnectWallet);
+  walletTopBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (publicKey) {
+      walletDropdown.classList.toggle('active');
+    } else {
+      connectWallet();
+    }
+  });
   document.addEventListener('click', (e) => {
     if (!walletTop.contains(e.target)) {
       walletDropdown.classList.remove('active');
@@ -4189,65 +3973,6 @@ document.addEventListener('DOMContentLoaded', function() {
     applyCookiePreferences(cookieConsent);
   }
 })();
-function showRpcNotification() {
-  const notification = document.getElementById('rpcNotification');
-  if (notification) {
-    notification.style.display = 'block';
-    setTimeout(() => {
-      hideRpcNotification();
-    }, 10000);
-  }
-}
-function hideRpcNotification() {
-  const notification = document.getElementById('rpcNotification');
-  if (notification) {
-    notification.style.display = 'none';
-  }
-}
-let failureCount = 0;
-let notificationShown = false;
-async function fetchBalance() {
-  if (!publicKey) return 0;
-  
-  for (let i = 0; i < RPCS.length; i++) {
-    currentRpcIndex = i;
-    try {
-      const connection = getConnection();
-      console.log('Trying RPC:', RPCS[i]);      
-      const tokenAccounts = await connection.getTokenAccountsByOwner(
-        publicKey,
-        { mint: new solanaWeb3.PublicKey(SYNTA_MINT) },
-        "jsonParsed"
-      );      
-      if (tokenAccounts.value.length > 0) {
-        const balance = tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount;
-        console.log('Balance found:', balance);
-        walletBalance = balance || 0;
-        failureCount = 0;
-        notificationShown = false;
-        hideRpcNotification();
-        return walletBalance;
-      } else {
-        console.log('No token account found');
-        walletBalance = 0;
-        failureCount = 0;
-        notificationShown = false;
-        hideRpcNotification();
-        return 0;
-      }
-    } catch (error) {
-      console.log(`RPC ${RPCS[i]} failed:`, error.message);
-      failureCount++;
-    }
-  }  
-  console.error('All RPCs failed');
-  walletBalance = 0;
-  if (!notificationShown) {
-    showRpcNotification();
-    notificationShown = true;
-  }  
-  return 0;
-}
 </script>
 <section class="section">
   <div class="grid">
@@ -4557,4 +4282,5 @@ async function fetchBalance() {
 </div>
 </body>
 </html>
+
 
