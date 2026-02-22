@@ -3587,39 +3587,29 @@ function isWalletInstalled() {
   return !!window.solana; 
 }
 async function fetchBalance() {
-  if (!publicKey) return 0;
-  
+  if (!publicKey) return 0;  
   for (let i = 0; i < RPCS.length; i++) {
     currentRpcIndex = i;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);    
     try {
       const connection = getConnection();
-      console.log('Trying RPC:', RPCS[i]); 
-      const tokenAccounts = await connection.getTokenAccountsByOwner(
-        publicKey,                              
-        { mint: new solanaWeb3.PublicKey(SYNTA_MINT) }, 
-        {                                             
-          commitment: 'confirmed',
-          encoding: 'jsonParsed'  
-        }
+      console.log('Trying RPC:', RPCS[i]);
+      const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
+        publicKey,
+        { mint: new solanaWeb3.PublicKey(SYNTA_MINT) }
       );      
       clearTimeout(timeoutId);      
       if (tokenAccounts?.value?.length > 0) {
-        const account = tokenAccounts.value[0];        
-        if (account.account.data.parsed) {
-          const balance = account.account.data.parsed.info.tokenAmount.uiAmount;
-          console.log('Balance found:', balance);
-          walletBalance = balance || 0;
-          return walletBalance;
-        } else {
-          console.log('Received raw data instead of parsed - encoding issue');
-        }
+        const balance = tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount;
+        console.log('Balance found:', balance);
+        walletBalance = balance || 0;
+        return walletBalance;
       } else {
         console.log('No token account found');
-      }      
-      walletBalance = 0;
-      return 0;      
+        walletBalance = 0;
+        return 0;
+      }
     } catch (error) {
       clearTimeout(timeoutId);
       console.log(`RPC ${RPCS[i]} failed:`, error.message);
@@ -4443,5 +4433,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
