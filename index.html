@@ -3588,14 +3588,17 @@ async function fetchBalance() {
   if (!publicKey) return 0;  
   for (let i = 0; i < RPCS.length; i++) {
     currentRpcIndex = i;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); 
     try {
       const connection = getConnection();
-      console.log('Trying RPC:', RPCS[i]);      
+      console.log('Trying RPC:', RPCS[i]);
       const tokenAccounts = await connection.getTokenAccountsByOwner(
         publicKey,
         { mint: new solanaWeb3.PublicKey(SYNTA_MINT) },
         "jsonParsed"
-      );      
+      );
+      clearTimeout(timeoutId);      
       if (tokenAccounts.value.length > 0) {
         const balance = tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount;
         console.log('Balance found:', balance);
@@ -3607,7 +3610,12 @@ async function fetchBalance() {
         return 0;
       }
     } catch (error) {
-      console.log(`RPC ${RPCS[i]} failed:`, error.message);
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError' || error.message?.includes('abort')) {
+        console.log(`RPC ${RPCS[i]} timed out after 5 seconds`);
+      } else {
+        console.log(`RPC ${RPCS[i]} failed:`, error.message);
+      }
     }
   }  
   console.error('All RPCs failed');
@@ -4428,6 +4436,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
