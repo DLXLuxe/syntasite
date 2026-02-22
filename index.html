@@ -4158,11 +4158,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="compactPauseIcon" style="display: none;">
                     <path d="M6 4h4v16H6zM14 4h4v16h-4z"></path>
                 </svg>
-            </button>            
-            <div class="radio-volume-compact">                
-                    <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
-                </svg>
-                <input type="range" class="volume-slider-compact" id="compactVolumeSlider" min="0" max="1" step="0.01" value="0.7">
+            </button>         
+            <div class="radio-volume-compact">
+                 <label for="compactVolumeSlider" class="visually-hidden">Volume Control</label>
+  <input type="range" class="volume-slider-compact" id="compactVolumeSlider" 
+         min="0" max="1" step="0.01" value="0.7"> 
             </div>
         </div>
     </div>
@@ -4418,13 +4418,10 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
   </div>
 </div>
-   <div class="radio-volume-compact">
-  <label for="compactVolumeSlider" class="visually-hidden">Volume Control</label>
-  <input type="range" class="volume-slider-compact" id="compactVolumeSlider" 
-         min="0" max="1" step="0.01" value="0.7">
 </div>
 </body>
 </html>
+
 
 
 
