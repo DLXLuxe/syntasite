@@ -4101,12 +4101,17 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 (function() {
   const cookieConsent = localStorage.getItem('cookieConsent');  
+  const banner = document.getElementById('cookieConsentBanner');  
   if (!cookieConsent) {
     setTimeout(function() {
-      document.getElementById('cookieConsentBanner').style.display = 'block';
+      if (banner) {
+        banner.style.display = 'block';
+      }
     }, 1000);
   } else {
-    document.getElementById('cookieConsentBanner').style.display = 'none';
+    if (banner) {
+      banner.style.display = 'none';
+    }
     applyCookiePreferences(cookieConsent);
   }
 })();
@@ -4420,6 +4425,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
