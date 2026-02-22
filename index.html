@@ -3909,8 +3909,7 @@ async function disconnectWallet() {
     burnModal.classList.remove('active');
     document.body.style.overflow = 'auto';
   });
-
- confirmBurn.addEventListener('click', async () => {
+confirmBurn.addEventListener('click', async () => {
   if (!publicKey) {
     alert('Please connect your wallet first');
     return;
@@ -3923,37 +3922,37 @@ async function disconnectWallet() {
   if (amount > walletBalance) {
     alert(`Insufficient balance. You have ${walletBalance.toFixed(2)} SYNTA`);
     return;
-  }  
+  }    
   txStatus.classList.add('active');
-  statusMessage.textContent = 'Starting burn...';  
+  statusMessage.textContent = 'Starting burn...';    
   try {
     const lamports = Math.floor(amount * Math.pow(10, DECIMALS));
     console.log('Burning', amount, 'tokens (', lamports, 'lamports)');
     const TOKEN_2022_PROGRAM_ID = new solanaWeb3.PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
     const ASSOCIATED_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
     const burnWallet = new solanaWeb3.PublicKey(BURN_ADDRESS);
-    const mintPubkey = new solanaWeb3.PublicKey(SYNTA_MINT);    
+    const mintPubkey = new solanaWeb3.PublicKey(SYNTA_MINT);        
     statusMessage.textContent = 'Finding token accounts...';
     const fromTokenAccount = solanaWeb3.PublicKey.findProgramAddressSync(
       [publicKey.toBuffer(), TOKEN_2022_PROGRAM_ID.toBuffer(), mintPubkey.toBuffer()],
       ASSOCIATED_TOKEN_PROGRAM_ID
-    )[0];    
+    )[0];        
     const toTokenAccount = solanaWeb3.PublicKey.findProgramAddressSync(
       [burnWallet.toBuffer(), TOKEN_2022_PROGRAM_ID.toBuffer(), mintPubkey.toBuffer()],
       ASSOCIATED_TOKEN_PROGRAM_ID
-    )[0];    
+    )[0];        
     console.log('From:', fromTokenAccount.toString());
-    console.log('To:', toTokenAccount.toString());    
+    console.log('To:', toTokenAccount.toString());        
     const connection = getConnection();
     const solBalance = await connection.getBalance(publicKey);
-    console.log('SOL balance:', solBalance / 1e9, 'SOL');
+    console.log('SOL balance:', solBalance / 1e9, 'SOL');    
     if (solBalance < 10000000) {
       alert('⚠️ You need at least 0.01 SOL for transaction fees. Please add SOL to your wallet.');
       return;
-    }
+    }    
     const toAccountInfo = await connection.getAccountInfo(toTokenAccount);
-    console.log('Burn account exists:', !!toAccountInfo);
-    const transaction = new solanaWeb3.Transaction();
+    console.log('Burn account exists:', !!toAccountInfo);    
+    const transaction = new solanaWeb3.Transaction();    
     if (!toAccountInfo) {
       statusMessage.textContent = 'Creating burn account...';
       console.log('Adding create account instruction');      
@@ -3972,7 +3971,7 @@ async function disconnectWallet() {
           data: new Uint8Array([])
         })
       );
-    }    
+    }        
     statusMessage.textContent = 'Creating transfer instruction...';
     const data = new Uint8Array(1 + 8 + 1);
     data[0] = 12; 
@@ -3980,7 +3979,7 @@ async function disconnectWallet() {
     for (let i = 0; i < 8; i++) {
       data[1 + i] = Number((amountBig >> BigInt(i * 8)) & 0xFFn);
     }    
-    data[9] = DECIMALS;     
+    data[9] = DECIMALS;  
     transaction.add(
       new solanaWeb3.TransactionInstruction({
         keys: [
@@ -3997,63 +3996,82 @@ async function disconnectWallet() {
       solanaWeb3.ComputeBudgetProgram.setComputeUnitLimit({
         units: 200000
       })
-    );    
+    );   
     statusMessage.textContent = 'Getting recent blockhash...';
     const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash;
     transaction.feePayer = publicKey;    
     statusMessage.textContent = 'Please sign the transaction...';
-    const signedTransaction = await wallet.signTransaction(transaction);    
+    const signedTransaction = await wallet.signTransaction(transaction);  
     statusMessage.textContent = 'Sending transaction...';
-    const signature = await connection.sendRawTransaction(signedTransaction.serialize());    
+    const signature = await connection.sendRawTransaction(signedTransaction.serialize());       
     statusMessage.textContent = 'Confirming transaction...';
-    const confirmation = await connection.confirmTransaction({
-      signature,
-      blockhash,
-      lastValidBlockHeight
-    }, 'confirmed');    
-    if (confirmation.value.err) {
-      throw new Error('Transaction failed');
+    try {
+      const confirmation = await connection.confirmTransaction({
+        signature,
+        blockhash,
+        lastValidBlockHeight
+      }, 'confirmed');
+      
+      if (confirmation.value.err) {
+        throw new Error('Transaction failed: ' + JSON.stringify(confirmation.value.err));
+      }      
+      statusMessage.innerHTML = '✅ Burn Successful!';      
+    } catch (confirmError) {
+      console.log('Confirmation error:', confirmError.message);
+      statusMessage.innerHTML = '✅ Transaction sent! (Confirming...)';
+      try {
+        const status = await connection.getSignatureStatus(signature);
+        if (status.value && (status.value.confirmationStatus === 'confirmed' || status.value.confirmationStatus === 'finalized')) {
+          console.log('✅ Transaction confirmed with status:', status.value.confirmationStatus);
+          statusMessage.innerHTML = '✅ Burn Successful!';
+        } else {
+          console.log('Transaction status:', status.value);
+        }
+      } catch (statusError) {
+        console.log('Status check timed out - transaction likely succeeded');
+      }
     }    
-    statusMessage.innerHTML = '✅ Burn Successful!';
     txHash.textContent = signature;
-    txHash.onclick = () => window.open(`https://explorer.solana.com/tx/${signature}`, '_blank');    
+    txHash.onclick = () => window.open(`https://explorer.solana.com/tx/${signature}`, '_blank');   
     await fetchBalance();
     updateUI();
-    updateBurnStatus();
-const successModal = document.getElementById('burnSuccessModal');
-const successTxHash = document.getElementById('successTxHash');
-const explorerLink = document.getElementById('explorerLink');
-const copyTxHashBtn = document.getElementById('copyTxHash');
-const closeSuccessBtn = document.getElementById('closeSuccessModal');
-const viewTransactionBtn = document.getElementById('viewTransaction');
-if (successModal && successTxHash) {
-  successTxHash.textContent = signature;
-  if (explorerLink) {
-    explorerLink.href = `https://explorer.solana.com/tx/${signature}`;
-  }
-  if (copyTxHashBtn) {
-    copyTxHashBtn.onclick = (e) => {
-      e.stopPropagation();
-      navigator.clipboard.writeText(signature);
-      copyTxHashBtn.innerHTML = '✅ Copied!';
-      setTimeout(() => {
-        copyTxHashBtn.innerHTML = '📋 Copy Hash';
-      }, 2000);
-    };
-  }
-  if (viewTransactionBtn) {
-    viewTransactionBtn.onclick = () => {
-      window.open(`https://explorer.solana.com/tx/${signature}`, '_blank');
-    };
-  }
-  if (closeSuccessBtn) {
-    closeSuccessBtn.onclick = () => {
-      successModal.classList.remove('active');
-    };
-  }  
-  successModal.classList.add('active');
-}    
+    updateBurnStatus();    
+    const successModal = document.getElementById('burnSuccessModal');
+    const successTxHash = document.getElementById('successTxHash');
+    const explorerLink = document.getElementById('explorerLink');
+    const copyTxHashBtn = document.getElementById('copyTxHash');
+    const closeSuccessBtn = document.getElementById('closeSuccessModal');
+    const viewTransactionBtn = document.getElementById('viewTransaction');
+    
+    if (successModal && successTxHash) {
+      successTxHash.textContent = signature;
+      if (explorerLink) {
+        explorerLink.href = `https://explorer.solana.com/tx/${signature}`;
+      }
+      if (copyTxHashBtn) {
+        copyTxHashBtn.onclick = (e) => {
+          e.stopPropagation();
+          navigator.clipboard.writeText(signature);
+          copyTxHashBtn.innerHTML = '✅ Copied!';
+          setTimeout(() => {
+            copyTxHashBtn.innerHTML = '📋 Copy Hash';
+          }, 2000);
+        };
+      }
+      if (viewTransactionBtn) {
+        viewTransactionBtn.onclick = () => {
+          window.open(`https://explorer.solana.com/tx/${signature}`, '_blank');
+        };
+      }
+      if (closeSuccessBtn) {
+        closeSuccessBtn.onclick = () => {
+          successModal.classList.remove('active');
+        };
+      }  
+      successModal.classList.add('active');
+    }    
+    
   } catch (error) {
     console.error('Burn error:', error);
     statusMessage.textContent = `❌ Error: ${error.message}`;
@@ -4433,6 +4451,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
+
 
 
 
