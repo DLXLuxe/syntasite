@@ -1187,8 +1187,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
             }
         });
-    }, { threshold: 0.1 });
-    
+    }, { threshold: 0.1 });    
     walletCards.forEach(card => walletObserver.observe(card));
 });
 const style = document.createElement('style');
