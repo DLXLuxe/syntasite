@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>SYNTA Quests — Strategic Community Challenges</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: 'Space Grotesk', sans-serif;
+  background: #0a0a1a;
+backdrop-filter: blur(4px);
+    color: #ffffff;
+    overflow-x: hidden;
+    min-height: 100vh;
+    background-image: 
+        url('background.jpg'),
+        radial-gradient(circle at 10% 20%, rgba(124, 249, 255, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(127, 92, 255, 0.03) 0%, transparent 50%);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+.quests-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(10, 20, 40, 0.9);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(124, 249, 255, 0.25);
+    padding: 20px 40px;
+}
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-decoration: none;
+    color: white;
+    font-weight: 700;
+    font-size: 24px;
+}
+.logo-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 20%;
+    object-fit: cover;
+    border: 2px solid rgba(124, 249, 255, 0.4);
+    box-shadow: 
+        0 0 20px rgba(124, 249, 255, 0.3),
+        inset 0 0 10px rgba(124, 249, 255, 0.2);
+}
+.back-btn {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, 
+        rgba(124, 249, 255, 0.15), 
+        rgba(127, 92, 255, 0.15));
+    border: 1px solid rgba(124, 249, 255, 0.35);
+    border-radius: 30px;
+    color: #7cf9ff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(5px);
+    cursor: pointer;
+}
+.back-btn:hover {
+    background: linear-gradient(135deg, 
+        rgba(124, 249, 255, 0.25), 
+        rgba(127, 92, 255, 0.25));
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 25px rgba(124, 249, 255, 0.25),
+        inset 0 0 20px rgba(124, 249, 255, 0.1);
+}
+.quests-hero {
+    padding: 20px 20px 0px;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 60px;
+    position: relative; 
+    z-index: 2000;
+}
+.hero-subtitle {
+    color: #7cf9ff;
+    font-size: 14px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    text-shadow: 0 0 15px rgba(124, 249, 255, 0.5);
+}
+.hero-title {
+    font-size: 52px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #7cf9ff, #7f5cff, #00ffd5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 20px;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    text-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+.hero-description {
+    color: #9FE7E5;
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.active-quest-section {
+    max-width: 1400px;
+    margin: 0 auto 80px;
+    padding: 0 20px;
+}
+.section-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.section-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 30px;
+    background: rgba(0, 255, 213, 0.1);
+    border: 1px solid rgba(0, 255, 213, 0.3);
+    border-radius: 30px;
+    color: #00ffd5;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+.section-subtitle {
+    font-size: 32px;
+    font-weight: 700;
+    color: #00ffd5;
+    margin-bottom: 10px;
+}
+.active-quest-card {
+    width: 60%;
+    margin: 0 auto;
+    background: rgba(20, 40, 70, 0.25);
+    border: 1px solid rgba(124, 249, 255, 0.3);
+    border-radius: 25px;
+    overflow: hidden;
+    backdrop-filter: blur(15px);
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(124, 249, 255, 0.1),
+        inset 0 0 30px rgba(124, 249, 255, 0.05);
+    transition: all 0.4s ease;
+    position: relative;
+}
+.active-quest-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+        #7cf9ff, 
+        #7f5cff, 
+        #00ffd5, 
+        #7cf9ff);
+    border-radius: 27px;
+    z-index: -1;
+    opacity: 0.3;
+    filter: blur(10px);
+    animation: borderGlow 4s linear infinite;
+}
+.active-quest-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(124, 249, 255, 0.2),
+        inset 0 0 40px rgba(124, 249, 255, 0.1);
+}
+.quest-banner {
+    width: 100%;
+    height: 500px;
+    background: linear-gradient(135deg, 
+        rgba(0, 20, 40, 0.9), 
+        rgba(0, 40, 80, 0.7));
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.quest-banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    display: block;
+}
+.quest-header {
+    padding: 30px;
+    position: relative;
+}
+.quest-status {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #3c3c3e00, #ffffffeb); // linear-gradient(135deg, #00ffd5, #00b894);
+    color: #0a0a1a;
+    box-shadow: 0 5px 20px rgba(0, 255, 213, 0.4);
+    animation: pulseActive 2s infinite;
+}
+.quest-number {
+    font-size: 14px;
+    color: #7cf9ff;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.quest-title {
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 20px;
+ margin-left: 40%;
+    background: linear-gradient(90deg, #e5d272, #f20000);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1.1;
+}
+.quest-subtitle {
+    color: #9FE7E5;
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+.quest-legend {
+    margin: 30px 0;
+    padding: 25px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    border: 1px solid rgba(124, 249, 255, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+.legend-text {
+    color: #9FE7E5;
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+.legend-text:last-child {
+    margin-bottom: 0;
+}
+.legend-text strong {
+    color: #7cf9ff;
+}
+.protocol-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background: rgba(0, 255, 213, 0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(0, 255, 213, 0.2);
+    margin: 30px 0;
+}
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.status-label {
+    color: #7cf9ff;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.status-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #7cf9ff;
+}
+.status-value.small {
+    font-size: 18px;
+}
+.status-pulse {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #00ffd5;
+    box-shadow: 0 0 20px #00ffd5;
+    animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+}
+.mechanics-section {
+    margin: 40px 0;
+}
+.mechanics-title {
+    font-size: 20px;
+    color: #7cf9ff;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.mechanics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+.mechanic-item {
+    padding: 20px;
+    background: rgba(124, 249, 255, 0.03);
+    border: 1px solid rgba(124, 249, 255, 0.1);
+    border-radius: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+.mechanic-item:hover {
+    background: rgba(124, 249, 255, 0.08);
+    transform: translateY(-3px);
+}
+.mechanic-number {
+    font-size: 24px;
+    font-weight: 700;
+    color: #7cf9ff;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+.mechanic-text {
+    color: #7cf9ff;
+    font-size: 15px;
+    line-height: 1.5;
+}
+.rewards-section {
+    margin: 40px 0;
+    padding: 25px;
+    background: linear-gradient(135deg, 
+        rgba(155, 89, 182, 0.1), 
+        rgba(127, 92, 255, 0.05));
+    border-radius: 20px;
+    border: 1px solid rgba(155, 89, 182, 0.3);
+}
+.rewards-title {
+    font-size: 20px;
+    color: #7cf9ff;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.rewards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+.reward-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    border: 1px solid rgba(155, 89, 182, 0.2);
+}
+.reward-icon {
+    font-size: 24px;
+}
+.reward-text {
+    color: #7cf9ff;
+    font-size: 14px;
+    line-height: 1.4;
+}
+.reward-text strong {
+    color: #7cf9ff;
+}
+.quest-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin: 30px 0;
+    padding: 25px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    border: 1px solid rgba(124, 249, 255, 0.15);
+}
+.stat-item {
+    text-align: center;
+}
+.stat-label {
+    font-size: 12px;
+    color: #7cf9ff;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+    opacity: 0.8;
+}
+.stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+}
+.stat-subvalue {
+
+    font-size: 13px;
+    color: #7cf9ff;
+    margin-top: 4px;
+}
+.quest-features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin: 30px 0;
+}
+.feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 20px;
+    background: rgba(124, 249, 255, 0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(124, 249, 255, 0.1);
+    transition: all 0.3s ease;
+}
+.feature-item:hover {
+    background: rgba(124, 249, 255, 0.1);
+    transform: translateY(-3px);
+}
+.feature-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, 
+        rgba(124, 249, 255, 0.15), 
+        rgba(127, 92, 255, 0.15));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+.feature-text {
+    color: #7cf9ff;
+    font-size: 15px;
+    line-height: 1.5;
+}
+.feature-text strong {
+    color: #7cf9ff;
+}
+.deep-lore {
+    margin-top: 30px;
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid rgba(124, 249, 255, 0.1);
+}
+.lore-text {
+    color: #7cf9ff;
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 1px;
+}
+.connected-state {
+    display: none;
+    text-align: center;
+    padding: 30px;
+    background: rgba(0, 255, 213, 0.05);
+    border-radius: 15px;
+    margin: 20px 30px 30px;
+    border: 1px solid rgba(0, 255, 213, 0.3);
+}
+.connected-state.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.signal-confirmed {
+    font-size: 24px;
+    color: #7cf9ff;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.node-id {
+    font-size: 32px;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 10px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 4px;
+}
+.quest-actions {
+    display: flex;
+    gap: 15px;
+    padding: 20px 30px;
+    justify-content: center;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 16px 24px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #7cf9ff, #7f5cff);
+    color: #0a0a1a;
+    box-shadow: 0 4px 15px rgba(124, 249, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.action-btn.secondary {
+    background: linear-gradient(135deg, #00ffd5, #00b894);
+    color: #0a0a1a;
+    box-shadow: 0 5px 20px rgba(0, 255, 213, 0.3);
+}
+
+.action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(124, 249, 255, 0.5);
+    background: linear-gradient(135deg, #8affff, #8f6cff);
+}
+
+.action-btn:active {
+    transform: translateY(0);
+}
+.upcoming-quests-section {
+    max-width: 1400px;
+    margin: 0 auto 100px;
+    padding: 0 20px;
+}
+
+.upcoming-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.upcoming-card {
+    background: rgba(20, 40, 70, 0.2);
+    border: 1px solid rgba(127, 92, 255, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.upcoming-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #7f5cff, #5c3cff);
+}
+
+.upcoming-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(127, 92, 255, 0.4);
+    box-shadow: 0 15px 40px rgba(127, 92, 255, 0.15);
+}
+
+.upcoming-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.upcoming-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(127, 92, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #7f5cff;
+    border: 2px solid rgba(127, 92, 255, 0.4);
+}
+
+.upcoming-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    flex: 1;
+}
+
+.upcoming-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 25px 0;
+}
+
+.upcoming-features li {
+    color: #9FE7E5;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(127, 92, 255, 0.1);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.upcoming-features li:last-child {
+    border-bottom: none;
+}
+
+.upcoming-features li::before {
+    content: '→';
+    color: #7f5cff;
+}
+
+.upcoming-status {
+    color: #7f5cff;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    background: rgba(127, 92, 255, 0.1);
+    border-radius: 20px;
+    border: 1px solid rgba(127, 92, 255, 0.3);
+    text-align: center;
+    margin-top: 20px;
+}
+.quest-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.quest-modal.active {
+    display: flex;
+    animation: fadeInModal 0.4s ease;
+}
+
+@keyframes fadeInModal {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-container {
+    background: linear-gradient(145deg, #0a0a1a, #1a1a2e);
+    border-radius: 25px;
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+    border: 1px solid rgba(124, 249, 255, 0.4);
+    box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(124, 249, 255, 0.1),
+        inset 0 0 40px rgba(124, 249, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-close {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(124, 249, 255, 0.3);
+    color: #7cf9ff;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+    box-shadow: 0 0 20px rgba(124, 249, 255, 0.3);
+}
+
+.modal-header {
+    padding: 40px 40px 30px;
+    background: linear-gradient(to bottom,
+        rgba(0, 255, 213, 0.1) 0%,
+        transparent 100%
+    );
+}
+
+.modal-title {
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #7cf9ff, #00ffd5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 10px;
+    line-height: 1.1;
+}
+
+.modal-subtitle {
+    color: #9FE7E5;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.modal-content {
+    padding: 30px 40px;
+    overflow-y: auto;
+    max-height: calc(90vh - 200px);
+}
+
+.modal-section {
+    margin-bottom: 35px;
+}
+.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #00ffd5;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid rgba(0, 255, 213, 0.2);
+}
+
+.rules-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.rule-card {
+    background: rgba(124, 249, 255, 0.05);
+    border: 1px solid rgba(124, 249, 255, 0.1);
+    border-radius: 15px;
+    padding: 25px;
+    transition: all 0.3s ease;
+}
+
+.rule-card:hover {
+    background: rgba(124, 249, 255, 0.1);
+    transform: translateY(-3px);
+}
+
+.rule-number {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00ffd5, #00b894);
+    color: #0a0a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 15px;
+}
+
+.rule-text {
+    color: #e2e8f0;
+    line-height: 1.6;
+    font-size: 15px;
+}
+.quests-footer {
+    text-align: center;
+    padding: 60px 20px;
+    border-top: 1px solid rgba(124, 249, 255, 0.15);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+.quests-footer {
+    text-align: center;
+    padding: 60px 20px;
+    border-top: 1px solid rgba(124, 249, 255, 0.15);
+    max-width: 1400px;
+    margin: 0 auto;
+    background: linear-gradient(to top,
+        rgba(10, 20, 40, 0.8) 0%,
+        transparent 100%
+    );
+}
+
+.footer-title {
+    color: #7cf9ff;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.footer-link {
+    padding: 14px 28px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer-link.twitter {
+    background: linear-gradient(135deg, 
+        rgba(29, 161, 242, 0.15), 
+        rgba(29, 161, 242, 0.05));
+    border: 1px solid rgba(29, 161, 242, 0.3);
+    color: #1da1f2;
+}
+
+.footer-link.discord {
+    background: linear-gradient(135deg, 
+        rgba(88, 101, 242, 0.15), 
+        rgba(88, 101, 242, 0.05));
+    border: 1px solid rgba(88, 101, 242, 0.3);
+    color: #5865f2;
+}
+
+.footer-link.burn {
+    background: linear-gradient(135deg, 
+        rgba(255, 100, 100, 0.15), 
+        rgba(255, 50, 50, 0.05));
+    border: 1px solid rgba(255, 100, 100, 0.3);
+    color: #ff6666;
+}
+
+.footer-link.roadmap {
+    background: linear-gradient(135deg, 
+        rgba(124, 249, 255, 0.15), 
+        rgba(124, 249, 255, 0.05));
+    border: 1px solid rgba(124, 249, 255, 0.3);
+    color: #7cf9ff;
+}
+
+.footer-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(124, 249, 255, 0.2);
+}
+
+.footer-text {
+    color: #666;
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    margin-top: 20px;
+}
+@keyframes pulseActive {
+    0%, 100% {
+        box-shadow: 0 5px 20px rgba(0, 255, 213, 0.4);
+    }
+    50% {
+        box-shadow: 0 5px 30px rgba(0, 255, 213, 0.6);
+    }
+}
+@keyframes borderGlow {
+    0%, 100% {
+        opacity: 0.3;
+        filter: blur(10px);
+    }
+    50% {
+        opacity: 0.5;
+        filter: blur(15px);
+    }
+}
+@media (max-width: 1200px) {
+    .active-quest-card {
+        width: 75%;
+    }
+    .quest-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 992px) {
+    .active-quest-card {
+        width: 85%;
+    }
+    .upcoming-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .quest-features {
+        grid-template-columns: 1fr;
+    }
+    
+    .mechanics-grid {
+        grid-template-columns: 1fr;
+    }
+    .rewards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 768px) {
+    .quests-nav {
+        padding: 15px 20px;
+    }
+    .quests-hero {
+        padding: 120px 20px 40px;
+    }
+    .hero-title {
+        font-size: 36px;
+    }
+    .active-quest-card {
+        width: 95%;
+    }
+    .quest-title {
+        font-size: 28px;
+    }
+    .quest-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .upcoming-grid {
+        grid-template-columns: 1fr;
+    }
+    .quest-actions {
+        flex-direction: column;
+    }
+    .protocol-status {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+}
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 28px;
+    }
+    .quest-title {
+        font-size: 24px;
+    }
+    .quest-header {
+        padding: 20px;
+    }
+    .quest-actions {
+        padding: 20px;
+    }
+}
+/* Video Modal Styles */
+.video-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.video-modal.active {
+    display: flex;
+    animation: fadeInModal 0.4s ease;
+}
+
+.video-modal-content {
+    background: linear-gradient(145deg, #0a0a1a, #1a1a2e);
+    border-radius: 25px;
+    width: 100%;
+    max-width: 800px;
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    position: relative;
+    overflow: hidden;
+}
+
+.video-modal-header {
+    padding: 30px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.video-modal-header h2 {
+    color: #FFD700;
+    font-size: 28px;
+    margin-bottom: 10px;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.video-modal-header p {
+    color: #9FE7E5;
+    font-size: 14px;
+}
+
+.video-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    color: #FFD700;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.video-close:hover {
+    background: rgba(255,255,255,0.2);
+    transform: rotate(90deg);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.code-input-section {
+    padding: 40px;
+    text-align: center;
+}
+
+.code-input-container {
+    margin: 30px 0;
+}
+
+.code-input {
+    width: 300px;
+    padding: 18px 25px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 50px;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+    letter-spacing: 4px;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.code-input:focus {
+    outline: none;
+    border-color: #FFD700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.code-submit-btn {
+    padding: 16px 40px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border: none;
+    border-radius: 50px;
+    color: #0a0a1a;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+.code-submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
+}
+.code-error {
+    color: #ff6b6b;
+    margin-top: 15px;
+    display: none;
+    font-size: 14px;
+}
+.video-container {
+    display: none;
+    padding: 20px;
+}
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 15px;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.video-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 2000;
+    align-items: center; /* ← ADD THIS LINE */
+    justify-content: center;
+    padding: 20px;
+}
+.shake {
+    animation: shake 0.5s ease;
+}
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+.action-btn.primary {
+    background: linear-gradient(135deg, #FFD700, #FFA500) !important;
+    color: #0a0a1a !important;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+}
+
+.action-btn.primary:hover {
+    background: linear-gradient(135deg, #FFE55C, #FFB347) !important;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6) !important;
+    transform: translateY(-3px) !important;
+}
+
+.action-btn.primary i, 
+.action-btn.primary span {
+    color: #0a0a1a;
+}
+</style>
+</head>
+<body>
+<nav class="quests-nav">
+    <div class="nav-container">
+        <a href="https://www.syntaquest.com/" class="logo-link">
+            <img src="synta.webp" alt="SYNTA Logo" class="logo-img">
+            <span>SYNTA</span>
+        </a>
+        <a href="https://www.syntaquest.com/" class="back-btn">
+            ← Back to Main
+        </a>
+    </div>
+</nav>
+<section class="quests-hero">
+    
+    <h1 class="hero-title">SYNTA Quests</h1>
+</section>
+<div class="active-quest-card" id="activeQuest">
+    <!-- Quest Banner with Image - Properly aligned -->
+    <div class="quest-banner">
+        <img src="quest.jpg" alt="GENESIS SIGNAL" class="quest-banner-img">
+    </div>
+    <div class="quest-header">
+        <div class="quest-status">Completed</div>
+        <div class="quest-number">
+            <span></span><em> PRE-QUEST #00 (by DLX_Luxe_ICE)</em>
+        </div>
+        <h2 class="quest-title">IGNITION</h2>
+        <div class="quest-legend">
+            <div class="legend-text">
+         <strong>&nbsp; 🔥 What is Ignition?</strong>
+<p>&nbsp; Ten challenges. Ten secrets. Ten chances to prove yourself.
+
+&nbsp; Ignition is the beginning — the moment SYNTA sparks to life.<p> <br>Each challenge rewards the first to crack the code with <strong>5 USDC + 100 SYNTA</strong>.
+
+<p><br>&nbsp; The answers are hidden everywhere: on the website, on Solscan, in Discord, in the details.<br>
+
+
+<p>Look closer. Burn brighter. Be first.
+<p><br><br> P.S. Follow correct CODE format mentioned in the brackets for each challenge;
+            </div>
+        </div>
+        <div class="quest-stats">
+            <div class="stat-item">
+                <div class="stat-label">Entry Fee</div>
+                <div class="stat-value">FREE</div>
+                
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Reward Pool</div>
+                <div class="stat-value">50 USDC + 1000 SYNTA</div>
+               
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Reward</div>
+                <div class="stat-value">5 USDC + 100 SYNTA<p>
+                 <div class="stat-subvalue">Each winner</div>                       
+                 </div>
+                <div class="stat-subvalue2"></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Time Left</div>
+                <div class="stat-value">Untill 10 challenges completed</div>
+               
+            </div>
+        </div>
+        <div class="quest-features">
+            <div class="feature-item">
+                <div class="feature-icon">⏣</div>
+                <div class="feature-text">
+                    <strong>How to Claim</strong>
+<p>• Winner will receive a DM or comment on X 
+                                                             
+<p>• Must provide a SOL wallet address
+                                                            
+ <p>• ONLY FROM<strong> @syntaofficial account </strong></div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">⏣</div>
+                <div class="feature-text">
+                    <strong>How It Works</strong>
+ <p>• Read the legends – challenge has a story;
+                                                   
+ <p>• Think and find the code;
+ 
+                                                   
+ <p>• Be first – enter CODE on X under <p>&nbsp&nbsp<strong>PROPER Challenge post</strong>. 
+
+ <p>• One winner per challenge.
+
+</div>
+            </div>
+        </div> 
+        <div class="quest-actions">
+            <button class="action-btn secondary" onclick="window.open('https://x.com/SYNTAofficial', '_blank')">
+                 Participate on X
+            </button>
+            <button class="action-btn primary" onclick="openVideoModal()">
+    <span>🏆</span> Entry to FINAL Challenge
+</button>
+        </div>
+        </div>
+    </div>
+    <div class="quest-actions">
+    </div>
+</div>
+<div class="upcoming-quests-section">
+    <div class="section-header">
+        <div class="section-title">
+         UPCOMING QUESTS
+    </div>
+        <p style="color: #9FE7E5; max-width: 600px; margin: 0 auto;"
+    </div>
+        </div>
+    </div>
+    <div class="upcoming-grid">
+        <div class="upcoming-card">
+            <div class="upcoming-header">
+                <div class="upcoming-number">02</div>
+                <div class="upcoming-title">ENCRYPTION</div>
+            </div>
+            <ul class="upcoming-features">
+                <li>Complex varied guests</li>
+                <li>Multi-stage challenge design</li>
+                <li>Special NFT rewards for winners</li>
+                <li>Longer duration (14 days)</li>
+            </ul>
+            <div class="upcoming-status">Coming soon</div>
+        </div>
+        <div class="upcoming-card">
+            <div class="upcoming-header">
+                <div class="upcoming-number">03</div>
+                <div class="upcoming-title">CONQUEST</div>
+            </div>
+            <ul class="upcoming-features">
+                <li>Head-to-head competition</li>
+                <li>Live leaderboards</li>
+                <li>Major prize pool</li>
+                <li>Tournament format</li>
+            </ul>
+            <div class="upcoming-status">Coming soon</div>
+        </div>
+        <div class="upcoming-card">
+            <div class="upcoming-header">
+                <div class="upcoming-number">04</div>
+                <div class="upcoming-title">ASCENSION</div>
+            </div>
+            <ul class="upcoming-features">
+                <li>Community-governed challenge</li>
+                <li>Legendary rewards</li>
+                <li>Multi-phase event</li>
+                <li>An open platform for creating guests</li>
+            </ul>
+            <div class="upcoming-status">Coming soon</div>
+        </div>
+    </div>
+</div>
+
+
+
+<footer class="quests-footer">
+  
+    <div class="footer-links">
+    </div>
+</footer>
+<script>
+function activateSignal() {
+    const connectedState = document.getElementById('connectedState');
+    const actionBtn = document.querySelector('.action-btn.primary');
+    const nodeCount = document.getElementById('nodeCount');
+    const nodeId = Math.floor(Math.random() * 100) + 1;
+    connectedState.classList.add('active');
+    document.getElementById('nodeId').textContent = `NODE #${nodeId.toString().padStart(5, '0')}`;
+    actionBtn.textContent = '✓ SIGNAL ACTIVE';
+    actionBtn.disabled = true;
+    actionBtn.style.opacity = '0.7';
+    actionBtn.style.cursor = 'default';
+    const currentCount = parseInt(nodeCount.textContent);
+    if (currentCount < 100) {
+        nodeCount.textContent = currentCount + 1;
+    }
+}
+const SECRET_CODE = "WHOISFIRST"; 
+const VIDEO_URL = "https://dlxluxe.github.io/syntasite/video.mp4"; 
+function openVideoModal() {
+    document.getElementById('videoModal').classList.add('active');
+    document.getElementById('codeInputSection').style.display = 'block';
+    document.getElementById('videoSection').style.display = 'none';
+    document.getElementById('secretCode').value = '';
+    document.getElementById('codeError').style.display = 'none';
+}
+function closeVideoModal() {
+    document.getElementById('videoModal').classList.remove('active');
+    document.getElementById('videoFrame').src = ''; // Stop video
+}
+function checkVideoCode() {
+    const enteredCode = document.getElementById('secretCode').value.trim();
+    const errorElement = document.getElementById('codeError');
+    const inputElement = document.getElementById('secretCode');    
+    if (enteredCode === SECRET_CODE) {
+        document.getElementById('videoFrame').src = VIDEO_URL;
+        document.getElementById('codeInputSection').style.display = 'none';
+        document.getElementById('videoSection').style.display = 'block';
+        errorElement.style.display = 'none';
+    } else {
+        errorElement.style.display = 'block';
+        inputElement.classList.add('shake');
+        setTimeout(() => {
+            inputElement.classList.remove('shake');
+        }, 500);
+    }
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('secretCode');
+    if (input) {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkVideoCode();
+            }
+        });
+    }
+});
+window.addEventListener('click', function(e) {
+    const modal = document.getElementById('videoModal');
+    if (e.target === modal) {
+        closeVideoModal();
+    }
+});
+</script>
+<!-- Video Code Modal -->
+<div class="video-modal" id="videoModal">
+    <div class="video-modal-content">
+        <button class="video-close" onclick="closeVideoModal()">✕</button>
+        <div class="video-modal-header">
+            <h2>🔐 Enter Access Code</h2>
+            <p>Enter the secret code to unlock the IGNITION video</p>
+        </div>
+        
+        <!-- Code Input Section -->
+        <div class="code-input-section" id="codeInputSection">
+            <div class="code-input-container">
+                <input type="password" id="secretCode" class="code-input" placeholder="Enter code" maxlength="20">
+                <br>
+                <button class="code-submit-btn" onclick="checkVideoCode()">
+                    <span>🔓</span> Unlock Video
+                </button>
+            </div>
+            <div class="code-error" id="codeError">
+                ❌ Incorrect code. Try again!
+            </div>
+        </div>
+        
+        <!-- Video Section (hidden initially) -->
+        <div class="video-container" id="videoSection">
+            <div class="video-wrapper">
+                <iframe id="videoFrame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loop></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
