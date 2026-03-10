@@ -967,7 +967,7 @@ backdrop-filter: blur(4px);
         padding: 15px 20px;
     }
     .quests-hero {
-        padding: 120px 20px 40px;
+        padding: 150px 20px 0px;
     }
     .hero-title {
         font-size: 36px;
@@ -1168,7 +1168,7 @@ backdrop-filter: blur(4px);
     background: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(20px);
     z-index: 2000;
-    align-items: center; /* ← ADD THIS LINE */
+    align-items: center; 
     justify-content: center;
     padding: 20px;
 }
@@ -1199,6 +1199,15 @@ backdrop-filter: blur(4px);
 .action-btn.primary span {
     color: #0a0a1a;
 }
+@media (max-width: 768px) {
+    .quests-hero {       
+        position: relative;
+        z-index: 1;
+    }   
+    .quests-nav {
+        z-index: 2000; 
+    }
+}
 </style>
 </head>
 <body>
@@ -1220,7 +1229,7 @@ backdrop-filter: blur(4px);
 <div class="active-quest-card" id="activeQuest">
     <!-- Quest Banner with Image - Properly aligned -->
     <div class="quest-banner">
-        <img src="https://dlxluxe.github.io/syntasite/quest.jpg" alt="GENESIS SIGNAL" class="quest-banner-img">
+        <img src="quest.jpg" alt="GENESIS SIGNAL" class="quest-banner-img">
     </div>
     <div class="quest-header">
         <div class="quest-status">Completed</div>
