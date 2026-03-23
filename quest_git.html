@@ -243,7 +243,7 @@ margin-top: 100px;
     font-size: 38px;
     font-weight: 800;
     margin-bottom: 20px;
- margin-left: 25%;
+ margin-left: 18%;
     background: linear-gradient(90deg, #e5d272, #f20000);
     -webkit-background-clip: text;
     background-clip: text;
@@ -1220,6 +1220,21 @@ margin-top: 100px;
         display: none; /* Hides the empty span if needed */
     }
 }
+#cityOfSoulQuest .mechanics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+/* Make it compact on mobile */
+@media (max-width: 768px) {
+    #cityOfSoulQuest .mechanics-grid {
+        gap: 8px;
+    }
+    #cityOfSoulQuest .mechanic-item {
+        padding: 12px 8px;
+    }
+}
 </style>
 </head>
 <body>
@@ -1240,6 +1255,142 @@ margin-top: 100px;
 </section>
 
 
+
+
+
+<!-- NEW QUEST: City of Soul -->
+<div class="active-quest-card" id="cityOfSoulQuest">
+    <!-- Quest Banner with Image (will be added later) -->
+    <div class="quest-banner">
+        <img src="city.jpg" alt="City of Soul" class="quest-banner-img" onerror="this.style.display='none'">
+    </div>
+    
+    <div class="quest-header">
+        <div class="quest-status" style="background: linear-gradient(135deg, #7f5cff, #00ffd5); color: #0a0a1a; animation: pulseActive 2s infinite;">REGISTRATION OPENED</div>
+        <div class="quest-number">
+            QUEST #02
+        </div>
+ <h2 class="quest-title" style="text-align: center; background: linear-gradient(90deg, #e5d272, #f20000); -webkit-background-clip: text; background-clip: text; color: transparent; position: relative; left: -3cm;">City of Soul</h2>
+        
+        <!-- Reward Pool Highlight -->
+        <div style="background: linear-gradient(135deg, rgba(229, 210, 114, 0.2), rgba(242, 0, 0, 0.1)); border: 2px solid #e5d272; border-radius: 20px; padding: 25px; margin: 20px 0; text-align: center;">
+            <div style="font-size: 14px; color: #e5d272; letter-spacing: 2px; margin-bottom: 10px;">🏆 REWARD POOL</div>
+            <div style="font-size: 48px; font-weight: 800; color: #ffffff; line-height: 1; margin-bottom: 10px;">1000 SYNTA</div>
+            <div style="display: flex; justify-content: center; gap: 30px; margin-top: 15px; flex-wrap: wrap;">
+                <div><span style="color: #e5d272;">5 Winners:</span></div>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 10px; flex-wrap: wrap;">
+                <div><span style="color: #ffd700;">1st:</span> <strong style="color: white;">325 SYNTA</strong></div>
+                <div><span style="color: #c0c0c0;">2nd:</span> <strong style="color: white;">225 SYNTA</strong></div>
+                <div><span style="color: #cd7f32;">3rd:</span> <strong style="color: white;">175 SYNTA</strong></div>
+                <div><span style="color: #9FE7E5;">4th:</span> <strong style="color: white;">150 SYNTA</strong></div>
+                <div><span style="color: #9FE7E5;">5th:</span> <strong style="color: white;">125 SYNTA</strong></div>
+            </div>
+        </div>
+        
+        <!-- When -->
+        <div style="margin: 25px 0; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 15px; border-left: 4px solid #e5d272;">
+            <div style="color: #e5d272; font-size: 14px; margin-bottom: 5px;"> WHEN?</div>
+            <div style="color: white; font-size: 20px; font-weight: 600;">Starts: 25-Mar-2026 19:00 UTC</div>
+            <div style="color: #99f7ff; font-size: 14px; margin-top: 8px;">Registration closes before start</div>
+        </div>
+        
+        <!-- The Challenge -->
+        <div class="quest-legend" style="border-color: rgba(229, 210, 114, 0.5);">
+            <div class="legend-text">
+                <strong> THE CHALLENGE</strong>
+            </div>
+            <div class="legend-text">
+                Enter the <strong style="font-size: 24px; color: #e5d272;">City of Soul</strong>
+            </div>
+            <div class="legend-text">
+                A realm where shadows hold secrets and whispers guide the worthy. 
+                Navigate through <strong>10 challenges</strong>, each testing your wit, 
+                perception, and ability to decode the city's mysteries.
+            </div>
+            <div class="legend-text">
+                <em>Every code unlocks a piece of the puzzle. The fastest minds claim the soul of the city.</em>
+            </div>
+        </div>
+        
+        <!-- Entry Requirements -->
+        <div style="margin: 25px 0; padding: 15px; background: rgba(229, 210, 114, 0.1); border-radius: 15px; border: 1px solid #e5d272;">
+            <div style="color: #e5d272; margin-bottom: 10px; font-size: 16px;"> ENTRY REQUIREMENT</div>
+            <div style="color: white; font-size: 18px; font-weight: 600; margin-bottom: 10px;">Burn 100 SYNTA</div>
+            <div style="background: rgba(0,0,0,0.5); border-radius: 12px; padding: 15px; font-family: monospace; word-break: break-all;">
+                <span style="color: #e5d272;">Burn Address:</span><br>
+                <code style="color: #7cf9ff; font-size: 14px;">1nc1nerator11111111111111111111111111111111</code>
+            </div>
+            <div style="margin-top: 15px; font-size: 14px; color: #9FE7E5;">
+                💡 Submit your transaction hash after burning. Registration approved after verification on SOLSCAN.
+            </div>
+        </div>
+        
+        <!-- Mechanics -->
+        <div class="mechanics-section">
+            <div class="mechanics-title"> QUEST MECHANICS</div>
+            <div class="mechanics-grid">
+                <div class="mechanic-item">
+                    <div class="mechanic-number">10</div>
+                    <div class="mechanic-text">Challenges<br>10 minutes each</div>
+                </div>
+                <div class="mechanic-item">
+                    <div class="mechanic-number">⏱️</div>
+                    <div class="mechanic-text">Time limit per challenge<br>Correct code appears after expiry</div>
+                </div>
+                <div class="mechanic-item">
+                    <div class="mechanic-number">🏆</div>
+                    <div class="mechanic-text">Top 5 fastest<br>total completion time</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Code Validation -->
+        <div style="margin: 20px 0; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px; color: #7cf9ff; font-size: 14px;">
+                <span>🔓</span> Code Entry: Case insensitive • Extra spaces ignored • Special characters preserved
+            </div>
+        </div>
+        
+        <!-- Registration Steps -->
+        <div style="margin: 25px 0;">
+            <div style="color: #e5d272; font-size: 16px; margin-bottom: 15px;">📝 HOW TO REGISTER</div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="background: #e5d272; color: #0a0a1a; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</div>
+                    <div>Burn <strong>100 SYNTA</strong> to the official burn address</div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="background: #e5d272; color: #0a0a1a; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</div>
+                    <div>Submit transaction hash in registration field</div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="background: #e5d272; color: #0a0a1a; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</div>
+                    <div>Registration approved after hash verification on SOLSCAN</div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="background: #e5d272; color: #0a0a1a; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">4</div>
+                    <div>Burn must be completed before quest start deadline</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Reward Distribution -->
+        <div style="margin: 20px 0; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 12px;">
+            <div style="color: #e5d272;">💰 REWARD DISTRIBUTION</div>
+            <div style="color: #9FE7E5; font-size: 14px;">Immediately after quest end (max 48 hours) — sent directly to registered wallets</div>
+        </div>
+        
+        <!-- Action Button -->
+        <div class="quest-actions" style="margin-top: 30px;">
+            <button class="action-btn primary" onclick="window.open('https://app.syntaquest.com/quest', '_blank')" style="background: linear-gradient(135deg, #e5d272, #f20000) !important; font-size: 18px; padding: 18px;">
+                🎮 JOIN THE QUEST
+            </button>
+        </div>
+    </div>
+</div>
+
+
     
     <div class="active-quest-card" id="preTGEQuest">
         <!-- Quest Banner with Image -->
@@ -1248,7 +1399,7 @@ margin-top: 100px;
         </div>
         
         <div class="quest-header">
-            <div class="quest-status" style="background: linear-gradient(135deg, #14339cc2, #32fcff); color: white; animation: pulseActive 2s infinite;">Active</div>
+            <div class="quest-status" style="background: linear-gradient(135deg, #3c3c3e00, #ffffffeb); color: white; animation: pulseActive 2s infinite;">Completed</div>
             <div class="quest-number">
                  PRE-TGE QUEST #01
             </div>
