@@ -6,7 +6,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta http-equiv="Cache-Control" content="public, max-age=31536000">
-<img-src 'self' https://gateway.pinata.cloud https://ipfs.io https://raw.githubusercontent.com data:
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src https://jup.ag https://jupiter.com; img-src 'self' https://gateway.pinata.cloud https://ipfs.io https://phantom.app https://solflare.com https://jup.ag https://raw.githubusercontent.com data:; media-src 'self' https://gateway.pinata.cloud https://ipfs.io; connect-src 'self' https://*.solana.com https://*.publicnode.com https://*.ankr.com https://*.extrnode.com https://solana-api.projectserum.com https://mainnet.helius-rpc.com https://go.getblock.us https://solana-mainnet.core.chainstack.com https://gateway.pinata.cloud;">
    <title>SYNTA</title>
    <title>SYNTA</title>
@@ -4249,6 +4248,21 @@ if (window.solana && window.solana.isJupiter) {
       console.log('Jupiter Wallet not found');
     }
   });
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (window.jupiter?.solana) {
+      console.log('✅ Jupiter Wallet detected');
+    } else if (window.solana && window.solana.isJupiter) {
+      console.log('✅ Jupiter Wallet detected via solana');
+    } else {
+      console.log('Jupiter Wallet not detected. Try refreshing the page.');
+      // Check if extension is installed but not injecting
+      console.log('Try going to chrome://extensions and reloading the Jupiter Wallet extension');
+    }
+  }, 2000);
+});
+
+
 }
 console.log('Burn address:', BURN_ADDRESS);
 console.log('Burn address length:', BURN_ADDRESS.length);
@@ -4526,7 +4540,10 @@ function showWalletSelection() {
   });
 }
 
-// Connect to selected wallet - FULLY FIXED FOR ALL WALLETS
+
+
+
+
 async function connectToWallet(wallet) {
   try {
     walletTopBtn.classList.add('loading');
@@ -4534,123 +4551,79 @@ async function connectToWallet(wallet) {
     
     let provider = wallet.getProvider();
     
-    // ==================== SOLFLARE SPECIFIC HANDLING ====================
+    if (!provider) {
+      alert(`${wallet.name} extension not detected. Please install it first.`);
+      walletTopBtn.classList.remove('loading');
+      walletBtnText.innerHTML = 'Connect Wallet';
+      return;
+    }
+    
+    console.log(`${wallet.name} provider found:`, provider);
+    
+    let response;
+    let publicKey;
+    
     if (wallet.name === 'Solflare') {
-      if (!provider) {
-        alert('Solflare extension not detected. Please install it first.');
-        walletTopBtn.classList.remove('loading');
-        walletBtnText.innerHTML = 'Connect Wallet';
-        return;
-      }
-      
+      // Solflare correct connection method
       try {
-        // Call the connect method - Solflare returns a response object with public_key
-        const response = await provider.connect();
+        // Try standard connect first
+        response = await provider.connect();
+        console.log('Solflare connect response:', response);
         
-        // Solflare returns different response formats:
-        // Format 1: { public_key: "3huUrtWW..." }
-        // Format 2: { publicKey: { toString: function } }
-        // Format 3: response.publicKey directly
-        
-        if (response && response.public_key) {
-          // Format 1 - raw public_key string from Solflare docs
+        if (response && response.publicKey) {
+          publicKey = response.publicKey;
+        } else if (response && response.public_key) {
           publicKey = new solanaWeb3.PublicKey(response.public_key);
-        } else if (response && response.publicKey) {
-          // Format 2 - publicKey object
-          if (typeof response.publicKey === 'object' && response.publicKey.toString) {
-            publicKey = response.publicKey;
-          } else if (typeof response.publicKey === 'string') {
-            publicKey = new solanaWeb3.PublicKey(response.publicKey);
-          } else {
-            publicKey = response.publicKey;
-          }
-        } else if (response && typeof response === 'object' && response.toString) {
-          // Format 3 - response itself is the publicKey object
+        } else if (response && typeof response === 'object' && response._bn) {
           publicKey = response;
+        } else if (provider.publicKey) {
+          publicKey = provider.publicKey;
+        } else {
+          throw new Error('No public key in connect response');
+        }
+      } catch (connectError) {
+        console.log('Connect failed, trying request method:', connectError);
+        // Fallback to request method
+        response = await provider.request({ method: 'connect' });
+        console.log('Solflare request response:', response);
+        
+        if (response && response.publicKey) {
+          publicKey = new solanaWeb3.PublicKey(response.publicKey);
+        } else if (response && response.public_key) {
+          publicKey = new solanaWeb3.PublicKey(response.public_key);
+        } else if (response && typeof response === 'string') {
+          publicKey = new solanaWeb3.PublicKey(response);
         } else {
           throw new Error('No public key received from Solflare');
         }
-        
-        // Store the session if provided (important for future requests)
-        if (response && response.session) {
-          localStorage.setItem('solflare_session', response.session);
-        }
-        
-        walletProvider = provider;
-        currentWalletName = wallet.name;
-        
-      } catch (e) {
-        console.error('Solflare connection error:', e);
-        // Try alternative connection method
-        if (provider.request) {
-          const resp = await provider.request({ method: 'connect' });
-          if (resp && resp.publicKey) {
-            publicKey = new solanaWeb3.PublicKey(resp.publicKey);
-            walletProvider = provider;
-            currentWalletName = wallet.name;
-          } else {
-            throw e;
-          }
-        } else {
-          throw e;
-        }
       }
-    } 
-    // ==================== JUPITER SPECIFIC HANDLING ====================
-    else if (wallet.name === 'Jupiter') {
-      if (!provider && window.solana) {
-        provider = window.solana;
-      }
-      if (!provider) {
-        alert('Jupiter Wallet extension not detected. Please install it first.');
-        walletTopBtn.classList.remove('loading');
-        walletBtnText.innerHTML = 'Connect Wallet';
-        return;
-      }
-      
-      const resp = await provider.connect();
-      publicKey = resp.publicKey;
-      walletProvider = provider;
-      currentWalletName = wallet.name;
-    }
-    // ==================== PHANTOM AND OTHERS ====================
-    else {
-      if (!provider) {
-        alert(`${wallet.name} not detected. Please install it first.`);
-        walletTopBtn.classList.remove('loading');
-        walletBtnText.innerHTML = 'Connect Wallet';
-        return;
-      }
-      const resp = await provider.connect();
-      publicKey = resp.publicKey;
-      walletProvider = provider;
-      currentWalletName = wallet.name;
+    } else {
+      // Phantom and Jupiter
+      response = await provider.connect();
+      publicKey = response.publicKey;
     }
     
-    // Final validation: Ensure we have a valid publicKey
     if (!publicKey) {
-      throw new Error('Failed to get public key - no publicKey object received');
+      throw new Error('Failed to get public key object');
     }
     
-    // Convert to string safely for display
-    const publicKeyString = publicKey.toString ? publicKey.toString() : String(publicKey);
-    console.log(`${wallet.name} connected:`, publicKeyString);
+    walletProvider = provider;
+    currentWalletName = wallet.name;
     
     // Setup disconnect listener
-    if (walletProvider && walletProvider.on) {
-      walletProvider.on('disconnect', () => {
+    if (typeof provider.on === 'function') {
+      provider.on('disconnect', () => {
         publicKey = null;
         walletProvider = null;
         walletBalance = 0;
         updateUI();
         updateBurnStatus();
-        localStorage.removeItem('solflare_session');
       });
     }
     
     await fetchBalance();
     
-    // Update UI with the public key
+    const publicKeyString = publicKey.toString();
     const short = publicKeyString.slice(0, 4) + '...' + publicKeyString.slice(-4);
     walletBtnText.innerHTML = `${wallet.icon || '🔗'} ${wallet.name}`;
     walletShortAddress.textContent = short;
@@ -4660,24 +4633,21 @@ async function connectToWallet(wallet) {
     
     updateBurnStatus();
     walletTopBtn.classList.remove('loading');
-    console.log('Wallet connected:', wallet.name);
+    console.log('Wallet connected:', wallet.name, publicKeyString);
     
   } catch (error) {
     console.error('Connection error:', error);
     walletTopBtn.classList.remove('loading');
     walletBtnText.innerHTML = 'Connect Wallet';
     
-    let errorMsg = `Failed to connect to ${wallet.name}.\n`;
-    if (wallet.name === 'Jupiter') {
-      errorMsg += 'Make sure Jupiter Wallet extension is installed and you are logged in.';
-    } else if (wallet.name === 'Solflare') {
-      errorMsg += 'Make sure Solflare extension is installed and you are logged in.\n\nTry refreshing the page and clicking "Connect" again.';
+    if (error.message === 'User rejected the request') {
+      alert('You rejected the connection request. Please click "Connect" again and approve.');
     } else {
-      errorMsg += 'Please make sure it\'s unlocked and try again.';
+      alert(`Failed to connect to ${wallet.name}. Error: ${error.message}`);
     }
-    alert(errorMsg);
   }
 }
+
 
 
 
@@ -5445,20 +5415,23 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
 </div>
+<!-- Jupiter Swap Modal -->
 <div class="widget-backdrop" id="widgetBackdrop"></div>
 <div class="jupiter-widget" id="jupiterWidget">
   <div class="jupiter-widget-header">
     <h3 class="jupiter-widget-title">🪐 Swap SOL for SYNTA</h3>
     <button class="jupiter-close-btn" id="jupiterCloseBtn">×</button>
   </div>
-  <div class="jupiter-widget-body">
-    <iframe 
-      class="jupiter-iframe" 
-      id="jupiterIframe"
-      src="https://jup.ag/swap/SOL-2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La?theme=dark&referrer=synta"
-      title="Jupiter Swap Interface"
-      allow="clipboard-write"
-    ></iframe>
+  <div class="jupiter-widget-body" style="display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 40px; text-align: center;">
+    <div style="font-size: 48px; margin-bottom: 20px;">🪐</div>
+    <h4 style="color: #7cf9ff; margin-bottom: 15px;">Open Jupiter Exchange</h4>
+    <p style="color: #9FE7E5; margin-bottom: 25px; font-size: 14px;">Click the button below to swap SOL for SYNTA</p>
+    <a href="https://jup.ag/swap/SOL-2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       style="background: linear-gradient(135deg, #7cf9ff, #7f5cff); color: #0a0a1a; padding: 14px 32px; border-radius: 40px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 10px;">
+      <span>🪐</span> Launch Jupiter <span>→</span>
+    </a>
   </div>
 </div>
 <div class="particle-ticker">
