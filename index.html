@@ -4766,7 +4766,10 @@ await fetchBalance();
 // Call updateUI to properly set all UI elements
 updateUI();
 walletTopBtn.classList.remove('loading');
-console.log('Wallet connected:', wallet.name, publicKeyString);
+console.log('Wallet connected:', wallet.name, publicKey?.toString());  // Use publicKey instead
+
+// Show success notification
+showToast('Wallet Connected', `${wallet.name} wallet connected successfully`, 'success');
 
     
     // Show success notification
