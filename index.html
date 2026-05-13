@@ -4774,9 +4774,7 @@ async function connectToWallet(wallet) {
     updateBurnStatus();
     walletTopBtn.classList.remove('loading');
     console.log('Wallet connected:', wallet.name, publicKeyString);
-    updateBurnStatus();
-    walletTopBtn.classList.remove('loading');
-    console.log('Wallet connected:', wallet.name, publicKeyString);
+
     
     // Show success notification
     showToast('Wallet Connected', `${wallet.name} wallet connected successfully`, 'success');
