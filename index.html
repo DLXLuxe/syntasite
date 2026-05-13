@@ -5930,6 +5930,19 @@ document.getElementById('toastCloseBtn')?.addEventListener('click', () => {
   }
 })();
 
+window.connectWallet = async function() {
+  if (typeof publicKey !== 'undefined' && publicKey) {
+    showToast('Already Connected', 'Wallet is already connected', 'info');
+    return;
+  }
+  showWalletSelection();
+};
+
+window.showWalletSelection = showWalletSelection;
+window.connectWalletMobile = connectWalletMobile;
+window.disconnectWallet = disconnectWallet;
+
+console.log('✅ Wallet functions exposed to window globally');
  </script>
 <!-- Toast Notification -->
 <div class="toast-notification" id="toastNotification">
