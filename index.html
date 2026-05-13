@@ -4436,37 +4436,40 @@ function showWalletSelection() {
   document.head.appendChild(style);
   
   // Wallet configurations - FIXED ICONS and JUPITER DETECTION
-  const wallets = [
-    {
-      name: 'Phantom',
-      iconUrl: 'https://phantom.app/static/phantom_icon.png',
-      icon: '🦊',
-      getProvider: () => window.phantom?.solana || (window.solana?.isPhantom ? window.solana : null),
-      isInstalled: () => !!(window.phantom?.solana || (window.solana && window.solana.isPhantom)),
-      downloadUrl: 'https://phantom.app/'
+ const wallets = [
+  {
+    name: 'Phantom',
+    iconSvg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#AB9FF2" d="M5.13 19.2c2.297 0 4.023-1.92 5.053-3.436a2.9 2.9 0 0 0-.195.994c0 .885.53 1.516 1.574 1.516 1.433 0 2.965-1.208 3.758-2.51a2 2 0 0 0-.083.524c0 .617.362 1.006 1.1 1.006 2.324 0 4.663-3.959 4.663-7.421C21 7.175 19.58 4.8 16.016 4.8 9.752 4.8 3 12.154 3 16.905 3 18.771 4.044 19.2 5.13 19.2m8.729-9.622c0-.671.39-1.141.96-1.141.557 0 .947.47.947 1.14 0 .672-.39 1.155-.947 1.155-.57 0-.96-.483-.96-1.154m2.979 0c0-.671.39-1.141.96-1.141.557 0 .947.47.947 1.14 0 .672-.39 1.155-.947 1.155-.57 0-.96-.483-.96-1.154"/>
+    </svg>`,
+    icon: '🦊',
+    getProvider: () => window.phantom?.solana || (window.solana?.isPhantom ? window.solana : null),
+    isInstalled: () => !!(window.phantom?.solana || (window.solana && window.solana.isPhantom)),
+    downloadUrl: 'https://phantom.app/'
+  },
+  {
+    name: 'Solflare',
+    iconSvg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#FFEF46" d="m12.063 12.715 1.245-1.199 2.32.757c1.518.505 2.278 1.43 2.278 2.734 0 .988-.38 1.64-1.14 2.481l-.231.253.084-.59c.337-2.144-.295-3.07-2.383-3.742zM8.942 5.376l6.327 2.103-1.37 1.304-3.291-1.094c-1.139-.378-1.519-.988-1.666-2.27zm-.38 10.682 1.434-1.367 2.7.884c1.413.462 1.898 1.072 1.75 2.607zM6.748 9.96c0-.4.211-.778.57-1.093.38.547 1.033 1.03 2.067 1.367l2.235.736-1.244 1.198-2.194-.715c-1.012-.336-1.434-.84-1.434-1.493M13.371 21c4.64-3.07 7.129-5.152 7.129-7.717 0-1.704-1.012-2.65-3.248-3.386l-1.687-.568 4.619-4.415-.928-.989-1.371 1.199L11.409 3c-2.003.652-4.534 2.565-4.534 4.479 0 .21.02.42.084.652-1.666.946-2.341 1.83-2.341 2.923 0 1.03.548 2.06 2.299 2.628l1.392.463L3.5 18.75l.928.988 1.498-1.366z"/>
+    </svg>`,
+    icon: '🟠',
+    getProvider: () => window.solflare,
+    isInstalled: () => !!(window.solflare && window.solflare.isSolflare),
+    downloadUrl: 'https://solflare.com/'
+  },
+  {
+    name: 'Jupiter',
+    iconSvg: null,
+    icon: '🪐',
+    getProvider: () => {
+      if (window.solana && window.solana.isJupiter) return window.solana;
+      if (window.jupiter?.solana) return window.jupiter.solana;
+      return null;
     },
-    {
-      name: 'Solflare',
-      iconUrl: 'https://solflare.com/assets/favicon.svg',
-      icon: '🟠',
-      getProvider: () => window.solflare || (window.solflare?.isSolflare ? window.solflare : null),
-      isInstalled: () => !!(window.solflare && window.solflare.isSolflare),
-      downloadUrl: 'https://solflare.com/'
-    },
-    {
-      name: 'Jupiter',
-      iconUrl: 'https://jup.ag/favicon.ico',
-      icon: '🪐',
-      // Jupiter Wallet injects as window.solana with isJupiter property
-      getProvider: () => {
-        if (window.solana && window.solana.isJupiter) return window.solana;
-        if (window.jupiter?.solana) return window.jupiter.solana;
-        return null;
-      },
-      isInstalled: () => !!(window.solana && window.solana.isJupiter) || !!(window.jupiter?.solana),
-      downloadUrl: 'https://chromewebstore.google.com/detail/jupiter-wallet/iledlaeogohbilgbfhmbgkgmpplbfboh'
-    }
-  ];
+    isInstalled: () => !!(window.solana && window.solana.isJupiter) || !!(window.jupiter?.solana),
+    downloadUrl: 'https://chromewebstore.google.com/detail/jupiter-wallet/iledlaeogohbilgbfhmbgkgmpplbfboh'
+  }
+];
   
   const optionsContainer = document.getElementById('walletOptionsList');
   optionsContainer.innerHTML = '';
@@ -4489,21 +4492,22 @@ function showWalletSelection() {
     `;
     
     btn.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 14px;">
-        <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
-          <img src="${wallet.iconUrl}" width="28" height="28" style="border-radius: 8px; object-fit: contain;" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=font-size:24px>${wallet.icon}</span>'">
-        </div>
-        <div style="text-align: left;">
-          <div style="font-weight: 600; color: white; font-size: 15px;">${wallet.name}</div>
-          <div style="font-size: 11px; color: ${isInstalled ? '#10b981' : '#64748b'}; margin-top: 2px;">
-            ${isInstalled ? '✓ Installed' : 'Not installed'}
-          </div>
-        </div>
+  <div style="display: flex; align-items: center; gap: 14px;">
+    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+      ${wallet.iconSvg || `<span style="font-size: 24px;">${wallet.icon}</span>`}
+    </div>
+    <div style="text-align: left;">
+      <div style="font-weight: 600; color: white; font-size: 15px;">${wallet.name}</div>
+      <div style="font-size: 11px; color: ${isInstalled ? '#10b981' : '#64748b'}; margin-top: 2px;">
+        ${isInstalled ? '✓ Installed' : 'Not installed'}
       </div>
-      <div style="font-size: 13px; color: ${isInstalled ? '#7cf9ff' : '#64748b'};">
-        ${isInstalled ? 'Connect →' : 'Install →'}
-      </div>
-    `;
+    </div>
+  </div>
+  <div style="font-size: 13px; color: ${isInstalled ? '#7cf9ff' : '#64748b'};">
+    ${isInstalled ? 'Connect →' : 'Install →'}
+  </div>
+`;
+        
     
     btn.onmouseenter = () => {
       btn.style.background = 'rgba(124, 249, 255, 0.08)';
