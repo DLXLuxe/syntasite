@@ -4859,8 +4859,7 @@ async function checkPhantomConnection() {
             await fetchBalance();
             updateUI();
             updateBurnStatus();
-            walletBtnText.textContent = 'Wallet';
-            console.log('Auto-connected after returning from Phantom!');
+                       console.log('Auto-connected after returning from Phantom!');
           }
         } catch (error) {
           console.log('Not auto-connected, user needs to approve in Phantom');
@@ -4868,8 +4867,7 @@ async function checkPhantomConnection() {
       }
     }
     walletTopBtn.classList.remove('loading');
-    walletBtnText.textContent = publicKey ? 'Wallet' : 'Connect Wallet';
-  }
+    }
 }
 walletTopBtn.addEventListener('click', (e) => {
   e.stopPropagation();  
