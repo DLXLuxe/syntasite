@@ -4260,8 +4260,6 @@ window.addEventListener('load', () => {
     }
   }, 2000);
 });
-
-
 }
 console.log('Burn address:', BURN_ADDRESS);
 console.log('Burn address length:', BURN_ADDRESS.length);
@@ -4315,21 +4313,32 @@ async function fetchBalance() {
   return 0;
 }
   function updateUI() {
-    if (publicKey) {
-      const short = publicKey.toString().slice(0, 4) + '...' + publicKey.toString().slice(-4);
-      walletBtnText.textContent = 'Wallet';
-      walletShortAddress.textContent = short;
-      walletFullAddress.textContent = publicKey.toString();
-      syntaBalance.textContent = walletBalance.toFixed(2);
-      walletTopBtn.classList.add('connected');
-    } else {
-      walletBtnText.textContent = 'Connect Wallet';
-      walletShortAddress.textContent = '';
-      walletFullAddress.textContent = 'Not connected';
-      syntaBalance.textContent = '0.00';
-      walletTopBtn.classList.remove('connected');
+  if (publicKey) {
+    const short = publicKey.toString().slice(0, 4) + '...' + publicKey.toString().slice(-4);
+    
+    // Get the icon for the connected wallet
+    let walletIcon = '🔗';
+    if (currentWalletName === 'Phantom') {
+      walletIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle;"><path fill="#AB9FF2" d="M5.13 19.2c2.297 0 4.023-1.92 5.053-3.436a2.9 2.9 0 0 0-.195.994c0 .885.53 1.516 1.574 1.516 1.433 0 2.965-1.208 3.758-2.51a2 2 0 0 0-.083.524c0 .617.362 1.006 1.1 1.006 2.324 0 4.663-3.959 4.663-7.421C21 7.175 19.58 4.8 16.016 4.8 9.752 4.8 3 12.154 3 16.905 3 18.771 4.044 19.2 5.13 19.2m8.729-9.622c0-.671.39-1.141.96-1.141.557 0 .947.47.947 1.14 0 .672-.39 1.155-.947 1.155-.57 0-.96-.483-.96-1.154m2.979 0c0-.671.39-1.141.96-1.141.557 0 .947.47.947 1.14 0 .672-.39 1.155-.947 1.155-.57 0-.96-.483-.96-1.154"/></svg>`;
+    } else if (currentWalletName === 'Solflare') {
+      walletIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle;"><path fill="#FFEF46" d="m12.063 12.715 1.245-1.199 2.32.757c1.518.505 2.278 1.43 2.278 2.734 0 .988-.38 1.64-1.14 2.481l-.231.253.084-.59c.337-2.144-.295-3.07-2.383-3.742zM8.942 5.376l6.327 2.103-1.37 1.304-3.291-1.094c-1.139-.378-1.519-.988-1.666-2.27zm-.38 10.682 1.434-1.367 2.7.884c1.413.462 1.898 1.072 1.75 2.607zM6.748 9.96c0-.4.211-.778.57-1.093.38.547 1.033 1.03 2.067 1.367l2.235.736-1.244 1.198-2.194-.715c-1.012-.336-1.434-.84-1.434-1.493M13.371 21c4.64-3.07 7.129-5.152 7.129-7.717 0-1.704-1.012-2.65-3.248-3.386l-1.687-.568 4.619-4.415-.928-.989-1.371 1.199L11.409 3c-2.003.652-4.534 2.565-4.534 4.479 0 .21.02.42.084.652-1.666.946-2.341 1.83-2.341 2.923 0 1.03.548 2.06 2.299 2.628l1.392.463L3.5 18.75l.928.988 1.498-1.366z"/></svg>`;
+    } else if (currentWalletName === 'Jupiter') {
+      walletIcon = `🪐`;
     }
+    
+    walletBtnText.innerHTML = `${walletIcon} ${wallet.name || 'Wallet'}`;
+    walletShortAddress.textContent = short;
+    walletFullAddress.textContent = publicKey.toString();
+    syntaBalance.textContent = walletBalance.toFixed(2);
+    walletTopBtn.classList.add('connected');
+  } else {
+    walletBtnText.textContent = 'Connect Wallet';
+    walletShortAddress.textContent = '';
+    walletFullAddress.textContent = 'Not connected';
+    syntaBalance.textContent = '0.00';
+    walletTopBtn.classList.remove('connected');
   }
+}
   function updateBurnStatus() {
     if (burnWalletStatus) {
       if (publicKey) {
@@ -4435,8 +4444,7 @@ function showWalletSelection() {
   `;
   document.head.appendChild(style);
   
-  // Wallet configurations - FIXED ICONS and JUPITER DETECTION
- const wallets = [
+const wallets = [
   {
     name: 'Phantom',
     iconSvg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -4459,7 +4467,40 @@ function showWalletSelection() {
   },
   {
     name: 'Jupiter',
-    iconSvg: null,
+    iconSvg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="JUP__a" x1="31.514" x2="-11.852" y1="-44.073" y2="1.318" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#C7F284"/>
+          <stop offset="1" stop-color="#00BEF0"/>
+        </linearGradient>
+        <linearGradient id="JUP__b" x1="22.308" x2="-1.561" y1="-15.359" y2="11.673" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#C7F284"/>
+          <stop offset="1" stop-color="#00BEF0"/>
+        </linearGradient>
+        <linearGradient id="JUP__c" x1="11.502" x2="-11.828" y1="12.343" y2="38.055" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#C7F284"/>
+          <stop offset="1" stop-color="#00BEF0"/>
+        </linearGradient>
+        <linearGradient id="JUP__d" x1="16.445" x2="1.436" y1="1.484" y2="19.792" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#C7F284"/>
+          <stop offset="1" stop-color="#00BEF0"/>
+        </linearGradient>
+        <linearGradient id="JUP__e" x1="18.777" x2="1.508" y1="-4.563" y2="16.538" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#C7F284"/>
+          <stop offset="1" stop-color="#00BEF0"/>
+        </linearGradient>
+        <linearGradient id="JUP__f" x1="14.986" x2="7.18" y1="6.9" y2="20.843" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#C7F284"/>
+          <stop offset="1" stop-color="#00BEF0"/>
+        </linearGradient>
+      </defs>
+      <path fill="url(#JUP__a)" d="M4.723 16.919a9.05 9.05 0 0 0 2.837 2.478 9.4 9.4 0 0 0 3.64 1.143c-.66-.957-1.62-1.837-2.82-2.507-1.198-.67-2.468-1.037-3.658-1.115"/>
+      <path fill="url(#JUP__b)" d="M9.993 15.365c-2.31-1.292-4.81-1.62-6.598-1.04q.259.827.68 1.589c1.554-.035 3.25.371 4.83 1.254 1.578.883 2.786 2.1 3.525 3.418a9.6 9.6 0 0 0 1.771-.218c-.361-1.784-1.899-3.711-4.208-5.003"/>
+      <path fill="url(#JUP__c)" d="M21 10.122a8.7 8.7 0 0 0-1.562-3.178 9.05 9.05 0 0 0-2.73-2.337 9.4 9.4 0 0 0-3.46-1.125 9.5 9.5 0 0 0-3.643.268c1.976.233 4.17.947 6.322 2.15S19.811 8.584 21 10.122"/>
+      <path fill="url(#JUP__d)" d="M18.124 14.337c-1.011-1.617-2.744-3.166-4.88-4.36-2.134-1.193-4.39-1.875-6.35-1.92-1.723-.04-3.016.443-3.547 1.323l-.01.015q-.072.247-.127.496c.741-.281 1.6-.438 2.556-.456 2.124-.038 4.5.616 6.695 1.842 2.193 1.227 3.962 2.892 4.98 4.686.455.808.74 1.604.853 2.365q.196-.17.385-.351l.008-.017c.531-.881.326-2.201-.563-3.623"/>
+      <path fill="url(#JUP__e)" d="M11.62 12.67c-3.27-1.83-6.883-2.116-8.62-.84q.005.6.095 1.194a7.5 7.5 0 0 1 1.57-.28c1.942-.14 4.082.38 6.025 1.467 1.942 1.086 3.473 2.619 4.308 4.31.231.464.407.951.525 1.452a9 9 0 0 0 1.125-.511c.29-2.085-1.758-4.964-5.028-6.793"/>
+      <path fill="url(#JUP__f)" d="M19.805 11.63c-1.023-1.615-2.771-3.168-4.922-4.37s-4.414-1.894-6.38-1.95c-1.498-.041-2.658.308-3.26.969 2.499-.408 5.794.277 8.988 2.063s5.446 4.203 6.315 6.493c.298-.83.038-1.973-.741-3.205"/>
+    </svg>`,
     icon: '🪐',
     getProvider: () => {
       if (window.solana && window.solana.isJupiter) return window.solana;
@@ -4542,11 +4583,6 @@ function showWalletSelection() {
     modal.remove();
   });
 }
-
-
-
-
-
 async function connectToWallet(wallet) {
   try {
     walletTopBtn.classList.add('loading');
@@ -4601,7 +4637,6 @@ async function connectToWallet(wallet) {
         }
       }
     } else {
-      // Phantom and Jupiter
       response = await provider.connect();
       publicKey = response.publicKey;
     }
@@ -4612,8 +4647,7 @@ async function connectToWallet(wallet) {
     
     walletProvider = provider;
     currentWalletName = wallet.name;
-    
-    // Setup disconnect listener
+
     if (typeof provider.on === 'function') {
       provider.on('disconnect', () => {
         publicKey = null;
@@ -4650,10 +4684,6 @@ async function connectToWallet(wallet) {
     }
   }
 }
-
-
-
-
 // Replace the old connectWallet function - THIS WAS MISSING!
 async function connectWallet() {
   showWalletSelection();
@@ -5031,10 +5061,6 @@ document.addEventListener('DOMContentLoaded', function() {
     applyCookiePreferences(cookieConsent);
   }
 })();
-// ============================================
-// NFT MODAL GALLERY - FIXED VIDEO PLAYBACK
-// ============================================
-
 const NFT_COLLECTION = [
     {
         address: "ENQo6j7dVw7YgLUqZLGUSsAcXQ4efxVtDAD9Dnbr5eFF",
@@ -5629,9 +5655,6 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- BURN COUNTER SCRIPT - Live total burned from Solana blockchain -->
 <script>
 (function() {
-  // ============================================
-  // SYNTA BURNED COUNTER - Professional Tracker
-  // ============================================
   const BURN_ADDRESS = '1nc1nerator11111111111111111111111111111111';
   const SYNTA_MINT = '2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La';
   const DECIMALS = 9;
