@@ -6,6 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta http-equiv="Cache-Control" content="public, max-age=31536000">
+<img-src 'self' https://gateway.pinata.cloud https://ipfs.io https://raw.githubusercontent.com data:
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src https://jup.ag https://jupiter.com; img-src 'self' https://gateway.pinata.cloud https://ipfs.io https://phantom.app https://solflare.com https://jup.ag https://raw.githubusercontent.com data:; media-src 'self' https://gateway.pinata.cloud https://ipfs.io; connect-src 'self' https://*.solana.com https://*.publicnode.com https://*.ankr.com https://*.extrnode.com https://solana-api.projectserum.com https://mainnet.helius-rpc.com https://go.getblock.us https://solana-mainnet.core.chainstack.com https://gateway.pinata.cloud;">
    <title>SYNTA</title>
    <title>SYNTA</title>
@@ -4525,6 +4526,7 @@ function showWalletSelection() {
   });
 }
 
+// Connect to selected wallet - FULLY FIXED FOR ALL WALLETS
 async function connectToWallet(wallet) {
   try {
     walletTopBtn.classList.add('loading');
@@ -4532,7 +4534,7 @@ async function connectToWallet(wallet) {
     
     let provider = wallet.getProvider();
     
-    // Special handling for Solflare
+    // ==================== SOLFLARE SPECIFIC HANDLING ====================
     if (wallet.name === 'Solflare') {
       if (!provider) {
         alert('Solflare extension not detected. Please install it first.');
@@ -4540,18 +4542,61 @@ async function connectToWallet(wallet) {
         walletBtnText.innerHTML = 'Connect Wallet';
         return;
       }
+      
       try {
-        const resp = await provider.connect();
-        publicKey = resp.publicKey;
+        // Call the connect method - Solflare returns a response object with public_key
+        const response = await provider.connect();
+        
+        // Solflare returns different response formats:
+        // Format 1: { public_key: "3huUrtWW..." }
+        // Format 2: { publicKey: { toString: function } }
+        // Format 3: response.publicKey directly
+        
+        if (response && response.public_key) {
+          // Format 1 - raw public_key string from Solflare docs
+          publicKey = new solanaWeb3.PublicKey(response.public_key);
+        } else if (response && response.publicKey) {
+          // Format 2 - publicKey object
+          if (typeof response.publicKey === 'object' && response.publicKey.toString) {
+            publicKey = response.publicKey;
+          } else if (typeof response.publicKey === 'string') {
+            publicKey = new solanaWeb3.PublicKey(response.publicKey);
+          } else {
+            publicKey = response.publicKey;
+          }
+        } else if (response && typeof response === 'object' && response.toString) {
+          // Format 3 - response itself is the publicKey object
+          publicKey = response;
+        } else {
+          throw new Error('No public key received from Solflare');
+        }
+        
+        // Store the session if provided (important for future requests)
+        if (response && response.session) {
+          localStorage.setItem('solflare_session', response.session);
+        }
+        
         walletProvider = provider;
         currentWalletName = wallet.name;
+        
       } catch (e) {
-        const resp = await provider.request({ method: 'connect' });
-        publicKey = new solanaWeb3.PublicKey(resp.publicKey);
-        walletProvider = provider;
-        currentWalletName = wallet.name;
+        console.error('Solflare connection error:', e);
+        // Try alternative connection method
+        if (provider.request) {
+          const resp = await provider.request({ method: 'connect' });
+          if (resp && resp.publicKey) {
+            publicKey = new solanaWeb3.PublicKey(resp.publicKey);
+            walletProvider = provider;
+            currentWalletName = wallet.name;
+          } else {
+            throw e;
+          }
+        } else {
+          throw e;
+        }
       }
     } 
+    // ==================== JUPITER SPECIFIC HANDLING ====================
     else if (wallet.name === 'Jupiter') {
       if (!provider && window.solana) {
         provider = window.solana;
@@ -4562,11 +4607,13 @@ async function connectToWallet(wallet) {
         walletBtnText.innerHTML = 'Connect Wallet';
         return;
       }
+      
       const resp = await provider.connect();
       publicKey = resp.publicKey;
       walletProvider = provider;
       currentWalletName = wallet.name;
     }
+    // ==================== PHANTOM AND OTHERS ====================
     else {
       if (!provider) {
         alert(`${wallet.name} not detected. Please install it first.`);
@@ -4580,12 +4627,14 @@ async function connectToWallet(wallet) {
       currentWalletName = wallet.name;
     }
     
-    // FIXED: Check if publicKey exists before calling toString
+    // Final validation: Ensure we have a valid publicKey
     if (!publicKey) {
-      throw new Error('Failed to get public key');
+      throw new Error('Failed to get public key - no publicKey object received');
     }
     
-    console.log(`${wallet.name} connected:`, publicKey.toString());
+    // Convert to string safely for display
+    const publicKeyString = publicKey.toString ? publicKey.toString() : String(publicKey);
+    console.log(`${wallet.name} connected:`, publicKeyString);
     
     // Setup disconnect listener
     if (walletProvider && walletProvider.on) {
@@ -4595,20 +4644,19 @@ async function connectToWallet(wallet) {
         walletBalance = 0;
         updateUI();
         updateBurnStatus();
+        localStorage.removeItem('solflare_session');
       });
     }
     
     await fetchBalance();
     
-    // FIXED: Check publicKey exists before toString
-    if (publicKey) {
-      const short = publicKey.toString().slice(0, 4) + '...' + publicKey.toString().slice(-4);
-      walletBtnText.innerHTML = `${wallet.icon || '🔗'} ${wallet.name}`;
-      walletShortAddress.textContent = short;
-      walletFullAddress.textContent = publicKey.toString();
-      syntaBalance.textContent = walletBalance.toFixed(2);
-      walletTopBtn.classList.add('connected');
-    }
+    // Update UI with the public key
+    const short = publicKeyString.slice(0, 4) + '...' + publicKeyString.slice(-4);
+    walletBtnText.innerHTML = `${wallet.icon || '🔗'} ${wallet.name}`;
+    walletShortAddress.textContent = short;
+    walletFullAddress.textContent = publicKeyString;
+    syntaBalance.textContent = walletBalance.toFixed(2);
+    walletTopBtn.classList.add('connected');
     
     updateBurnStatus();
     walletTopBtn.classList.remove('loading');
@@ -4623,13 +4671,15 @@ async function connectToWallet(wallet) {
     if (wallet.name === 'Jupiter') {
       errorMsg += 'Make sure Jupiter Wallet extension is installed and you are logged in.';
     } else if (wallet.name === 'Solflare') {
-      errorMsg += 'Make sure Solflare extension is installed and you are logged in.';
+      errorMsg += 'Make sure Solflare extension is installed and you are logged in.\n\nTry refreshing the page and clicking "Connect" again.';
     } else {
       errorMsg += 'Please make sure it\'s unlocked and try again.';
     }
     alert(errorMsg);
   }
 }
+
+
 
 // Replace the old connectWallet function - THIS WAS MISSING!
 async function connectWallet() {
