@@ -3704,6 +3704,109 @@ margin-bottom: 40px;
   .burn-counter-number { font-size: 32px; }
   .burn-counter-card { padding: 18px; }
 }
+/* Toast Notification */
+.toast-notification {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 10001;
+  transform: translateX(-20px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.toast-notification.show {
+  transform: translateX(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+.toast-content {
+  background: linear-gradient(145deg, #0f172a, #1e293b);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(124, 249, 255, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(124, 249, 255, 0.1);
+  min-width: 280px;
+}
+
+.toast-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 18px;
+}
+
+.toast-icon.success {
+  background: rgba(0, 255, 213, 0.15);
+  color: #00ffd5;
+}
+
+.toast-icon.error {
+  background: rgba(255, 68, 68, 0.15);
+  color: #ff4444;
+}
+
+.toast-icon.info {
+  background: rgba(124, 249, 255, 0.15);
+  color: #7cf9ff;
+}
+
+.toast-message {
+  flex: 1;
+}
+
+.toast-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.toast-subtitle {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.toast-close {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: #94a3b8;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.toast-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .toast-notification {
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+  }
+  .toast-content {
+    min-width: auto;
+    width: calc(100% - 32px);
+  }
+}
 </style>
 </style>
 </head>
@@ -4326,7 +4429,7 @@ async function fetchBalance() {
       walletIcon = `🪐`;
     }
     
-    walletBtnText.innerHTML = `${walletIcon} ${wallet.name || 'Wallet'}`;
+    walletBtnText.innerHTML = `${walletIcon} <span style="margin-left: 6px;">${currentWalletName || 'Wallet'}</span>`;
     walletShortAddress.textContent = short;
     walletFullAddress.textContent = publicKey.toString();
     syntaBalance.textContent = walletBalance.toFixed(2);
@@ -4671,18 +4774,30 @@ async function connectToWallet(wallet) {
     updateBurnStatus();
     walletTopBtn.classList.remove('loading');
     console.log('Wallet connected:', wallet.name, publicKeyString);
-    
-  } catch (error) {
-    console.error('Connection error:', error);
+    updateBurnStatus();
     walletTopBtn.classList.remove('loading');
-    walletBtnText.innerHTML = 'Connect Wallet';
+    console.log('Wallet connected:', wallet.name, publicKeyString);
     
-    if (error.message === 'User rejected the request') {
-      alert('You rejected the connection request. Please click "Connect" again and approve.');
-    } else {
-      alert(`Failed to connect to ${wallet.name}. Error: ${error.message}`);
-    }
+    // Show success notification
+    showToast('Wallet Connected', `${wallet.name} wallet connected successfully`, 'success');
+
+  } catch (error) {
+  console.error('Connection error:', error);
+  walletTopBtn.classList.remove('loading');
+  walletBtnText.innerHTML = 'Connect Wallet';
+  
+  let errorMessage = error.message || 'Unknown error';
+  
+  if (errorMessage === 'User rejected the request') {
+    showToast('Connection Rejected', 'You rejected the connection request. Please approve to connect.', 'error');
+  } else if (errorMessage.includes('already processing')) {
+    showToast('Connection Busy', 'Wallet is already processing a request. Please try again.', 'error');
+  } else if (errorMessage.includes('timeout')) {
+    showToast('Connection Timeout', 'Request timed out. Please try again.', 'error');
+  } else {
+    showToast('Connection Failed', `Failed to connect to ${wallet.name}. ${errorMessage}`, 'error');
   }
+}
 }
 // Replace the old connectWallet function - THIS WAS MISSING!
 async function connectWallet() {
@@ -4800,7 +4915,10 @@ async function disconnectWallet() {
   updateBurnStatus();
   walletDropdown.classList.remove('active');
   walletTopBtn.classList.remove('loading');
-  walletBtnText.textContent = 'Connect Wallet';  
+  walletBtnText.textContent = 'Connect Wallet';
+showToast('Wallet Disconnected', 'Your wallet has been disconnected', 'info');
+  
+  console.log('Wallet disconnected');  
   console.log('Wallet disconnected and reset');
 }
   copyWalletAddress.addEventListener('click', () => {
@@ -5759,7 +5877,43 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   }
+ 
+// Toast notification system
+function showToast(title, subtitle, type = 'success') {
+  const toast = document.getElementById('toastNotification');
+  const toastIcon = document.getElementById('toastIcon');
+  const toastTitle = document.getElementById('toastTitle');
+  const toastSubtitle = document.getElementById('toastSubtitle');
   
+  // Set icon based on type
+  if (type === 'success') {
+    toastIcon.innerHTML = '✅';
+    toastIcon.className = 'toast-icon success';
+  } else if (type === 'error') {
+    toastIcon.innerHTML = '❌';
+    toastIcon.className = 'toast-icon error';
+  } else {
+    toastIcon.innerHTML = '🔗';
+    toastIcon.className = 'toast-icon info';
+  }
+  
+  toastTitle.textContent = title;
+  toastSubtitle.textContent = subtitle;
+  
+  // Show toast
+  toast.classList.add('show');
+  
+  // Auto hide after 4 seconds
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 4000);
+}
+
+// Close toast on button click
+document.getElementById('toastCloseBtn')?.addEventListener('click', () => {
+  document.getElementById('toastNotification').classList.remove('show');
+});
+
   // Refresh button handler
   function setupRefreshButton() {
     const refreshBtn = document.getElementById('refreshBurnBtn');
@@ -5799,7 +5953,18 @@ document.addEventListener('DOMContentLoaded', () => {
     startAutoRefresh();
   }
 })();
-</script>
+ </script>
+<!-- Toast Notification -->
+<div class="toast-notification" id="toastNotification">
+  <div class="toast-content">
+    <div class="toast-icon" id="toastIcon">🔗</div>
+    <div class="toast-message">
+      <div class="toast-title" id="toastTitle">Wallet Connected</div>
+      <div class="toast-subtitle" id="toastSubtitle">Phantom wallet connected</div>
+    </div>
+    <button class="toast-close" id="toastCloseBtn">×</button>
+  </div>
+</div>
 </body>
 </html>
 
