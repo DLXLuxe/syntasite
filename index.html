@@ -4686,6 +4686,9 @@ const wallets = [
     modal.remove();
   });
 }
+
+
+
 async function connectToWallet(wallet) {
   try {
     walletTopBtn.classList.add('loading');
@@ -4704,14 +4707,9 @@ async function connectToWallet(wallet) {
     
     let response;
     
-    
     if (wallet.name === 'Solflare') {
-      // Solflare correct connection method
       try {
-        // Try standard connect first
         response = await provider.connect();
-        console.log('Solflare connect response:', response);
-        
         if (response && response.publicKey) {
           publicKey = response.publicKey;
         } else if (response && response.public_key) {
@@ -4724,11 +4722,7 @@ async function connectToWallet(wallet) {
           throw new Error('No public key in connect response');
         }
       } catch (connectError) {
-        console.log('Connect failed, trying request method:', connectError);
-        // Fallback to request method
         response = await provider.request({ method: 'connect' });
-        console.log('Solflare request response:', response);
-        
         if (response && response.publicKey) {
           publicKey = new solanaWeb3.PublicKey(response.publicKey);
         } else if (response && response.public_key) {
@@ -4761,15 +4755,35 @@ async function connectToWallet(wallet) {
       });
     }
     
-await fetchBalance();
+    await fetchBalance();
+    
+    // THIS MUST BE CALLED - it sets the button text to icon + name
+    updateUI();
+    
+    walletTopBtn.classList.remove('loading');
+    console.log('Wallet connected:', wallet.name, publicKey.toString());
+    
+    showToast('Wallet Connected', `${wallet.name} wallet connected successfully`, 'success');
 
-// Call updateUI to properly set all UI elements
-updateUI();
-walletTopBtn.classList.remove('loading');
-console.log('Wallet connected:', wallet.name, publicKey?.toString());  // Use publicKey instead
-
-// Show success notification
-showToast('Wallet Connected', `${wallet.name} wallet connected successfully`, 'success');
+  } catch (error) {
+    console.error('Connection error:', error);
+    walletTopBtn.classList.remove('loading');
+    walletBtnText.innerHTML = 'Connect Wallet';
+    
+    let errorMessage = error.message || 'Unknown error';
+    
+    if (errorMessage === 'User rejected the request') {
+      showToast('Connection Rejected', 'You rejected the connection request. Please approve to connect.', 'error');
+    } else if (errorMessage.includes('already processing')) {
+      showToast('Connection Busy', 'Wallet is already processing a request. Please try again.', 'error');
+    } else if (errorMessage.includes('timeout')) {
+      showToast('Connection Timeout', 'Request timed out. Please try again.', 'error');
+    } else {
+      showToast('Connection Failed', `Failed to connect to ${wallet.name}. ${errorMessage}`, 'error');
+    }
+  }
+}
+    
 
     
 
