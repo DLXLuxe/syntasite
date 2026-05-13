@@ -5933,7 +5933,40 @@ document.getElementById('toastCloseBtn')?.addEventListener('click', () => {
     startAutoRefresh();
   }
 })();
-
+// ============================================
+// GLOBAL TOAST FUNCTION - Make it accessible everywhere
+// ============================================
+window.showToast = function(title, subtitle, type = 'success') {
+  const toast = document.getElementById('toastNotification');
+  const toastIcon = document.getElementById('toastIcon');
+  const toastTitle = document.getElementById('toastTitle');
+  const toastSubtitle = document.getElementById('toastSubtitle');
+  
+  if (!toast) return;
+  
+  // Set icon based on type
+  if (type === 'success') {
+    toastIcon.innerHTML = '✅';
+    toastIcon.className = 'toast-icon success';
+  } else if (type === 'error') {
+    toastIcon.innerHTML = '❌';
+    toastIcon.className = 'toast-icon error';
+  } else {
+    toastIcon.innerHTML = '🔗';
+    toastIcon.className = 'toast-icon info';
+  }
+  
+  toastTitle.textContent = title;
+  toastSubtitle.textContent = subtitle;
+  
+  // Show toast
+  toast.classList.add('show');
+  
+  // Auto hide after 4 seconds
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 4000);
+};
  </script>
 <!-- Toast Notification -->
 <div class="toast-notification" id="toastNotification">
