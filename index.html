@@ -6,8 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta http-equiv="Cache-Control" content="public, max-age=31536000">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src https://jup.ag; connect-src 'self' https://*.solana.com https://*.publicnode.com https://*.ankr.com https://*.extrnode.com https://solana-api.projectserum.com https://mainnet.helius-rpc.com https://go.getblock.us https://solana-mainnet.core.chainstack.com;">
-<meta name="description" content="SYNTA - GameFi Community Token on Solana. Burn-to-play mechanics, quests, and rewards in the crypto gaming ecosystem.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src https://jup.ag; img-src 'self' https://gateway.pinata.cloud https://ipfs.io; media-src 'self' https://gateway.pinata.cloud https://ipfs.io; connect-src 'self' https://*.solana.com https://*.publicnode.com https://*.ankr.com https://*.extrnode.com https://solana-api.projectserum.com https://mainnet.helius-rpc.com https://go.getblock.us https://solana-mainnet.core.chainstack.com https://gateway.pinata.cloud;"><meta name="description" content="SYNTA - GameFi Community Token on Solana. Burn-to-play mechanics, quests, and rewards in the crypto gaming ecosystem.">
 <link rel="preconnect" href="https://jup.ag" crossorigin>
    <title>SYNTA</title>
    <title>SYNTA</title>
@@ -404,7 +403,7 @@ input:disabled + .cookie-toggle-slider:before {
 }
 .manifesto-frame {
   max-width: 800px;
-  margin: 300px auto 0px auto; 
+  margin: 50px auto 0px auto; 
   background: linear-gradient(145deg, 
     rgba(15, 25, 45, 0.95),
     rgba(10, 20, 40, 0.98)
@@ -1279,8 +1278,7 @@ a[href="quest_final.html"] {
   margin-bottom: 25px;
 }
 .warning-title {
-  display: flex;
-  align-items: center;
+   align-items: center;
   gap: 10px;
   color: #ff9966;
   font-weight: 600;
@@ -2262,7 +2260,7 @@ h1 {
 }
 .community-buttons {
   position: absolute;
-  top: -50%;
+  top: -90%;
   right: 100%; 
   margin-right: 10px;
   display: none;
@@ -3079,6 +3077,636 @@ transform: translateZ(0);
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+/* NFT Gallery Button */
+.nft-gallery-btn {
+    background: linear-gradient(135deg, #6b21a5 0%, #a855f7 50%, #c084fc 100%);
+    border: none;
+    padding: 16px 40px;
+    border-radius: 60px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.nft-gallery-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.nft-gallery-btn:hover::before {
+    left: 100%;
+}
+
+.nft-gallery-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.6);
+}
+
+.btn-icon {
+    font-size: 1.3rem;
+}
+
+.btn-arrow {
+    transition: transform 0.3s ease;
+}
+
+.nft-gallery-btn:hover .btn-arrow {
+    transform: translateX(5px);
+}
+
+/* Modal Overlay */
+.nft-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(15px);
+    z-index: 20000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.nft-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Modal Container */
+.nft-modal-container {
+    max-width: 1400px;
+    width: 90%;
+    max-height: 90vh;
+    background: linear-gradient(145deg, #0a0a1a, #1a1a2e);
+    border-radius: 32px;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(168, 85, 247, 0.2);
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.nft-modal-overlay.active .nft-modal-container {
+    transform: scale(1);
+}
+
+/* Modal Header */
+.nft-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    background: linear-gradient(90deg, rgba(168, 85, 247, 0.1), rgba(107, 33, 168, 0.05));
+    border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.nft-modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.nft-modal-close {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nft-modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+}
+
+/* Modal Body */
+.nft-modal-body {
+    padding: 30px;
+    overflow-y: auto;
+    max-height: calc(90vh - 80px);
+}
+
+/* NFT Grid inside Modal */
+.nft-modal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+/* NFT Card inside Modal */
+.nft-modal-card {
+    background: linear-gradient(135deg, rgba(20, 20, 30, 0.9), rgba(15, 15, 25, 0.95));
+    border-radius: 24px;
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.nft-modal-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(168, 85, 247, 0.5);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.nft-modal-video {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.nft-modal-info {
+    padding: 20px;
+}
+
+.nft-modal-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nft-modal-edition {
+    background: rgba(168, 85, 247, 0.2);
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    color: #c084fc;
+}
+
+.nft-modal-desc {
+    color: #9ca3af;
+    font-size: 0.8rem;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.nft-modal-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.price-label {
+    color: #6b7280;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.price-value {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #c084fc;
+}
+
+.modal-buy-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #6b21a5, #a855f7);
+    border: none;
+    padding: 12px;
+    border-radius: 40px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-buy-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 20px rgba(168, 85, 247, 0.4);
+}
+
+.modal-buy-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Modal Footer */
+.nft-modal-footer {
+    padding: 15px 30px;
+    border-top: 1px solid rgba(168, 85, 247, 0.1);
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.8rem;
+}
+
+/* Scrollbar */
+.nft-modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.nft-modal-body::-webkit-scrollbar-track {
+    background: rgba(168, 85, 247, 0.1);
+    border-radius: 4px;
+}
+
+.nft-modal-body::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #a855f7, #6b21a5);
+    border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .nft-modal-container {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    .nft-modal-body {
+        padding: 15px;
+    }
+    
+    .nft-modal-grid {
+        gap: 15px;
+    }
+    
+    .nft-modal-title {
+        font-size: 1.1rem;
+    }
+}
+.nft-video-wrapper:hover .video-play-overlay {
+    opacity: 1 !important;
+}
+/* Professional Burn Modal */
+.burn-instruction-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(15px);
+    z-index: 30000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.burn-instruction-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.burn-instruction-container {
+    max-width: 550px;
+    width: 90%;
+    background: linear-gradient(145deg, #0a0a1a, #1a1a2e);
+    border-radius: 28px;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(168, 85, 247, 0.2);
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+    position: relative;
+}
+
+.burn-instruction-modal.active .burn-instruction-container {
+    transform: scale(1);
+}
+
+.burn-instruction-header {
+    background: linear-gradient(90deg, rgba(168, 85, 247, 0.15), rgba(107, 33, 168, 0.08));
+    padding: 24px 28px;
+    border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.burn-instruction-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff, #c084fc, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.burn-instruction-close {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.burn-instruction-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+}
+
+.burn-instruction-body {
+    padding: 28px;
+}
+
+.burn-step {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 28px;
+    align-items: flex-start;
+}
+
+.burn-step-number {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #6b21a5, #a855f7);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+}
+
+.burn-step-content {
+    flex: 1;
+}
+
+.burn-step-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #c084fc;
+    margin-bottom: 8px;
+}
+
+.burn-step-text {
+    color: #9ca3af;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.burn-address-box {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-top: 10px;
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.burn-address-code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: #00ffd5;
+    word-break: break-all;
+}
+
+.copy-address-btn {
+    background: rgba(168, 85, 247, 0.2);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    color: #c084fc;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.copy-address-btn:hover {
+    background: rgba(168, 85, 247, 0.4);
+}
+
+.burn-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.3), transparent);
+    margin: 20px 0;
+}
+
+.burn-note {
+    background: rgba(0, 255, 213, 0.05);
+    border: 1px solid rgba(0, 255, 213, 0.2);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 20px;
+}
+
+.burn-note-title {
+    color: #00ffd5;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.burn-note-text {
+    color: #9ca3af;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.burn-instruction-footer {
+    padding: 20px 28px;
+    border-top: 1px solid rgba(168, 85, 247, 0.1);
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+.burn-footer-btn {
+    padding: 10px 24px;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.burn-footer-btn.secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #aaa;
+}
+
+.burn-footer-btn.primary {
+    background: linear-gradient(135deg, #6b21a5, #a855f7);
+    border: none;
+    color: white;
+}
+
+.burn-footer-btn:hover {
+    transform: scale(1.02);
+}
+.burn-stats-container {
+  position: relative;
+  z-index: 10;
+}
+.burn-counter-card {
+  background: linear-gradient(145deg, rgba(15, 25, 45, 0.98), rgba(10, 20, 40, 0.98));
+margin-bottom: 40px;
+  backdrop-filter: blur(16px);
+  border-radius: 28px;
+  border: 1px solid rgba(255, 102, 0, 0.4);
+  padding: 24px 28px;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(255, 102, 0, 0.2);
+  transition: all 0.3s ease;
+}
+.burn-counter-card:hover {
+  border-color: rgba(255, 102, 0, 0.7);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 35px rgba(255, 102, 0, 0.3);
+  transform: translateY(-3px);
+}
+.burn-counter-icon {
+  font-size: 42px;
+  margin-bottom: 8px;
+  animation: fireFlicker 1.2s ease-in-out infinite;
+  display: inline-block;
+}
+.burn-counter-title {
+  font-size: 14px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #ff9966;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.burn-counter-number {
+  font-size: 48px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffeb3b, #ff9800, #ff5722);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: 'Space Grotesk', monospace;
+  letter-spacing: 2px;
+  margin: 10px 0;
+  word-break: break-word;
+}
+.burn-spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(255, 102, 0, 0.2);
+  border-top: 2px solid #ff6600;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.burn-counter-subtitle {
+  font-size: 13px;
+  color: #9FE7E5;
+  margin: 12px 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.burn-address-short {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 4px 12px;
+  border-radius: 40px;
+  font-family: monospace;
+  font-size: 12px;
+  color: #ffaa77;
+}
+.copy-burn-address-btn {
+  background: rgba(255, 102, 0, 0.2);
+  border: 1px solid rgba(255, 102, 0, 0.4);
+  color: #ffaa77;
+  padding: 5px 10px;
+  border-radius: 40px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+.copy-burn-address-btn:hover {
+  background: rgba(255, 102, 0, 0.4);
+  transform: scale(1.02);
+}
+.burn-counter-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 102, 0, 0.2);
+}
+.update-badge {
+  font-size: 11px;
+  color: #7cf9ff;
+  background: rgba(124, 249, 255, 0.1);
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+.refresh-burn-btn {
+  background: rgba(255, 102, 0, 0.15);
+  border: 1px solid rgba(255, 102, 0, 0.4);
+  color: #ffaa77;
+  padding: 5px 14px;
+  border-radius: 30px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 600;
+}
+.refresh-burn-btn:hover {
+  background: rgba(255, 102, 0, 0.35);
+  transform: translateY(-2px);
+}
+@media (max-width: 640px) {
+  .burn-counter-number { font-size: 32px; }
+  .burn-counter-card { padding: 18px; }
+}
+</style>
 </style>
 </head>
 <body>
@@ -3087,12 +3715,12 @@ transform: translateZ(0);
   <div class="dropdown-container">
     <a href="#signal" class="dock-item buy-dex">BUY ON DEX</a>
     <div class="dex-buttons">
-      <a href="https://raydium.io/swap/?inputCurrency=sol&outputCurrency=2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La" 
+      <a href="https://raydium.io/swap/?inputMint=sol&outputMint=2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La" 
          target="_blank" class="dex-button">Raydium</a>
-      <a href="https://jup.ag/swap/SOL-2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La" 
+      <a href="https://jup.ag/tokens/2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La" 
          target="_blank" class="dex-button">Jupiter</a>
-<a href="https://www.orca.so/swap?inputCurrency=sol&outputCurrency=2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La" 
-         target="_blank" class="dex-button">Orca</a>
+<a href="https://dexscreener.com/solana/2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La" 
+         target="_blank" class="dex-button">DEX Screener</a>
     </div>
   </div>
  <div class="dropdown-container">
@@ -3121,6 +3749,8 @@ transform: translateZ(0);
          target="_blank" class="dex-button">Twitter / X</a>
       <a href="https://discord.gg/StWab7Bcc9" 
          target="_blank" class="dex-button">Discord</a>
+<a href="https://t.me/+yMTaSWQRNQkwOTFk" 
+         target="_blank" class="dex-button">Telegram</a>
     </div>
   </div>  
   <div class="dropdown-container right-dropdown">
@@ -3130,9 +3760,9 @@ transform: translateZ(0);
           class="dex-button">Roadmap</a>
       <a href="whitepaper.html" 
           class="dex-button">Whitepaper</a>
-      <a href="https://dexscreener.com/solana/2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La" 
+      <a href="http://app.syntaquest.com" 
 target="_blank"
-          class="dex-button">DEX Screener</a>
+          class="dex-button">Quest APP</a>
     </div>
   </div>
     <div class="wallet-dock-item" id="walletTop">
@@ -3173,6 +3803,20 @@ target="_blank"
 </a>
   <img src="synta.webp" alt="SYNTA Logo" class="logo" fetchpriority="high">
   <h1>SYNTA</h1>
+<div style="position: relative; text-align: center; margin-top: 280px; margin-bottom: 1px; z-index: 5;">
+  <a href="https://www.geckoterminal.com/solana/tokens/2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La" 
+     target="_blank" 
+     rel="noopener noreferrer">
+    <img src="geckoterminal_dark.png" 
+         alt="Track SYNTA on GeckoTerminal" 
+         style="height: 35px; width: auto; opacity: 0.85; transition: all 0.3s ease;">
+  </a>
+</div>
+<div style="text-align: center; margin-top: 40px;">
+    <button id="openNftGalleryBtn" class="nft-gallery-btn">
+               VIEW NFT COLLECTION
+    </button>
+</div>
   <div class="manifesto-frame">
   <div class="manifesto-header">    
     <h2 class="manifesto-title">GameFi / Community Token</h2>
@@ -3188,6 +3832,7 @@ target="_blank"
   </div>
 </div>
 </section>
+
       </main>
 <div class="certificate-container">
 <div class="token-certificate-modern">
@@ -3196,6 +3841,23 @@ target="_blank"
             <div class="ca-badge">CERTIFICATE OF AUTHENTICITY</div>
             <p class="ca-subtitle">Digital Asset Authentication</p>
         </div>
+<div class="burn-stats-container" style="max-width: 800px; margin: 30px auto 0 auto;">
+  <div class="burn-counter-card">
+    <div class="burn-counter-icon">🔥</div>
+    <div class="burn-counter-title">TOTAL SYNTA BURNED</div>
+    <div class="burn-counter-number" id="totalBurnedDisplay">
+      <span class="burn-spinner"></span> Loading...
+    </div>
+    <div class="burn-counter-subtitle">
+      Sent to: <span class="burn-address-short">1nc1nerator...11111</span>
+      <button class="copy-burn-address-btn" id="quickCopyBurnAddr" title="Copy burn address">📋</button>
+    </div>
+    <div class="burn-counter-footer">
+      <span class="update-badge" id="lastUpdateBadge">Updating...</span>
+      <button class="refresh-burn-btn" id="refreshBurnBtn">⟳ Refresh</button>
+    </div>
+  </div>
+</div>
                 <div class="ca-content">
             <div class="token-info-grid">
                 <div class="info-card">
@@ -3570,6 +4232,15 @@ document.addEventListener('DOMContentLoaded', function() {
   const burnHistoryContainer = document.getElementById('burnHistoryContainer');
   const burnHistoryList = document.getElementById('burnHistoryList');  
   const BURN_ADDRESS = '1nc1nerator11111111111111111111111111111111';
+ if (window.jupiter?.solana) {
+    console.log('✅ Jupiter Wallet detected');
+  } else {
+    window.addEventListener('load', () => {
+      if (window.jupiter?.solana) {
+        console.log('✅ Jupiter Wallet detected after page load');
+      }
+    });
+  }
 console.log('Burn address:', BURN_ADDRESS);
 console.log('Burn address length:', BURN_ADDRESS.length);
 try {
@@ -3581,6 +4252,8 @@ try {
   const SYNTA_MINT = '2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La'; //'CNU9uQ6NK3bshZWkgcxnSPbvgu8xy2qLqb724oUzpump'
   const DECIMALS = 9;   // 6 
   let wallet = null;
+let walletProvider = null;
+let currentWalletName = null;
   let publicKey = null;
   let walletBalance = 0;
 function isWalletInstalled() {
@@ -3646,90 +4319,256 @@ async function fetchBalance() {
       }
     }
   }
-async function connectWallet() {
+
+// Professional wallet selection modal with real icons
+function showWalletSelection() {
+  // Remove existing modal if any
+  const existingModal = document.getElementById('walletSelectionModal');
+  if (existingModal) existingModal.remove();
+  
+  // Create modal container
+  const modal = document.createElement('div');
+  modal.id = 'walletSelectionModal';
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    animation: fadeInModal 0.2s ease;
+  `;
+  
+  modal.innerHTML = `
+    <div style="
+      background: linear-gradient(145deg, #0f172a, #1e293b);
+      border-radius: 28px;
+      width: 380px;
+      max-width: 90%;
+      border: 1px solid rgba(124, 249, 255, 0.2);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(124, 249, 255, 0.1);
+      overflow: hidden;
+      transform: scale(0.95);
+      animation: scaleIn 0.2s ease forwards;
+    ">
+      <!-- Header -->
+      <div style="
+        padding: 24px 24px 16px 24px;
+        border-bottom: 1px solid rgba(124, 249, 255, 0.1);
+      ">
+        <h3 style="
+          margin: 0;
+          font-size: 20px;
+          font-weight: 600;
+          color: #7cf9ff;
+          text-align: center;
+        ">Connect Wallet</h3>
+        <p style="
+          margin: 8px 0 0 0;
+          font-size: 13px;
+          color: #94a3b8;
+          text-align: center;
+        ">Choose your preferred Solana wallet</p>
+      </div>
+      
+      <!-- Wallet List -->
+      <div id="walletOptionsList" style="padding: 16px 20px 20px 20px; display: flex; flex-direction: column; gap: 12px;"></div>
+      
+      <!-- Footer -->
+      <div style="
+        padding: 16px 24px;
+        border-top: 1px solid rgba(124, 249, 255, 0.1);
+        text-align: center;
+      ">
+        <button id="closeWalletModal" style="
+          background: transparent;
+          border: none;
+          color: #64748b;
+          font-size: 13px;
+          cursor: pointer;
+          transition: color 0.2s;
+        " onmouseenter="this.style.color='#7cf9ff'" onmouseleave="this.style.color='#64748b'">Cancel</button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // Add animation styles
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes fadeInModal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes scaleIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // Wallet configurations with REAL OFFICIAL ICONS
+  const wallets = [
+    {
+      name: 'Phantom',
+      iconUrl: 'https://raw.githubusercontent.com/solana-labs/wallet-adapter/master/packages/wallets/icons/phantom.svg',
+      icon: '🦊',
+      getProvider: () => window.phantom?.solana || (window.solana?.isPhantom ? window.solana : null),
+      isInstalled: () => !!(window.phantom?.solana || (window.solana && window.solana.isPhantom)),
+      downloadUrl: 'https://phantom.app/'
+    },
+    {
+      name: 'Solflare',
+      iconUrl: 'https://raw.githubusercontent.com/solana-labs/wallet-adapter/master/packages/wallets/icons/solflare.svg',
+      icon: '🟠',
+      getProvider: () => window.solflare || (window.solflare?.isSolflare ? window.solflare : null),
+      isInstalled: () => !!(window.solflare && window.solflare.isSolflare),
+      downloadUrl: 'https://solflare.com/'
+    },
+    {
+      name: 'Jupiter',
+      iconUrl: 'https://jup.ag/favicon.ico',
+      icon: '🪐',
+      getProvider: () => window.jupiter?.solana || (window.solana?.isJupiter ? window.solana : null),
+      isInstalled: () => !!(window.jupiter?.solana || (window.solana && window.solana.isJupiter)),
+      downloadUrl: 'https://chromewebstore.google.com/detail/jupiter-wallet/iledlaeogohbilgbfhmbgkgmpplbfboh'
+    }
+  ];
+  
+  const optionsContainer = document.getElementById('walletOptionsList');
+  optionsContainer.innerHTML = '';
+  
+  wallets.forEach(wallet => {
+    const isInstalled = wallet.isInstalled();
+    const btn = document.createElement('button');
+    btn.style.cssText = `
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(124, 249, 255, 0.15);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: inherit;
+    `;
+    
+    // FIXED: Using iconUrl with img tag, and icon as fallback
+    btn.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+          <img src="${wallet.iconUrl}" width="28" height="28" style="border-radius: 8px; object-fit: contain;" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=font-size:24px>${wallet.icon}</span>'">
+        </div>
+        <div style="text-align: left;">
+          <div style="font-weight: 600; color: white; font-size: 15px;">${wallet.name}</div>
+          <div style="font-size: 11px; color: ${isInstalled ? '#10b981' : '#64748b'}; margin-top: 2px;">
+            ${isInstalled ? '✓ Installed' : 'Not installed'}
+          </div>
+        </div>
+      </div>
+      <div style="font-size: 13px; color: ${isInstalled ? '#7cf9ff' : '#64748b'};">
+        ${isInstalled ? 'Connect →' : 'Install →'}
+      </div>
+    `;
+    
+    btn.onmouseenter = () => {
+      btn.style.background = 'rgba(124, 249, 255, 0.08)';
+      btn.style.borderColor = 'rgba(124, 249, 255, 0.4)';
+      btn.style.transform = 'translateX(4px)';
+    };
+    btn.onmouseleave = () => {
+      btn.style.background = 'rgba(255, 255, 255, 0.03)';
+      btn.style.borderColor = 'rgba(124, 249, 255, 0.15)';
+      btn.style.transform = 'translateX(0)';
+    };
+    
+    btn.onclick = async () => {
+      modal.remove();
+      if (!isInstalled) {
+        if (confirm(`${wallet.name} is not installed. Would you like to download it?`)) {
+          window.open(wallet.downloadUrl, '_blank');
+        }
+        return;
+      }
+      await connectToWallet(wallet);
+    };
+    optionsContainer.appendChild(btn);
+  });
+  
+  // Close modal when clicking outside
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.remove();
+  });
+  
+  document.getElementById('closeWalletModal')?.addEventListener('click', () => {
+    modal.remove();
+  });
+}
+
+// Connect to selected wallet - FIXED
+async function connectToWallet(wallet) {
   try {
     walletTopBtn.classList.add('loading');
-    walletBtnText.textContent = 'Connecting...';    
-    if (!window.solana) {
+   walletBtnText.innerHTML = `${wallet.icon || '🔗'} Connecting...`;
+    
+    const provider = wallet.getProvider();
+    if (!provider) {
+      alert(`${wallet.name} not detected. Please install it first.`);
       walletTopBtn.classList.remove('loading');
-      walletBtnText.textContent = 'Connect Wallet';
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);      
-      if (isMobile) {
-        if (confirm('Phantom wallet not detected. Open Phantom app or install?')) {
-          window.location.href = 'phantom://browse';
-          setTimeout(() => {
-            if (isMobile) {
-              const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-              if (isIOS) {
-                window.location.href = 'https://apps.apple.com/app/phantom-solana-wallet/id1598432977';
-              } else {
-                window.location.href = 'https://play.google.com/store/apps/details?id=app.phantom';
-              }
-            }
-          }, 2000);
-        }
-      } else {
-        alert('Please install Phantom or another Solana wallet');
-        window.open('https://phantom.app/', '_blank');
-      }
+      walletBtnText.innerHTML = 'Connect Wallet';
       return;
-    }    
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);    
-    if (isMobile && window.solana.isPhantom) {
-      try {
-        if (window.solana._publicKey) {
-          try {
-            await window.solana.disconnect();
-          } catch (e) {}
-        }
-        const resp = await window.solana.connect({
-          onlyIfTrusted: false,
-          mobile: true
-        });        
-        publicKey = resp.publicKey;        
-      } catch (error) {
-        console.error('Mobile connection error:', error);
-        try {
-          const resp = await window.solana.request({
-            method: 'connect',
-            params: {}
-          });
-          
-          if (resp.publicKey) {
-            publicKey = new solanaWeb3.PublicKey(resp.publicKey);
-          }
-        } catch (secondError) {
-          throw new Error('Mobile connection failed. Make sure Phantom is installed and unlocked.');
-        }
-      }
-    } else {
-      const resp = await window.solana.connect();
-      publicKey = resp.publicKey;
-    }    
-           await fetchBalance();
+    }
+    
+    const resp = await provider.connect();
+    publicKey = resp.publicKey;
+    walletProvider = provider;
+    currentWalletName = wallet.name;
+    
+    // Setup disconnect listener
+    if (provider.on) {
+      provider.on('disconnect', () => {
+        publicKey = null;
+        walletProvider = null;
+        walletBalance = 0;
+        updateUI();
+        updateBurnStatus();
+      });
+    }
+    
+    await fetchBalance();
     console.log('Balance fetched:', walletBalance);
-    if (publicKey) {
-      const short = publicKey.toString().slice(0, 4) + '...' + publicKey.toString().slice(-4);
-      walletBtnText.textContent = 'Wallet';
-      walletShortAddress.textContent = short;
-      walletFullAddress.textContent = publicKey.toString();
-      syntaBalance.textContent = walletBalance.toFixed(2);
-      walletTopBtn.classList.add('connected');
-    }    
+    
+    const short = publicKey.toString().slice(0, 4) + '...' + publicKey.toString().slice(-4);
+    walletBtnText.innerHTML = `${wallet.icon || '🔗'} ${wallet.name}`;
+    walletShortAddress.textContent = short;
+    walletFullAddress.textContent = publicKey.toString();
+    syntaBalance.textContent = walletBalance.toFixed(2);
+    walletTopBtn.classList.add('connected');
+    
     updateBurnStatus();
     walletTopBtn.classList.remove('loading');
-    console.log('UI updated - button should show Wallet now');
+    console.log('Wallet connected:', wallet.name);
+    
   } catch (error) {
     console.error('Connection error:', error);
     walletTopBtn.classList.remove('loading');
-    walletBtnText.textContent = 'Connect Wallet';
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) {
-      alert('Failed to connect wallet. Make sure Phantom app is installed and you are using the in-app browser.');
-    } else {
-      alert('Failed to connect wallet. Please try again.');
-    }
+    walletBtnText.innerHTML = 'Connect Wallet';
+    alert(`Failed to connect to ${wallet.name}. Please make sure it's unlocked and try again.`);
   }
+}
+
+// Replace the old connectWallet function
+async function connectWallet() {
+  showWalletSelection();
 }
 function isPhantomInAppBrowser() {
   return window.solana?.isPhantom && 
@@ -3785,6 +4624,9 @@ wallet.on('disconnect', () => {
     updateBurnStatus();
   });
 }
+
+
+
 async function connectWalletMobile() {
   try {
     walletTopBtn.classList.add('loading');
@@ -4141,6 +4983,203 @@ document.addEventListener('DOMContentLoaded', function() {
     applyCookiePreferences(cookieConsent);
   }
 })();
+// ============================================
+// NFT MODAL GALLERY - FIXED VIDEO PLAYBACK
+// ============================================
+
+const NFT_COLLECTION = [
+    {
+        address: "ENQo6j7dVw7YgLUqZLGUSsAcXQ4efxVtDAD9Dnbr5eFF",
+        name: "SYNTA Genesis",
+        edition: "1/3",
+        description: "The inaugural SYNTA video NFT. A unique digital artifact from the SyntaQuest collection.",
+        videoUrl: "https://gateway.pinata.cloud/ipfs/bafybeicm6bepospktl3k5jstcvjr73s6z6rei7nekk5jn2d7ka5kj6kqeu",
+        videoFallback: "https://ipfs.io/ipfs/bafybeicm6bepospktl3k5jstcvjr73s6z6rei7nekk5jn2d7ka5kj6kqeu",
+        thumbnail: "https://gateway.pinata.cloud/ipfs/bafybeifcfgtyciuk2rzgnbtw5xs2hzyhjwb7ucfk3ewpoqqgyzbcsrb4ym",
+        thumbnailFallback: "https://ipfs.io/ipfs/bafybeifcfgtyciuk2rzgnbtw5xs2hzyhjwb7ucfk3ewpoqqgyzbcsrb4ym",
+        price: 1000
+    },
+    {
+        address: "4MhyCSrc6uuJKPNBhc4nZnUjPMMwPa3cprFi8eGRes1D",
+        name: "SYNTA Pinko",
+        edition: "2/3",
+        description: "Bold, vibrant, and unmistakable. The Pinko edition brings energy to the SYNTA collection.",
+        videoUrl: "https://gateway.pinata.cloud/ipfs/bafybeigtnuuxccjh7miqge6d6mjbfta7gkwfbi45yrvkz2735aluojj3nu",
+        videoFallback: "https://ipfs.io/ipfs/bafybeigtnuuxccjh7miqge6d6mjbfta7gkwfbi45yrvkz2735aluojj3nu",
+        thumbnail: "https://gateway.pinata.cloud/ipfs/bafybeig33xohqjmctvalq5meyx2f7qi2f4qbofa3mbyvbhbyvgaxvfqczq",
+        thumbnailFallback: "https://ipfs.io/ipfs/bafybeig33xohqjmctvalq5meyx2f7qi2f4qbofa3mbyvbhbyvgaxvfqczq",
+        price: 1000
+    },
+    {
+        address: "HqD6iXxEogciQDyu2Ca2oY6EKG5G9sUxRQSHdi9Q7mVQ",
+        name: "SYNTA Black Gold",
+        edition: "3/3",
+        description: "The rarest of them all. Black Gold represents prestige, power, and exclusivity.",
+        videoUrl: "https://gateway.pinata.cloud/ipfs/bafybeieq5pi2hf2zjpgeadkktpg3swlyy6gbwbpl3sxlshfoxtrvqogsoy",
+        videoFallback: "https://ipfs.io/ipfs/bafybeieq5pi2hf2zjpgeadkktpg3swlyy6gbwbpl3sxlshfoxtrvqogsoy",
+        thumbnail: "https://gateway.pinata.cloud/ipfs/bafybeiax7f6ytro4cez6cf2od3jp7kibizleqkowgfajq522iwqw5p5x5u",
+        thumbnailFallback: "https://ipfs.io/ipfs/bafybeiax7f6ytro4cez6cf2od3jp7kibizleqkowgfajq522iwqw5p5x5u",
+        price: 1000
+    }
+];
+
+const YOUR_WALLET = "ChCwqR4Hh1E7GmY6MqdXK4bQGvvNUX82hz24ZWvkZrLQ";
+
+function renderModalGallery() {
+    const grid = document.getElementById('nftModalGrid');
+    if (!grid) return;
+    
+    grid.innerHTML = NFT_COLLECTION.map((nft, index) => `
+        <div class="nft-modal-card">
+            <video 
+                class="nft-modal-video"
+                id="video-${index}"
+                src="${nft.videoUrl}"
+                poster="${nft.thumbnail}"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+                style="width: 100%; aspect-ratio: 1 / 1; object-fit: cover; background: #1a1a2e;"
+            ></video>
+            <div class="nft-modal-info">
+                <div class="nft-modal-name">
+                    ${nft.name}
+                    <span class="nft-modal-edition">${nft.edition}</span>
+                </div>
+                <div class="nft-modal-desc">${nft.description}</div>
+                <div class="nft-modal-price">
+                    <span class="price-label">Price</span>
+                    <span class="price-value">${nft.price.toLocaleString()} SYNTA</span>
+                </div>
+               <button class="modal-buy-btn" data-address="${nft.address}" data-price="${nft.price}">
+    🔥 BURN to BUY
+</button>
+            </div>
+        </div>
+    `).join('');
+    
+    // No extra video initialization needed - autoplay handles everything
+    
+    // Attach buy handlers
+    document.querySelectorAll('.modal-buy-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const address = btn.dataset.address;
+            const price = parseInt(btn.dataset.price);
+            await handleModalPurchase(address, price);
+        });
+    });
+}
+async function handleModalPurchase(nftAddress, priceInSyntax) {
+    // Open the professional modal instead of alert/confirm
+    const modal = document.getElementById('burnInstructionModal');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+// Close modal functions
+function closeBurnModal() {
+    const modal = document.getElementById('burnInstructionModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+// Copy address to clipboard
+function copyBurnAddress() {
+    const address = "1nc1nerator11111111111111111111111111111111";
+    navigator.clipboard.writeText(address);
+    const btn = document.getElementById('copyBurnAddrBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '✅ Copied!';
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+    }, 2000);
+}
+
+function copyQuestLink() {
+    const link = "https://app.syntaquest.com";
+    navigator.clipboard.writeText(link);
+    const btn = document.getElementById('copyQuestLinkBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '✅ Copied!';
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+    }, 2000);
+}
+
+// Event listeners for modal
+document.addEventListener('DOMContentLoaded', () => {
+    const closeBtn = document.getElementById('closeBurnModal');
+    const cancelBtn = document.getElementById('cancelBurnModal');
+    const confirmBtn = document.getElementById('confirmBurnModal');
+    const copyAddrBtn = document.getElementById('copyBurnAddrBtn');
+    const copyLinkBtn = document.getElementById('copyQuestLinkBtn');
+    
+    if (closeBtn) closeBtn.addEventListener('click', closeBurnModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeBurnModal);
+    if (confirmBtn) confirmBtn.addEventListener('click', closeBurnModal);
+    if (copyAddrBtn) copyAddrBtn.addEventListener('click', copyBurnAddress);
+    if (copyLinkBtn) copyLinkBtn.addEventListener('click', copyQuestLink);
+    
+    // Close on overlay click
+    const modal = document.getElementById('burnInstructionModal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeBurnModal();
+        });
+    }
+});
+
+
+// Modal open/close
+function openNftModal() {
+    const modal = document.getElementById('nftModalOverlay');
+    if (modal) {
+        renderModalGallery();
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeNftModal() {
+    const modal = document.getElementById('nftModalOverlay');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const openBtn = document.getElementById('openNftGalleryBtn');
+    const closeBtn = document.getElementById('nftModalClose');
+    const overlay = document.getElementById('nftModalOverlay');
+    
+    if (openBtn) {
+        openBtn.addEventListener('click', openNftModal);
+    }
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeNftModal);
+    }
+    if (overlay) {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeNftModal();
+        });
+    }
+    
+    // ESC key to close
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay?.classList.contains('active')) {
+            closeNftModal();
+        }
+    });
+});
 </script>
 <section class="section">
   <div class="grid">
@@ -4449,6 +5488,244 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 </div>
 </div>
+<!-- NFT Gallery Modal -->
+<div class="nft-modal-overlay" id="nftModalOverlay">
+    <div class="nft-modal-container">
+        <div class="nft-modal-header">
+            <span class="nft-modal-title"> SYNTA Genesis Collection</span>
+            <button class="nft-modal-close" id="nftModalClose">×</button>
+        </div>
+        <div class="nft-modal-body" id="nftModalBody">
+            <div class="nft-modal-grid" id="nftModalGrid">
+                <!-- NFTs will be loaded here -->
+            </div>
+        </div>
+        <div class="nft-modal-footer">
+            <span> 3 unique 1/1 NFTs | 5% royalties | Solana blockchain</span>
+        </div>
+    </div>
+</div>
+<!-- Burn Instruction Modal -->
+<div class="burn-instruction-modal" id="burnInstructionModal">
+    <div class="burn-instruction-container">
+        <div class="burn-instruction-header">
+            <div class="burn-instruction-title">
+                🔥 BURN to BUY
+            </div>
+            <button class="burn-instruction-close" id="closeBurnModal">×</button>
+        </div>
+        <div class="burn-instruction-body">
+            <!-- Step 1 -->
+            <div class="burn-step">
+                <div class="burn-step-number">1</div>
+                <div class="burn-step-content">
+                    <div class="burn-step-title">BURN 1,000 SYNTA Tokens</div>
+                    <div class="burn-step-text">Send exactly 1,000 SYNTA tokens to the official burn address:</div>
+                    <div class="burn-address-box">
+                        <code class="burn-address-code" id="burnAddressDisplay">1nc1nerator11111111111111111111111111111111</code>
+                        <button class="copy-address-btn" id="copyBurnAddrBtn">📋 Copy Address</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 2 -->
+            <div class="burn-step">
+                <div class="burn-step-number">2</div>
+                <div class="burn-step-content">
+                    <div class="burn-step-title">Copy Transaction Hash</div>
+                    <div class="burn-step-text">After sending the tokens, copy the transaction hash (TX hash) from your Phantom wallet activity.</div>
+                </div>
+            </div>
+            
+            <!-- Step 3 -->
+            <div class="burn-step">
+                <div class="burn-step-number">3</div>
+                <div class="burn-step-content">
+                    <div class="burn-step-title">Register for the Next Quest</div>
+                    <div class="burn-step-text">Use your transaction hash to register on the Quest platform:</div>
+                    <div class="burn-address-box" style="margin-top: 10px;">
+                        <code class="burn-address-code">https://app.syntaquest.com</code>
+                        <button class="copy-address-btn" id="copyQuestLinkBtn">📋 Copy Link</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="burn-divider"></div>
+            
+            <!-- Completion Note -->
+            <div class="burn-note">
+                <div class="burn-note-title">
+                    ✨ NFT Priority Quest Approval 
+                </div>
+                <div class="burn-note-text">
+                     You will be approved for the next Quest (No matter of Players Limit or Entry price) .              
+                </div>
+<div class="burn-note-title">
+                    ✨ NFT will be airdropped to your wallet. 
+                </div>
+<div class="burn-note-text">
+                <strong>⏱️ Delivery:</strong> NFT will arrive within 48 hours after quest completion.
+                </div>
+
+            </div>
+        </div>
+        <div class="burn-instruction-footer">
+            <button class="burn-footer-btn secondary" id="cancelBurnModal">Cancel</button>
+            <button class="burn-footer-btn primary" id="confirmBurnModal">I Understand</button>
+        </div>
+    </div>
+</div>
+<!-- BURN COUNTER SCRIPT - Live total burned from Solana blockchain -->
+<script>
+(function() {
+  // ============================================
+  // SYNTA BURNED COUNTER - Professional Tracker
+  // ============================================
+  const BURN_ADDRESS = '1nc1nerator11111111111111111111111111111111';
+  const SYNTA_MINT = '2D3JWxRfGoSK7MQiCYrKw5Szrxe3en71XEq3NGhgC2La';
+  const DECIMALS = 9;
+  
+  let totalBurnedLamports = 0;
+  let totalBurnedFormatted = 0;
+  let lastFetchTime = null;
+  
+  // Multiple RPC endpoints for reliability
+  const RPC_ENDPOINTS = [
+    'https://mainnet.helius-rpc.com/?api-key=6217270b-b2a3-44c9-8974-35539e40066a',
+    'https://solana-api.projectserum.com',
+    'https://api.mainnet-beta.solana.com',
+    'https://rpc.ankr.com/solana',
+    'https://solana.publicnode.com'
+  ];
+  
+  let currentRpcIdx = 0;
+  
+  function getConnection() {
+    return new solanaWeb3.Connection(RPC_ENDPOINTS[currentRpcIdx % RPC_ENDPOINTS.length]);
+  }
+  
+  async function fetchTotalBurned() {
+    const displayElement = document.getElementById('totalBurnedDisplay');
+    const badgeElement = document.getElementById('lastUpdateBadge');
+    
+    if (!displayElement) return;
+    
+    // Show loading state
+    displayElement.innerHTML = '<span class="burn-spinner"></span> Fetching...';
+    
+    // Try different RPCs
+    for (let attempt = 0; attempt < RPC_ENDPOINTS.length; attempt++) {
+      currentRpcIdx = attempt;
+      try {
+        const connection = getConnection();
+        const burnPubKey = new solanaWeb3.PublicKey(BURN_ADDRESS);
+        const mintPubKey = new solanaWeb3.PublicKey(SYNTA_MINT);
+        
+        // Get all token accounts for burn address
+        const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
+          burnPubKey,
+          { mint: mintPubKey }
+        );
+        
+        let totalLamports = 0;
+        
+        if (tokenAccounts && tokenAccounts.value && tokenAccounts.value.length > 0) {
+          for (const accountInfo of tokenAccounts.value) {
+            const amount = accountInfo.account.data.parsed.info.tokenAmount;
+            if (amount && amount.amount) {
+              totalLamports += parseInt(amount.amount);
+            }
+          }
+        }
+        
+        totalBurnedLamports = totalLamports;
+        totalBurnedFormatted = totalLamports / Math.pow(10, DECIMALS);
+        
+        // Format with commas and proper decimals
+        const formattedNumber = totalBurnedFormatted.toLocaleString(undefined, {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2
+        });
+        
+        displayElement.innerHTML = `${formattedNumber} <span style="font-size: 18px;">SYNTA</span>`;
+        
+        // Update timestamp
+        lastFetchTime = new Date();
+        if (badgeElement) {
+          badgeElement.innerHTML = `🕒 Updated: ${lastFetchTime.toLocaleTimeString()}`;
+        }
+        
+        console.log(`✅ Burned SYNTA: ${formattedNumber} tokens (${totalBurnedLamports} lamports)`);
+        return true;
+        
+      } catch (error) {
+        console.warn(`RPC ${attempt + 1} failed:`, error.message);
+        // Continue to next RPC
+      }
+    }
+    
+    // All RPCs failed
+    displayElement.innerHTML = '⚠️ Unable to fetch';
+    if (badgeElement) badgeElement.innerHTML = '⛔ Connection error';
+    return false;
+  }
+  
+  // Copy burn address helper
+  function setupCopyButton() {
+    const copyBtn = document.getElementById('quickCopyBurnAddr');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(BURN_ADDRESS);
+        const originalText = copyBtn.innerHTML;
+        copyBtn.innerHTML = '✅ Copied!';
+        setTimeout(() => {
+          copyBtn.innerHTML = originalText;
+        }, 2000);
+      });
+    }
+  }
+  
+  // Refresh button handler
+  function setupRefreshButton() {
+    const refreshBtn = document.getElementById('refreshBurnBtn');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', async () => {
+        refreshBtn.innerHTML = '⟳ Loading...';
+        refreshBtn.disabled = true;
+        await fetchTotalBurned();
+        refreshBtn.innerHTML = '⟳ Refresh';
+        refreshBtn.disabled = false;
+      });
+    }
+  }
+  
+  // Auto-refresh every 45 seconds
+  let autoRefreshInterval = null;
+  
+  function startAutoRefresh() {
+    if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+    autoRefreshInterval = setInterval(() => {
+      fetchTotalBurned().catch(console.warn);
+    }, 45000);
+  }
+  
+  // Initialize on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchTotalBurned();
+      setupCopyButton();
+      setupRefreshButton();
+      startAutoRefresh();
+    });
+  } else {
+    fetchTotalBurned();
+    setupCopyButton();
+    setupRefreshButton();
+    startAutoRefresh();
+  }
+})();
+</script>
 </body>
 </html>
 
