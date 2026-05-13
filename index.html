@@ -4761,19 +4761,12 @@ async function connectToWallet(wallet) {
       });
     }
     
-    await fetchBalance();
-    
-    const publicKeyString = publicKey.toString();
-    const short = publicKeyString.slice(0, 4) + '...' + publicKeyString.slice(-4);
-    walletBtnText.innerHTML = `${wallet.icon || '🔗'} ${wallet.name}`;
-    walletShortAddress.textContent = short;
-    walletFullAddress.textContent = publicKeyString;
-    syntaBalance.textContent = walletBalance.toFixed(2);
-    walletTopBtn.classList.add('connected');
-    
-    updateBurnStatus();
-    walletTopBtn.classList.remove('loading');
-    console.log('Wallet connected:', wallet.name, publicKeyString);
+await fetchBalance();
+
+// Call updateUI to properly set all UI elements
+updateUI();
+walletTopBtn.classList.remove('loading');
+console.log('Wallet connected:', wallet.name, publicKeyString);
 
     
     // Show success notification
