@@ -6,8 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta http-equiv="Cache-Control" content="public, max-age=31536000">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src https://jup.ag; img-src 'self' https://gateway.pinata.cloud https://ipfs.io; media-src 'self' https://gateway.pinata.cloud https://ipfs.io; connect-src 'self' https://*.solana.com https://*.publicnode.com https://*.ankr.com https://*.extrnode.com https://solana-api.projectserum.com https://mainnet.helius-rpc.com https://go.getblock.us https://solana-mainnet.core.chainstack.com https://gateway.pinata.cloud;"><meta name="description" content="SYNTA - GameFi Community Token on Solana. Burn-to-play mechanics, quests, and rewards in the crypto gaming ecosystem.">
-<link rel="preconnect" href="https://jup.ag" crossorigin>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src https://jup.ag https://jupiter.com; img-src 'self' https://gateway.pinata.cloud https://ipfs.io https://phantom.app https://solflare.com https://jup.ag https://raw.githubusercontent.com data:; media-src 'self' https://gateway.pinata.cloud https://ipfs.io; connect-src 'self' https://*.solana.com https://*.publicnode.com https://*.ankr.com https://*.extrnode.com https://solana-api.projectserum.com https://mainnet.helius-rpc.com https://go.getblock.us https://solana-mainnet.core.chainstack.com https://gateway.pinata.cloud;">
    <title>SYNTA</title>
    <title>SYNTA</title>
 <link rel="icon" type="image/png" href="synta.webp">
@@ -4232,17 +4231,21 @@ document.addEventListener('DOMContentLoaded', function() {
   const burnHistoryContainer = document.getElementById('burnHistoryContainer');
   const burnHistoryList = document.getElementById('burnHistoryList');  
   const BURN_ADDRESS = '1nc1nerator11111111111111111111111111111111';
-// Jupiter Wallet detection - check both methods
+// Jupiter Wallet detection - check for window.solana with isJupiter property
+console.log('Checking for Jupiter Wallet...');
 if (window.solana && window.solana.isJupiter) {
   console.log('✅ Jupiter Wallet detected via window.solana.isJupiter');
-} else if (window.jupiter?.solana) {
+} else if (window.jupiter && window.jupiter.solana) {
   console.log('✅ Jupiter Wallet detected via window.jupiter');
 } else {
+  console.log('Jupiter Wallet not detected yet, waiting...');
   window.addEventListener('load', () => {
     if (window.solana && window.solana.isJupiter) {
-      console.log('✅ Jupiter Wallet detected after page load (via window.solana)');
-    } else if (window.jupiter?.solana) {
-      console.log('✅ Jupiter Wallet detected after page load (via window.jupiter)');
+      console.log('✅ Jupiter Wallet detected after page load');
+    } else if (window.jupiter && window.jupiter.solana) {
+      console.log('✅ Jupiter Wallet detected after page load');
+    } else {
+      console.log('Jupiter Wallet not found');
     }
   });
 }
@@ -4522,42 +4525,71 @@ function showWalletSelection() {
   });
 }
 
-// Connect to selected wallet - FIXED for all wallets
 async function connectToWallet(wallet) {
   try {
     walletTopBtn.classList.add('loading');
     walletBtnText.innerHTML = `${wallet.icon || '🔗'} Connecting...`;
     
-    const provider = wallet.getProvider();
-    if (!provider) {
-      alert(`${wallet.name} not detected. Please install it first.`);
-      walletTopBtn.classList.remove('loading');
-      walletBtnText.innerHTML = 'Connect Wallet';
-      return;
-    }
+    let provider = wallet.getProvider();
     
-    console.log(`${wallet.name} provider found:`, provider);
-    
-    // Connect based on wallet type
-    let resp;
+    // Special handling for Solflare
     if (wallet.name === 'Solflare') {
-      resp = await provider.connect();
+      if (!provider) {
+        alert('Solflare extension not detected. Please install it first.');
+        walletTopBtn.classList.remove('loading');
+        walletBtnText.innerHTML = 'Connect Wallet';
+        return;
+      }
+      try {
+        const resp = await provider.connect();
+        publicKey = resp.publicKey;
+        walletProvider = provider;
+        currentWalletName = wallet.name;
+      } catch (e) {
+        const resp = await provider.request({ method: 'connect' });
+        publicKey = new solanaWeb3.PublicKey(resp.publicKey);
+        walletProvider = provider;
+        currentWalletName = wallet.name;
+      }
+    } 
+    else if (wallet.name === 'Jupiter') {
+      if (!provider && window.solana) {
+        provider = window.solana;
+      }
+      if (!provider) {
+        alert('Jupiter Wallet extension not detected. Please install it first.');
+        walletTopBtn.classList.remove('loading');
+        walletBtnText.innerHTML = 'Connect Wallet';
+        return;
+      }
+      const resp = await provider.connect();
       publicKey = resp.publicKey;
-    } else if (wallet.name === 'Jupiter') {
-      // Jupiter uses standard connect
-      resp = await provider.connect();
+      walletProvider = provider;
+      currentWalletName = wallet.name;
+    }
+    else {
+      if (!provider) {
+        alert(`${wallet.name} not detected. Please install it first.`);
+        walletTopBtn.classList.remove('loading');
+        walletBtnText.innerHTML = 'Connect Wallet';
+        return;
+      }
+      const resp = await provider.connect();
       publicKey = resp.publicKey;
-    } else {
-      resp = await provider.connect();
-      publicKey = resp.publicKey;
+      walletProvider = provider;
+      currentWalletName = wallet.name;
     }
     
-    walletProvider = provider;
-    currentWalletName = wallet.name;
+    // FIXED: Check if publicKey exists before calling toString
+    if (!publicKey) {
+      throw new Error('Failed to get public key');
+    }
+    
+    console.log(`${wallet.name} connected:`, publicKey.toString());
     
     // Setup disconnect listener
-    if (provider.on) {
-      provider.on('disconnect', () => {
+    if (walletProvider && walletProvider.on) {
+      walletProvider.on('disconnect', () => {
         publicKey = null;
         walletProvider = null;
         walletBalance = 0;
@@ -4567,14 +4599,16 @@ async function connectToWallet(wallet) {
     }
     
     await fetchBalance();
-    console.log('Balance fetched:', walletBalance);
     
-    const short = publicKey.toString().slice(0, 4) + '...' + publicKey.toString().slice(-4);
-    walletBtnText.innerHTML = `${wallet.icon || '🔗'} ${wallet.name}`;
-    walletShortAddress.textContent = short;
-    walletFullAddress.textContent = publicKey.toString();
-    syntaBalance.textContent = walletBalance.toFixed(2);
-    walletTopBtn.classList.add('connected');
+    // FIXED: Check publicKey exists before toString
+    if (publicKey) {
+      const short = publicKey.toString().slice(0, 4) + '...' + publicKey.toString().slice(-4);
+      walletBtnText.innerHTML = `${wallet.icon || '🔗'} ${wallet.name}`;
+      walletShortAddress.textContent = short;
+      walletFullAddress.textContent = publicKey.toString();
+      syntaBalance.textContent = walletBalance.toFixed(2);
+      walletTopBtn.classList.add('connected');
+    }
     
     updateBurnStatus();
     walletTopBtn.classList.remove('loading');
@@ -4587,7 +4621,7 @@ async function connectToWallet(wallet) {
     
     let errorMsg = `Failed to connect to ${wallet.name}.\n`;
     if (wallet.name === 'Jupiter') {
-      errorMsg += 'Make sure Jupiter Wallet extension is installed and you are logged in.\nDownload: https://chromewebstore.google.com/detail/jupiter-wallet/iledlaeogohbilgbfhmbgkgmpplbfboh';
+      errorMsg += 'Make sure Jupiter Wallet extension is installed and you are logged in.';
     } else if (wallet.name === 'Solflare') {
       errorMsg += 'Make sure Solflare extension is installed and you are logged in.';
     } else {
