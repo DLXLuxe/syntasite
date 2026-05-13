@@ -4772,8 +4772,6 @@ console.log('Wallet connected:', wallet.name, publicKey?.toString());  // Use pu
 showToast('Wallet Connected', `${wallet.name} wallet connected successfully`, 'success');
 
     
-    // Show success notification
-    showToast('Wallet Connected', `${wallet.name} wallet connected successfully`, 'success');
 
   } catch (error) {
   console.error('Connection error:', error);
@@ -4853,8 +4851,7 @@ async function checkPhantomConnection() {
         await fetchBalance();
         updateUI();
         updateBurnStatus();
-        walletBtnText.textContent = 'Wallet';
-      } else {
+       } else {
         try {
           const resp = await window.solana.connect({ onlyIfTrusted: true });
           if (resp.publicKey) {
@@ -4867,7 +4864,6 @@ async function checkPhantomConnection() {
           }
         } catch (error) {
           console.log('Not auto-connected, user needs to approve in Phantom');
-          walletBtnText.textContent = 'Connect Wallet';
         }
       }
     }
