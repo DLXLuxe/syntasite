@@ -4784,6 +4784,10 @@ async function connectToWallet(wallet) {
   }
 }
     
+// Replace the old connectWallet function - THIS WAS MISSING!
+async function connectWallet() {
+  showWalletSelection();
+}
 
 // Updated init function - REPLACE your existing init function
 async function init() {
@@ -5930,19 +5934,6 @@ document.getElementById('toastCloseBtn')?.addEventListener('click', () => {
   }
 })();
 
-window.connectWallet = async function() {
-  if (typeof publicKey !== 'undefined' && publicKey) {
-    showToast('Already Connected', 'Wallet is already connected', 'info');
-    return;
-  }
-  showWalletSelection();
-};
-
-window.showWalletSelection = showWalletSelection;
-window.connectWalletMobile = connectWalletMobile;
-window.disconnectWallet = disconnectWallet;
-
-console.log('✅ Wallet functions exposed to window globally');
  </script>
 <!-- Toast Notification -->
 <div class="toast-notification" id="toastNotification">
