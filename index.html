@@ -4232,15 +4232,20 @@ document.addEventListener('DOMContentLoaded', function() {
   const burnHistoryContainer = document.getElementById('burnHistoryContainer');
   const burnHistoryList = document.getElementById('burnHistoryList');  
   const BURN_ADDRESS = '1nc1nerator11111111111111111111111111111111';
- if (window.jupiter?.solana) {
-    console.log('✅ Jupiter Wallet detected');
-  } else {
-    window.addEventListener('load', () => {
-      if (window.jupiter?.solana) {
-        console.log('✅ Jupiter Wallet detected after page load');
-      }
-    });
-  }
+// Jupiter Wallet detection - check both methods
+if (window.solana && window.solana.isJupiter) {
+  console.log('✅ Jupiter Wallet detected via window.solana.isJupiter');
+} else if (window.jupiter?.solana) {
+  console.log('✅ Jupiter Wallet detected via window.jupiter');
+} else {
+  window.addEventListener('load', () => {
+    if (window.solana && window.solana.isJupiter) {
+      console.log('✅ Jupiter Wallet detected after page load (via window.solana)');
+    } else if (window.jupiter?.solana) {
+      console.log('✅ Jupiter Wallet detected after page load (via window.jupiter)');
+    }
+  });
+}
 console.log('Burn address:', BURN_ADDRESS);
 console.log('Burn address length:', BURN_ADDRESS.length);
 try {
@@ -4319,7 +4324,6 @@ async function fetchBalance() {
       }
     }
   }
-
 // Professional wallet selection modal with real icons
 function showWalletSelection() {
   // Remove existing modal if any
@@ -4414,11 +4418,11 @@ function showWalletSelection() {
   `;
   document.head.appendChild(style);
   
-  // Wallet configurations with REAL OFFICIAL ICONS
+  // Wallet configurations - FIXED ICONS and JUPITER DETECTION
   const wallets = [
     {
       name: 'Phantom',
-      iconUrl: 'https://raw.githubusercontent.com/solana-labs/wallet-adapter/master/packages/wallets/icons/phantom.svg',
+      iconUrl: 'https://phantom.app/static/phantom_icon.png',
       icon: '🦊',
       getProvider: () => window.phantom?.solana || (window.solana?.isPhantom ? window.solana : null),
       isInstalled: () => !!(window.phantom?.solana || (window.solana && window.solana.isPhantom)),
@@ -4426,7 +4430,7 @@ function showWalletSelection() {
     },
     {
       name: 'Solflare',
-      iconUrl: 'https://raw.githubusercontent.com/solana-labs/wallet-adapter/master/packages/wallets/icons/solflare.svg',
+      iconUrl: 'https://solflare.com/assets/favicon.svg',
       icon: '🟠',
       getProvider: () => window.solflare || (window.solflare?.isSolflare ? window.solflare : null),
       isInstalled: () => !!(window.solflare && window.solflare.isSolflare),
@@ -4436,8 +4440,13 @@ function showWalletSelection() {
       name: 'Jupiter',
       iconUrl: 'https://jup.ag/favicon.ico',
       icon: '🪐',
-      getProvider: () => window.jupiter?.solana || (window.solana?.isJupiter ? window.solana : null),
-      isInstalled: () => !!(window.jupiter?.solana || (window.solana && window.solana.isJupiter)),
+      // Jupiter Wallet injects as window.solana with isJupiter property
+      getProvider: () => {
+        if (window.solana && window.solana.isJupiter) return window.solana;
+        if (window.jupiter?.solana) return window.jupiter.solana;
+        return null;
+      },
+      isInstalled: () => !!(window.solana && window.solana.isJupiter) || !!(window.jupiter?.solana),
       downloadUrl: 'https://chromewebstore.google.com/detail/jupiter-wallet/iledlaeogohbilgbfhmbgkgmpplbfboh'
     }
   ];
@@ -4462,7 +4471,6 @@ function showWalletSelection() {
       font-family: inherit;
     `;
     
-    // FIXED: Using iconUrl with img tag, and icon as fallback
     btn.innerHTML = `
       <div style="display: flex; align-items: center; gap: 14px;">
         <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
@@ -4514,11 +4522,11 @@ function showWalletSelection() {
   });
 }
 
-// Connect to selected wallet - FIXED
+// Connect to selected wallet - FIXED for all wallets
 async function connectToWallet(wallet) {
   try {
     walletTopBtn.classList.add('loading');
-   walletBtnText.innerHTML = `${wallet.icon || '🔗'} Connecting...`;
+    walletBtnText.innerHTML = `${wallet.icon || '🔗'} Connecting...`;
     
     const provider = wallet.getProvider();
     if (!provider) {
@@ -4528,8 +4536,22 @@ async function connectToWallet(wallet) {
       return;
     }
     
-    const resp = await provider.connect();
-    publicKey = resp.publicKey;
+    console.log(`${wallet.name} provider found:`, provider);
+    
+    // Connect based on wallet type
+    let resp;
+    if (wallet.name === 'Solflare') {
+      resp = await provider.connect();
+      publicKey = resp.publicKey;
+    } else if (wallet.name === 'Jupiter') {
+      // Jupiter uses standard connect
+      resp = await provider.connect();
+      publicKey = resp.publicKey;
+    } else {
+      resp = await provider.connect();
+      publicKey = resp.publicKey;
+    }
+    
     walletProvider = provider;
     currentWalletName = wallet.name;
     
@@ -4562,60 +4584,30 @@ async function connectToWallet(wallet) {
     console.error('Connection error:', error);
     walletTopBtn.classList.remove('loading');
     walletBtnText.innerHTML = 'Connect Wallet';
-    alert(`Failed to connect to ${wallet.name}. Please make sure it's unlocked and try again.`);
+    
+    let errorMsg = `Failed to connect to ${wallet.name}.\n`;
+    if (wallet.name === 'Jupiter') {
+      errorMsg += 'Make sure Jupiter Wallet extension is installed and you are logged in.\nDownload: https://chromewebstore.google.com/detail/jupiter-wallet/iledlaeogohbilgbfhmbgkgmpplbfboh';
+    } else if (wallet.name === 'Solflare') {
+      errorMsg += 'Make sure Solflare extension is installed and you are logged in.';
+    } else {
+      errorMsg += 'Please make sure it\'s unlocked and try again.';
+    }
+    alert(errorMsg);
   }
 }
 
-// Replace the old connectWallet function
+// Replace the old connectWallet function - THIS WAS MISSING!
 async function connectWallet() {
   showWalletSelection();
 }
-function isPhantomInAppBrowser() {
-  return window.solana?.isPhantom && 
-         /Phantom/i.test(navigator.userAgent) && 
-         /Mobile/i.test(navigator.userAgent);
-}
+
+// Updated init function - REPLACE your existing init function
 async function init() {
   console.log('Initializing wallet...');  
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)  
-  if (isMobile) {
-    console.log('Mobile device detected');
-    await checkPhantomConnection();
-    if (isPhantomInAppBrowser()) {
-      console.log('In Phantom in-app browser');
-    } else {
-      setTimeout(() => {
-        console.log('Not in Phantom browser');
-      }, 1000);
-    }
-  }  
-  if (window.solana) {
-    wallet = window.solana;
-    console.log('Wallet found:', wallet.isPhantom ? 'Phantom' : 'Other wallet');
-    if (wallet.isConnected && wallet.publicKey) {
-      publicKey = wallet.publicKey;
-      await fetchBalance();
-      updateUI();
-    }    
-    wallet.on('connect', async () => {
-  console.log('Wallet connected event');
-  publicKey = wallet.publicKey;
-  await fetchBalance();
-  updateUI();
-  updateBurnStatus();
-  walletTopBtn.classList.remove('loading');
-  walletBtnText.textContent = 'Wallet';
-});
-wallet.on('disconnect', () => {
-  console.log('Wallet disconnected event');
-  publicKey = null;
-  walletBalance = 0;
-  updateUI();
-  updateBurnStatus();
-  walletTopBtn.classList.remove('loading');
-  walletBtnText.textContent = 'Connect Wallet';
-});
-  }  
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  
+  // Just update UI and set up burn planet click
   updateUI();
   updateBurnStatus();  
   burnPlanet.addEventListener('click', () => {
@@ -4624,7 +4616,6 @@ wallet.on('disconnect', () => {
     updateBurnStatus();
   });
 }
-
 
 
 async function connectWalletMobile() {
